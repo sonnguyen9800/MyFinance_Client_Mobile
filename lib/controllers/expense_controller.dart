@@ -6,48 +6,53 @@ class ExpenseController extends GetxController {
   final ApiService _apiService = ApiService();
   final RxList<Expense> expenses = <Expense>[].obs;
   final RxBool isLoading = false.obs;
+  final RxBool hasError = false.obs;
+  final RxString errorMessage = ''.obs;
 
   @override
   void onInit() {
     super.onInit();
-    fetchExpenses();
+    // Don't load expenses automatically on init
   }
 
-  Future<void> fetchExpenses() async {
+  Future<void> loadExpenses() async {
+    if (isLoading.value) return; // Prevent multiple simultaneous loads
+
     try {
       isLoading.value = true;
-      expenses.value = await _apiService.getExpenses();
+      hasError.value = false;
+      errorMessage.value = '';
+
+      final loadedExpenses = await _apiService.getExpenses();
+      expenses.value = loadedExpenses;
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      hasError.value = true;
+      errorMessage.value = e.toString();
+      Get.snackbar('Error', 'Failed to load expenses: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
-  Future<void> createExpense(Expense expense) async {
+  Future<void> addExpense(Expense expense) async {
     try {
       isLoading.value = true;
-      final newExpense = await _apiService.createExpense(expense);
-      expenses.add(newExpense);
-      Get.back();
+      await _apiService.createExpense(expense);
+      await loadExpenses(); // Reload the list after adding
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      Get.snackbar('Error', 'Failed to add expense: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
-  Future<void> updateExpense(String id, Expense expense) async {
+  Future<void> updateExpense(Expense expense) async {
     try {
       isLoading.value = true;
-      final updatedExpense = await _apiService.updateExpense(id, expense);
-      final index = expenses.indexWhere((e) => e.id == id);
-      if (index != -1) {
-        expenses[index] = updatedExpense;
-      }
-      Get.back();
+      await _apiService.updateExpense(expense.id!, expense);
+      await loadExpenses(); // Reload the list after updating
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      Get.snackbar('Error', 'Failed to update expense: $e');
     } finally {
       isLoading.value = false;
     }
@@ -57,9 +62,9 @@ class ExpenseController extends GetxController {
     try {
       isLoading.value = true;
       await _apiService.deleteExpense(id);
-      expenses.removeWhere((e) => e.id == id);
+      await loadExpenses(); // Reload the list after deleting
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      Get.snackbar('Error', 'Failed to delete expense: $e');
     } finally {
       isLoading.value = false;
     }

@@ -80,7 +80,7 @@ class HomeView extends StatelessWidget {
         () => _expenseController.isLoading.value
             ? const Center(child: CircularProgressIndicator())
             : RefreshIndicator(
-                onRefresh: _expenseController.fetchExpenses,
+                onRefresh: _expenseController.loadExpenses,
                 child: ListView(
                   padding: const EdgeInsets.all(16.0),
                   children: [

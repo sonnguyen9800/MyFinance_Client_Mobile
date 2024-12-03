@@ -4,32 +4,75 @@ import 'package:intl/intl.dart';
 import '../controllers/expense_controller.dart';
 import '../models/expense_model.dart';
 
-class ExpensesView extends StatelessWidget {
-  ExpensesView({super.key});
+class ExpensesView extends StatefulWidget {
+  const ExpensesView({super.key});
 
+  @override
+  State<ExpensesView> createState() => _ExpensesViewState();
+}
+
+class _ExpensesViewState extends State<ExpensesView>
+    with AutomaticKeepAliveClientMixin {
   final ExpenseController _expenseController = Get.find<ExpenseController>();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _expenseController.loadExpenses();
+    });
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Expenses'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => _expenseController.loadExpenses(),
+          ),
+        ],
       ),
-      body: Obx(
-        () => _expenseController.isLoading.value
-            ? const Center(child: CircularProgressIndicator())
-            : RefreshIndicator(
-                onRefresh: _expenseController.fetchExpenses,
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(8.0),
-                  itemCount: _expenseController.expenses.length,
-                  itemBuilder: (context, index) {
-                    final expense = _expenseController.expenses[index];
-                    return _buildExpenseCard(expense);
-                  },
+      body: Obx(() {
+        if (_expenseController.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (_expenseController.hasError.value) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Error: ${_expenseController.errorMessage.value}'),
+                ElevatedButton(
+                  onPressed: _expenseController.loadExpenses,
+                  child: const Text('Retry'),
                 ),
-              ),
-      ),
+              ],
+            ),
+          );
+        }
+
+        if (_expenseController.expenses.isEmpty) {
+          return const Center(
+            child: Text('No expenses found'),
+          );
+        }
+
+        return ListView.builder(
+          itemCount: _expenseController.expenses.length,
+          itemBuilder: (context, index) {
+            final expense = _expenseController.expenses[index];
+            return _buildExpenseCard(expense);
+          },
+        );
+      }),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showExpenseDialog(),
         child: const Icon(Icons.add),
@@ -84,11 +127,12 @@ class ExpensesView extends StatelessWidget {
 
   void _showExpenseDialog([Expense? expense]) {
     final nameController = TextEditingController(text: expense?.name);
-    final descriptionController = TextEditingController(text: expense?.description);
-    final amountController = TextEditingController(
-        text: expense?.amount.toString() ?? '');
-    final paymentMethodController = TextEditingController(
-        text: expense?.paymentMethod);
+    final descriptionController =
+        TextEditingController(text: expense?.description);
+    final amountController =
+        TextEditingController(text: expense?.amount.toString() ?? '');
+    final paymentMethodController =
+        TextEditingController(text: expense?.paymentMethod);
     final categoryController = TextEditingController(text: expense?.category);
     DateTime selectedDate = expense?.date ?? DateTime.now();
 
@@ -181,9 +225,9 @@ class ExpensesView extends StatelessWidget {
                       );
 
                       if (expense == null) {
-                        _expenseController.createExpense(newExpense);
+                        _expenseController.addExpense(newExpense);
                       } else {
-                        _expenseController.updateExpense(expense.id!, newExpense);
+                        _expenseController.updateExpense(newExpense);
                       }
                       Get.back();
                     },

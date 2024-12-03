@@ -2,6 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 import '../models/user_model.dart';
 import '../models/expense_model.dart';
+import '../models/auth_response.dart';
 
 class ApiService {
   static const String baseUrl = 'http://10.0.2.2:8080/api';
@@ -20,25 +21,40 @@ class ApiService {
     ));
   }
 
-  Future<User> login(String email, String password) async {
+  Future<User> getCurrentUser() async {
     try {
-      final response = await _dio.post('$baseUrl/login',
-          data: {'email': email, 'password': password});
-      await _storage.write(key: 'token', value: response.data['token']);
-      return User.fromJson(response.data['user']);
+      final response = await _dio.get('$baseUrl/user');
+      return User.fromJson(response.data);
+    } catch (e) {
+      throw Exception('Failed to get current user: $e');
+    }
+  }
+
+  Future<AuthResponse> login(String email, String password) async {
+    try {
+      final response = await _dio
+          .post('$baseUrl/login', data: {'email': email, 'password': password});
+      final String token = response.data['token'];
+      final User user = User.fromJson(response.data['user']);
+      await _storage.write(key: 'token', value: token);
+      return AuthResponse(token: token, user: user);
     } catch (e) {
       throw Exception('Failed to login: $e');
     }
   }
 
-  Future<User> signup(String name, String email, String password) async {
+  Future<AuthResponse> signup(
+      String name, String email, String password) async {
     try {
       final response = await _dio.post('$baseUrl/signup',
           data: {'name': name, 'email': email, 'password': password});
       await _storage.write(key: 'token', value: response.data['token']);
-      return User.fromJson(response.data['user']);
+      final AuthResponse authResponse = AuthResponse(
+          token: response.data['token'],
+          user: User.fromJson(response.data['user']));
+      return authResponse;
     } catch (e) {
-      throw Exception('Failed to signup $e');
+      throw Exception('Failed to signup: $e');
     }
   }
 
@@ -55,7 +71,8 @@ class ApiService {
 
   Future<Expense> createExpense(Expense expense) async {
     try {
-      final response = await _dio.post('$baseUrl/expenses', data: expense.toJson());
+      final response =
+          await _dio.post('$baseUrl/expenses', data: expense.toJson());
       return Expense.fromJson(response.data);
     } catch (e) {
       throw Exception('Failed to create expense $e');
@@ -64,8 +81,8 @@ class ApiService {
 
   Future<Expense> updateExpense(String id, Expense expense) async {
     try {
-      final response = await _dio.put('$baseUrl/expenses/$id',
-          data: expense.toJson());
+      final response =
+          await _dio.put('$baseUrl/expenses/$id', data: expense.toJson());
       return Expense.fromJson(response.data);
     } catch (e) {
       throw Exception('Failed to update expense');
