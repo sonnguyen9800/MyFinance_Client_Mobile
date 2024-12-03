@@ -22,6 +22,11 @@ class AuthController extends GetxController {
       final token = await _storage.read(key: 'token');
       if (token != null) {
         isLoading.value = true;
+        final currentUser = await _apiService.getCurrentUser();
+        if (currentUser == null) {
+          await _storage.delete(key: 'token');
+          return;
+        }
         user.value = await _apiService.getCurrentUser();
         Get.offAllNamed('/home');
       }
