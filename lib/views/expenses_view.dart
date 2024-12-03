@@ -39,12 +39,14 @@ class ExpensesView extends StatelessWidget {
 
   Widget _buildExpenseCard(Expense expense) {
     final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
+    var category = expense.category ?? "No Category";
+    var paymentMethod = expense.paymentMethod ?? "No Payment Method";
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: Colors.blue.shade100,
-          child: Text(expense.category[0]),
+          child: Text(category),
         ),
         title: Text(expense.name),
         subtitle: Column(
@@ -70,7 +72,7 @@ class ExpensesView extends StatelessWidget {
               ),
             ),
             Text(
-              expense.paymentMethod,
+              paymentMethod,
               style: const TextStyle(fontSize: 12),
             ),
           ],

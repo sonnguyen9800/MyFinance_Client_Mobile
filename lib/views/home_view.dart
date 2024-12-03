@@ -203,9 +203,10 @@ class HomeView extends StatelessWidget {
 
   Widget _buildExpenseItem(Expense expense) {
     final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
+    var category = expense.category ?? "No Category";
     return ListTile(
       leading: CircleAvatar(
-        child: Text(expense.category[0]),
+        child: Text(category),
       ),
       title: Text(expense.name),
       subtitle: Text(DateFormat('MMM d, y').format(expense.date)),

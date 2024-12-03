@@ -187,7 +187,12 @@ class _ChartViewState extends State<ChartView> {
       // Group expenses by category
       final Map<String, double> categoryExpenses = {};
       for (var expense in expenses) {
-        categoryExpenses[expense.category] =
+        var category = expense.category ?? "";
+        if (category.isEmpty){
+            continue;
+        }
+
+        categoryExpenses[category] =
             (categoryExpenses[expense.category] ?? 0) + expense.amount;
       }
 

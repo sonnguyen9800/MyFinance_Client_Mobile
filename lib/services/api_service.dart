@@ -55,11 +55,10 @@ class ApiService {
 
   Future<Expense> createExpense(Expense expense) async {
     try {
-      final response = await _dio.post('$baseUrl/expenses',
-          data: expense.toJson());
+      final response = await _dio.post('$baseUrl/expenses', data: expense.toJson());
       return Expense.fromJson(response.data);
     } catch (e) {
-      throw Exception('Failed to create expense');
+      throw Exception('Failed to create expense $e');
     }
   }
 
