@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'controllers/auth_controller.dart';
 import 'controllers/expense_controller.dart';
+import 'services/connectivity_service.dart';
 import 'views/login_view.dart';
 import 'views/signup_view.dart';
 import 'views/home_view.dart';
@@ -13,16 +14,22 @@ import 'views/settings_view.dart';
 import 'views/about_view.dart';
 import 'views/splash_view.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize controllers
+  final authController = Get.put(AuthController());
+  final expenseController = Get.put(ExpenseController());
+  
+  // Initialize and start connectivity monitoring
+  final connectivityService = Get.put(ConnectivityService());
+  await connectivityService.init();
+  
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
-
-  final authController = Get.put(AuthController());
-  final expenseController = Get.put(ExpenseController());
 
   @override
   Widget build(BuildContext context) {

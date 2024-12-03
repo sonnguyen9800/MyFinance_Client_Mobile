@@ -34,17 +34,18 @@ dependencies:
   get: ^4.6.6  # State management and routing
   dio: ^5.4.0  # HTTP client
   shared_preferences: ^2.2.2  # Local storage
-  fl_chart: ^0.66.0  # Charts
+  fl_chart: ^0.69.2  # Charts
   intl: ^0.19.0  # Internationalization
   flutter_secure_storage: ^9.0.0  # Secure storage for tokens
   json_annotation: ^4.8.1  # JSON serialization
+  connectivity_plus: ^6.1.0
   flutter_localizations:
     sdk: flutter
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
   build_runner: ^2.4.8
   json_serializable: ^6.7.1
 

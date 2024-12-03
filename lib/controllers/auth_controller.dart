@@ -28,18 +28,18 @@ class AuthController extends GetxController {
     // Remove automatic checkAuthStatus call since it will be triggered from splash screen
   }
 
+  void handleOffline() {
+    developer.log('Handling offline state');
+    user.value = null;
+    Get.offAllNamed('/login');
+  }
+
   Future<void> checkAuthStatus() async {
     developer.log('Checking auth status...');
     isLoading.value = true;
 
     try {
-      // List all stored values for debugging
-      final all = await _storage.readAll();
-      developer.log('All stored values: $all');
-
       final token = await _storage.read(key: 'token');
-      developer.log(
-          'Retrieved token: ${token != null ? "Token exists" : "No token found"}');
 
       if (token != null && token.isNotEmpty) {
         try {
@@ -49,7 +49,6 @@ class AuthController extends GetxController {
           Get.offAllNamed('/home');
         } catch (e) {
           developer.log('Failed to get current user: $e');
-          // If getCurrentUser fails, token might be invalid
           await _storage.delete(key: 'token');
           Get.offAllNamed('/login');
         }
@@ -59,7 +58,6 @@ class AuthController extends GetxController {
       }
     } catch (e) {
       developer.log('Error in checkAuthStatus: $e');
-      // If there's an error reading the token, clear it to be safe
       await _storage.delete(key: 'token');
       Get.offAllNamed('/login');
     } finally {
