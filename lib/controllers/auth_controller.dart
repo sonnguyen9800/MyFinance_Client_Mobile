@@ -25,12 +25,12 @@ class AuthController extends GetxController {
   void onInit() {
     super.onInit();
     developer.log('AuthController initialized');
-
-    checkAuthStatus();
+    // Remove automatic checkAuthStatus call since it will be triggered from splash screen
   }
 
   Future<void> checkAuthStatus() async {
     developer.log('Checking auth status...');
+    isLoading.value = true;
 
     try {
       // List all stored values for debugging
@@ -42,7 +42,6 @@ class AuthController extends GetxController {
           'Retrieved token: ${token != null ? "Token exists" : "No token found"}');
 
       if (token != null && token.isNotEmpty) {
-        isLoading.value = true;
         try {
           final User currentUser = await _apiService.getCurrentUser();
           developer.log('Current user retrieved successfully');
@@ -58,8 +57,6 @@ class AuthController extends GetxController {
         developer.log('No valid token found, redirecting to login');
         Get.offAllNamed('/login');
       }
-
-      await _storage.write(key: 'vcl', value: "????");
     } catch (e) {
       developer.log('Error in checkAuthStatus: $e');
       // If there's an error reading the token, clear it to be safe

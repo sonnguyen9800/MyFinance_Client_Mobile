@@ -11,6 +11,7 @@ import 'views/chart_view.dart';
 import 'views/profile_view.dart';
 import 'views/settings_view.dart';
 import 'views/about_view.dart';
+import 'views/splash_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,8 +41,9 @@ class MyApp extends StatelessWidget {
         Locale('en'),
         Locale('vi'),
       ],
-      initialRoute: '/login',
+      initialRoute: '/splash',
       getPages: [
+        GetPage(name: '/splash', page: () => SplashView()),
         GetPage(name: '/login', page: () => LoginView()),
         GetPage(name: '/signup', page: () => SignupView()),
         GetPage(
