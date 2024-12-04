@@ -41,7 +41,10 @@ dependencies:
   connectivity_plus: ^6.1.0
   flutter_localizations:
     sdk: flutter
+
+  # icon and icon picker
   font_awesome_flutter: ^10.5.0
+  flutter_iconpicker: ^4.0.1
 
 dev_dependencies:
   flutter_test:
