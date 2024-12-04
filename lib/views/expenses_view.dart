@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../controllers/expense_controller.dart';
 import '../models/expense_model.dart';
+import 'dialog/create_expense_dialog.dart';
 
 class ExpensesView extends StatefulWidget {
   const ExpensesView({super.key});
@@ -95,7 +96,7 @@ class _ExpensesViewState extends State<ExpensesView>
         );
       }),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showExpenseDialog(),
+        onPressed: () => showExpenseDialog(_expenseController),
         child: const Icon(Icons.add),
       ),
     );
@@ -141,124 +142,7 @@ class _ExpensesViewState extends State<ExpensesView>
             ),
           ],
         ),
-        onTap: () => _showExpenseDialog(expense),
-      ),
-    );
-  }
-
-  void _showExpenseDialog([Expense? expense]) {
-    final nameController = TextEditingController(text: expense?.name);
-    final descriptionController =
-        TextEditingController(text: expense?.description);
-    final amountController =
-        TextEditingController(text: expense?.amount.toString() ?? '');
-    final paymentMethodController =
-        TextEditingController(text: expense?.paymentMethod);
-    final categoryController = TextEditingController(text: expense?.category);
-    DateTime selectedDate = expense?.date ?? DateTime.now();
-
-    Get.dialog(
-      Dialog(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                expense == null ? 'New Expense' : 'Edit Expense',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Name',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Description (Optional)',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 2,
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: amountController,
-                decoration: const InputDecoration(
-                  labelText: 'Amount',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: paymentMethodController,
-                decoration: const InputDecoration(
-                  labelText: 'Payment Method',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: categoryController,
-                decoration: const InputDecoration(
-                  labelText: 'Category',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () => Get.back(),
-                    child: const Text('Cancel'),
-                  ),
-                  if (expense != null)
-                    TextButton(
-                      onPressed: () {
-                        Get.back();
-                        _expenseController.deleteExpense(expense.id!);
-                      },
-                      child: const Text(
-                        'Delete',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ),
-                  ElevatedButton(
-                    onPressed: () {
-                      final newExpense = Expense(
-                        id: expense?.id,
-                        userId: expense?.userId,
-                        name: nameController.text,
-                        description: descriptionController.text,
-                        amount: double.parse(amountController.text),
-                        date: selectedDate,
-                        paymentMethod: paymentMethodController.text,
-                        category: categoryController.text,
-                      );
-
-                      if (expense == null) {
-                        _expenseController.addExpense(newExpense);
-                      } else {
-                        _expenseController.updateExpense(newExpense);
-                      }
-                      Get.back();
-                    },
-                    child: Text(expense == null ? 'Create' : 'Update'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+        onTap: () => showExpenseDialog(_expenseController, expense),
       ),
     );
   }
