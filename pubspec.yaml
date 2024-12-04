@@ -41,6 +41,7 @@ dependencies:
   connectivity_plus: ^6.1.0
   flutter_localizations:
     sdk: flutter
+  font_awesome_flutter: ^10.5.0
 
 dev_dependencies:
   flutter_test:
