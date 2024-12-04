@@ -16,20 +16,20 @@ import 'views/splash_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize controllers
   final authController = Get.put(AuthController());
   final expenseController = Get.put(ExpenseController());
-  
+
   // Initialize and start connectivity monitoring
   final connectivityService = Get.put(ConnectivityService());
   await connectivityService.init();
-  
+
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +92,8 @@ class AuthMiddleware extends GetMiddleware {
   @override
   RouteSettings? redirect(String? route) {
     final authController = Get.find<AuthController>();
-    return authController.user.value == null ? const RouteSettings(name: '/login') : null;
+    return authController.user.value == null
+        ? const RouteSettings(name: '/login')
+        : null;
   }
 }

@@ -9,12 +9,6 @@ class ExpenseController extends GetxController {
   final RxBool hasError = false.obs;
   final RxString errorMessage = ''.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    // Don't load expenses automatically on init
-  }
-
   Future<void> loadExpenses() async {
     if (isLoading.value) return; // Prevent multiple simultaneous loads
 

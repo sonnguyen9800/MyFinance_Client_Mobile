@@ -1,8 +1,9 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
+import 'package:myfinance_client_flutter/models/api/expense_response_model.dart';
 import '../models/user_model.dart';
 import '../models/expense_model.dart';
-import '../models/auth_response.dart';
+import '../models/api/auth_response.dart';
 import 'dart:developer' as developer;
 
 class ApiService {
@@ -85,9 +86,9 @@ class ApiService {
     try {
       developer.log('Getting expenses');
       final response = await _dio.get('$baseUrl/expenses');
-      return (response.data as List)
-          .map((json) => Expense.fromJson(json))
-          .toList();
+      final ExpensesResponse expensesResponse =
+          ExpensesResponse.fromJson(response.data);
+      return expensesResponse.expenses;
     } catch (e) {
       developer.log('getExpenses error: $e');
       throw Exception('Failed to get expenses');
