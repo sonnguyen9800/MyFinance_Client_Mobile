@@ -9,8 +9,26 @@ class HomeView extends StatelessWidget {
 
   final ExpenseController _expenseController = Get.find<ExpenseController>();
 
+  Future<void> fetchData() async {
+    await _expenseController.loadExpenses();
+  }
+
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: fetchData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            return _buildHomeView();
+          }
+        });
+  }
+
+  Widget _buildHomeView() {
     return Scaffold(
       appBar: AppBar(
         title: const Text('MyFinance'),
