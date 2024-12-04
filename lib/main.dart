@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:myfinance_client_flutter/views/category_view.dart';
 import 'controllers/auth_controller.dart';
 import 'controllers/expense_controller.dart';
 import 'services/connectivity_service.dart';
@@ -68,6 +69,10 @@ class MyApp extends StatelessWidget {
           page: () => const ChartView(),
           middlewares: [AuthMiddleware()],
         ),
+        GetPage(
+            name: '/categories',
+            page: () => CategoryView(),
+            middlewares: [AuthMiddleware()]),
         GetPage(
           name: '/profile',
           page: () => ProfileView(),

@@ -4,6 +4,7 @@ import 'package:myfinance_client_flutter/models/api/expense_response_model.dart'
 import '../models/user_model.dart';
 import '../models/expense_model.dart';
 import '../models/api/auth_response.dart';
+import '../models/category_model.dart';
 import 'dart:developer' as developer;
 
 class ApiService {
@@ -135,6 +136,54 @@ class ApiService {
     } catch (e) {
       developer.log('deleteExpense error: $e');
       throw Exception('Failed to delete expense');
+    }
+  }
+
+  // Category APIs
+  Future<List<Category>> getCategories() async {
+    try {
+      final response = await _dio.get('$baseUrl/categories');
+      return (response.data as List)
+          .map((json) => Category.fromJson(json))
+          .toList();
+    } catch (e) {
+      developer.log('getCategories error: $e');
+      throw Exception('Failed to load categories: $e');
+    }
+  }
+
+  Future<Category> createCategory(Category category) async {
+    try {
+      final response = await _dio.post(
+        '$baseUrl/categories',
+        data: category.toJson(),
+      );
+      return Category.fromJson(response.data);
+    } catch (e) {
+      developer.log('createCategory error: $e');
+      throw Exception('Failed to create category: $e');
+    }
+  }
+
+  Future<Category> updateCategory(String id, Category category) async {
+    try {
+      final response = await _dio.put(
+        '$baseUrl/categories/$id',
+        data: category.toJson(),
+      );
+      return Category.fromJson(response.data);
+    } catch (e) {
+      developer.log('updateCategory error: $e');
+      throw Exception('Failed to update category: $e');
+    }
+  }
+
+  Future<void> deleteCategory(String id) async {
+    try {
+      await _dio.delete('$baseUrl/categories/$id');
+    } catch (e) {
+      developer.log('deleteCategory error: $e');
+      throw Exception('Failed to delete category: $e');
     }
   }
 }
