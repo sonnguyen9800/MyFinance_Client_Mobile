@@ -68,22 +68,30 @@ class HomeView extends StatelessWidget {
                 Get.toNamed('/expenses');
               },
             ),
+            // ListTile(
+            //   leading: const Icon(Icons.pie_chart),
+            //   title: const Text('Charts'),
+            //   onTap: () {
+            //     Get.back();
+            //     Get.toNamed('/chart');
+            //   },
+            // ),
             ListTile(
-              leading: const Icon(Icons.pie_chart),
-              title: const Text('Charts'),
+              leading: const Icon(Icons.grade),
+              title: const Text('Categories'),
               onTap: () {
                 Get.back();
-                Get.toNamed('/chart');
+                Get.toNamed('/categories');
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
-              onTap: () {
-                Get.back();
-                Get.toNamed('/settings');
-              },
-            ),
+            // ListTile(
+            //   leading: const Icon(Icons.settings),
+            //   title: const Text('Settings'),
+            //   onTap: () {
+            //     Get.back();
+            //     Get.toNamed('/settings');
+            //   },
+            // ),
             ListTile(
               leading: const Icon(Icons.info),
               title: const Text('About'),
