@@ -82,16 +82,25 @@ class ApiService {
     }
   }
 
-  Future<List<Expense>> getExpenses() async {
+  Future<List<Expense>> getExpenses({int offset = 0, int limit = 10}) async {
     try {
-      developer.log('Getting expenses');
-      final response = await _dio.get('$baseUrl/expenses');
-      final ExpensesResponse expensesResponse =
-          ExpensesResponse.fromJson(response.data);
-      return expensesResponse.expenses;
+      final response = await _dio.get(
+        '$baseUrl/expenses',
+        queryParameters: {
+          'offset': offset,
+          'limit': limit,
+        },
+      );
+      
+      if (response.data == null) {
+        return [];
+      }
+
+      final expenseResponse = ExpensesResponse.fromJson(response.data);
+      return expenseResponse.expenses;
     } catch (e) {
       developer.log('getExpenses error: $e');
-      throw Exception('Failed to get expenses');
+      throw Exception('Failed to load expenses: $e');
     }
   }
 

@@ -40,18 +40,20 @@ class _ExpensesViewState extends State<ExpensesView>
         ],
       ),
       body: Obx(() {
-        if (_expenseController.isLoading.value) {
+        if (_expenseController.isLoading.value &&
+            _expenseController.expenses.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (_expenseController.hasError.value) {
+        if (_expenseController.hasError.value &&
+            _expenseController.expenses.isEmpty) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('Error: ${_expenseController.errorMessage.value}'),
                 ElevatedButton(
-                  onPressed: _expenseController.loadExpenses,
+                  onPressed: () => _expenseController.loadExpenses(),
                   child: const Text('Retry'),
                 ),
               ],
@@ -59,18 +61,37 @@ class _ExpensesViewState extends State<ExpensesView>
           );
         }
 
-        if (_expenseController.expenses.isEmpty) {
-          return const Center(
-            child: Text('No expenses found'),
-          );
-        }
+        return Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: _expenseController.expenses.length +
+                    1, // +1 for the Show More button
+                itemBuilder: (context, index) {
+                  if (index == _expenseController.expenses.length) {
+                    // Show More button at the last index
+                    return Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Center(
+                        child: _expenseController.isLoading.value
+                            ? const CircularProgressIndicator()
+                            : ElevatedButton(
+                                onPressed: () => _expenseController
+                                    .loadExpenses(loadMore: true),
+                                child: Text(
+                                  'Show more',
+                                ),
+                              ),
+                      ),
+                    );
+                  }
 
-        return ListView.builder(
-          itemCount: _expenseController.expenses.length,
-          itemBuilder: (context, index) {
-            final expense = _expenseController.expenses[index];
-            return _buildExpenseCard(expense);
-          },
+                  final expense = _expenseController.expenses[index];
+                  return _buildExpenseCard(expense);
+                },
+              ),
+            ),
+          ],
         );
       }),
       floatingActionButton: FloatingActionButton(

@@ -8,17 +8,41 @@ class ExpenseController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool hasError = false.obs;
   final RxString errorMessage = ''.obs;
+  final RxInt currentOffset = 0.obs;
+  final int limit = 10;
 
-  Future<void> loadExpenses() async {
+  Future<void> loadExpenses({bool loadMore = false}) async {
     if (isLoading.value) return; // Prevent multiple simultaneous loads
 
     try {
       isLoading.value = true;
-      hasError.value = false;
-      errorMessage.value = '';
+      if (!loadMore) {
+        // Reset pagination when loading fresh
+        currentOffset.value = 0;
+        hasError.value = false;
+        errorMessage.value = '';
+        expenses.clear();
+      }
 
-      final loadedExpenses = await _apiService.getExpenses();
-      expenses.value = loadedExpenses;
+      final loadedExpenses = await _apiService.getExpenses(
+        offset: currentOffset.value,
+        limit: limit,
+      );
+
+      if (loadedExpenses.isEmpty) {
+        if (loadMore) {
+          Get.snackbar('Info', 'No more records available');
+        }
+        return;
+      }
+
+      if (loadMore) {
+        expenses.addAll(loadedExpenses);
+      } else {
+        expenses.value = loadedExpenses;
+      }
+
+      currentOffset.value += loadedExpenses.length;
     } catch (e) {
       hasError.value = true;
       errorMessage.value = e.toString();
