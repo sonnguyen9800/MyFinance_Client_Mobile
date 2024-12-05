@@ -1,7 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:myfinance_client_flutter/models/expense/api/expense_api_model.dart';
-import 'package:myfinance_client_flutter/models/expense/api/last_expenses_model.dart';
+import '../models/category/api/category_api_model.dart';
 import '../models/user/user_model.dart';
 import '../models/expense/expense_model.dart';
 import '../models/api/auth_response.dart';
@@ -126,7 +126,7 @@ class ApiService {
     }
   }
 
-  Future<Expense> updateExpense(String id, Expense expense) async {
+  Future<Expense> updateExpense(String id, expense) async {
     try {
       developer.log('Updating expense');
       final response =
@@ -161,7 +161,7 @@ class ApiService {
     }
   }
 
-  Future<Category> createCategory(Category category) async {
+  Future<Category> createCategory(CategoryUpdateRequest category) async {
     try {
       final response = await _dio.post(
         '$baseUrl/categories',
@@ -174,11 +174,12 @@ class ApiService {
     }
   }
 
-  Future<Category> updateCategory(String id, Category category) async {
+  Future<Category> updateCategory(
+      String id, CategoryUpdateRequest categoryUpdateRequest) async {
     try {
       final response = await _dio.put(
         '$baseUrl/categories/$id',
-        data: category.toJson(),
+        data: categoryUpdateRequest.toJson(),
       );
       return Category.fromJson(response.data);
     } catch (e) {

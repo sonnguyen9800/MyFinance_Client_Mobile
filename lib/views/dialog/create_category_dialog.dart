@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:myfinance_client_flutter/models/category/api/category_api_model.dart';
 import '../../models/category/category_model.dart';
 import '../../controllers/category_controller.dart';
 import '../utils/icon_helper.dart';
@@ -169,8 +170,7 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
                       return;
                     }
 
-                    final category = Category(
-                      id: widget.category!.id,
+                    final categoryUpdateRequest = CategoryUpdateRequest(
                       name: nameController.text,
                       iconName: iconName,
                       color:
@@ -178,9 +178,11 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
                     );
 
                     if (widget.category == null) {
-                      widget.categoryController.createCategory(category);
+                      widget.categoryController
+                          .createCategory(categoryUpdateRequest);
                     } else {
-                      widget.categoryController.updateCategory(category);
+                      widget.categoryController.updateCategory(
+                          widget.category!.id!, categoryUpdateRequest);
                     }
                   },
                   child: Text(widget.category == null ? 'Create' : 'Update'),

@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:myfinance_client_flutter/models/category/api/category_api_model.dart';
 import '../models/category/category_model.dart';
 import '../services/api_service.dart';
 
@@ -34,7 +35,7 @@ class CategoryController extends GetxController {
     }
   }
 
-  Future<void> createCategory(Category category) async {
+  Future<void> createCategory(CategoryUpdateRequest category) async {
     try {
       isLoading.value = true;
       final newCategory = await _apiService.createCategory(category);
@@ -48,11 +49,11 @@ class CategoryController extends GetxController {
     }
   }
 
-  Future<void> updateCategory(Category category) async {
+  Future<void> updateCategory(String id, CategoryUpdateRequest request) async {
     try {
       isLoading.value = true;
-      final updatedCategory = await _apiService.updateCategory(category.id!, category);
-      final index = categories.indexWhere((c) => c.id == category.id);
+      final updatedCategory = await _apiService.updateCategory(id, request);
+      final index = categories.indexWhere((c) => c.id == id);
       if (index != -1) {
         categories[index] = updatedCategory;
       }
