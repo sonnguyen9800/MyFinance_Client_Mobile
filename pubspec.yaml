@@ -47,6 +47,10 @@ dependencies:
   flutter_iconpicker: ^4.0.1
   flutter_colorpicker: ^1.0.3
 
+dependency_overrides:
+  font_awesome_flutter:
+    path: D:/Projects/font_awesome_flutter-master
+    
 dev_dependencies:
   flutter_test:
     sdk: flutter

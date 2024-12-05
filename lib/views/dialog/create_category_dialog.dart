@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/Models/configuration.dart';
+import 'package:font_awesome_flutter/name_icon_mapping.dart';
 import 'package:get/get.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/category_model.dart';
 import '../../controllers/category_controller.dart';
+import '../utils/icon_helper.dart';
 
 class CreateCategoryDialog extends StatefulWidget {
   final Category? category;
@@ -60,8 +62,8 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
     }
     setState(() {
       selectedIcon = icon.data;
-      // Convert IconData to string name (e.g., "home" for FontAwesomeIcons.home)
-      iconName = icon.toString().split('.').last;
+
+      iconName = IconDataHelper.getIconName(icon.data);
     });
   }
 
@@ -201,19 +203,4 @@ void showCategoryDialog(CategoryController categoryController,
       categoryController: categoryController,
     ),
   );
-}
-
-// Helper class to convert string icon names to IconData
-class IconDataHelper {
-  static IconData? getIconData(String iconName) {
-    // Remove 'fa-' prefix if present
-    final name = iconName.replaceAll('fa-', '');
-
-    // Try to find the icon in FontAwesomeIcons
-    // final icon = FontAwesomeIcons.values.firstWhereOrNull(
-    //     (icon) => icon.toString().toLowerCase().contains(name.toLowerCase()));
-
-    final icon = FontAwesomeIcons.android;
-    return icon;
-  }
 }

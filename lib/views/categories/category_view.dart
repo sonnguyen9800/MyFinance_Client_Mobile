@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../controllers/category_controller.dart';
-import '../models/category_model.dart';
-import 'dialog/create_category_dialog.dart';
+import '../../controllers/category_controller.dart';
+import '../../models/category_model.dart';
+import '../dialog/create_category_dialog.dart';
+import '../utils/icon_helper.dart';
 
 class CategoryView extends StatelessWidget {
   CategoryView({super.key});
@@ -73,7 +74,7 @@ class CategoryView extends StatelessWidget {
       color: Color(int.parse(category.color.replaceAll('#', '0xFF'))),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Colors.white,
+          backgroundColor: const Color.fromARGB(255, 206, 179, 179),
           child: iconData != null
               ? FaIcon(iconData,
                   color:
@@ -92,20 +93,5 @@ class CategoryView extends StatelessWidget {
         onTap: () => showCategoryDialog(_categoryController, category),
       ),
     );
-  }
-}
-
-// Helper class to convert string icon names to IconData
-class IconDataHelper {
-  static IconData? getIconData(String iconName) {
-    // Remove 'fa-' prefix if present
-    final name = iconName.replaceAll('fa-', '');
-
-    // // Try to find the icon in FontAwesomeIcons
-    // final icon = FontAwesomeIcons .firstWhereOrNull(
-    //   (icon) => icon.toString().toLowerCase().contains(name.toLowerCase())
-    // );
-    final icon = FontAwesomeIcons.marsAndVenus;
-    return icon;
   }
 }
