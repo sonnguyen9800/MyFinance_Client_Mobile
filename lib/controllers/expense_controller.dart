@@ -35,11 +35,11 @@ class ExpenseController extends GetxController {
       }
 
       final loadedExpenses = await _apiService.getExpenses(
-        offset: currentOffset.value,
+        page: currentOffset.value,
         limit: limit,
       );
 
-      if (loadedExpenses.isEmpty) {
+      if (loadedExpenses.expenses.isEmpty) {
         if (loadMore) {
           Get.snackbar('Info', 'No more records available');
         }
@@ -47,12 +47,12 @@ class ExpenseController extends GetxController {
       }
 
       if (loadMore) {
-        expenses.addAll(loadedExpenses);
+        expenses.addAll(loadedExpenses.expenses);
       } else {
-        expenses.value = loadedExpenses;
+        expenses.value = loadedExpenses.expenses;
       }
 
-      currentOffset.value += loadedExpenses.length;
+      currentOffset.value += loadedExpenses.expenses.length;
       _hasCache = true;
     } catch (e) {
       hasError.value = true;
