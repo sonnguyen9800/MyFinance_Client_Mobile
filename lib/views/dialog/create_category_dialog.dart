@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/Models/configuration.dart';
-import 'package:font_awesome_flutter/name_icon_mapping.dart';
 import 'package:get/get.dart';
+import 'dart:developer' as developer;
+import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -11,13 +12,13 @@ import '../../controllers/category_controller.dart';
 import '../utils/icon_helper.dart';
 
 class CreateCategoryDialog extends StatefulWidget {
-  final Category? category;
   final CategoryController categoryController;
+  final Category? category;
 
   const CreateCategoryDialog({
     Key? key,
-    this.category,
     required this.categoryController,
+    this.category,
   }) : super(key: key);
 
   @override
@@ -25,21 +26,21 @@ class CreateCategoryDialog extends StatefulWidget {
 }
 
 class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
-  late TextEditingController nameController;
-  late Color pickedColor;
-  IconData? selectedIcon;
-  String iconName = '';
+  final TextEditingController nameController = TextEditingController();
+  String iconName = 'question_mark';
+  Color pickerColor = const Color(0xff443a49);
+
+  bool get isDefaultCategory =>
+      widget.category?.name == 'Default' || nameController.text == 'Default';
 
   @override
   void initState() {
     super.initState();
-    nameController = TextEditingController(text: widget.category?.name);
-    pickedColor = widget.category != null
-        ? Color(int.parse(widget.category!.color.replaceAll('#', '0xFF')))
-        : Colors.blue;
     if (widget.category != null) {
+      nameController.text = widget.category!.name;
       iconName = widget.category!.iconName;
-      selectedIcon = IconDataHelper.getIconData(iconName);
+      pickerColor =
+          Color(int.parse(widget.category!.color.replaceAll('#', '0xff')));
     }
   }
 
@@ -47,6 +48,36 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
   void dispose() {
     nameController.dispose();
     super.dispose();
+  }
+
+  void _showColorPicker() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Pick a color!'),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: pickerColor,
+              onColorChanged: (Color color) {
+                setState(() {
+                  pickerColor = color;
+                });
+              },
+              pickerAreaHeightPercent: 0.8,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Done'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _pickIcon() async {
@@ -62,110 +93,91 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
       return;
     }
     setState(() {
-      selectedIcon = icon.data;
-
       iconName = IconDataHelper.getIconName(icon.data);
     });
-  }
-
-  void _showColorPicker() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Pick a color'),
-          content: SingleChildScrollView(
-            child: ColorPicker(
-              pickerColor: pickedColor,
-              onColorChanged: (Color color) {
-                setState(() => pickedColor = color);
-              },
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Done'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: SingleChildScrollView(
+      child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              widget.category == null ? 'New Category' : 'Edit Category',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              widget.category == null ? 'Create Category' : 'Edit Category',
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(
+              enabled: !isDefaultCategory || widget.category == null,
+              decoration: InputDecoration(
                 labelText: 'Name',
-                border: OutlineInputBorder(),
+                hintText: isDefaultCategory
+                    ? 'Cannot modify Default category name'
+                    : 'Enter category name',
+                border: const OutlineInputBorder(),
               ),
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              title: const Text('Icon'),
-              leading: selectedIcon != null
-                  ? FaIcon(selectedIcon)
-                  : const Icon(Icons.category),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: _pickIcon,
-            ),
-            ListTile(
-              title: const Text('Color'),
-              leading: Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: pickedColor,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: _showColorPicker,
             ),
             const SizedBox(height: 16),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TextButton(
-                  onPressed: () => Get.back(),
-                  child: const Text('Cancel'),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _pickIcon,
+                    icon: Icon(IconDataHelper.getIconData(iconName)),
+                    label: const Text('Pick Icon'),
+                  ),
                 ),
-                if (widget.category != null)
-                  TextButton(
-                    onPressed: () {
-                      Get.back();
-                      widget.categoryController
-                          .deleteCategory(widget.category!.id!);
-                    },
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _showColorPicker,
+                    style: ButtonStyle(
+                      backgroundColor:
+                          WidgetStateProperty.all<Color>(pickerColor),
+                    ),
                     child: const Text(
-                      'Delete',
-                      style: TextStyle(color: Colors.red),
+                      'Pick Color',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
                     ),
                   ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancel'),
+                ),
+                const SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: () {
-                    if (nameController.text.isEmpty || iconName.isEmpty) {
+                    if (nameController.text.isEmpty) {
                       Get.snackbar(
                         'Error',
-                        'Please fill in all fields',
-                        backgroundColor: Colors.red,
-                        colorText: Colors.white,
+                        'Category name cannot be empty',
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
+                      return;
+                    }
+
+                    // Check if trying to create a new "Default" category
+                    if (widget.category == null &&
+                        nameController.text == 'Default') {
+                      Get.snackbar(
+                        'Error',
+                        'Cannot create a new category named "Default"',
+                        snackPosition: SnackPosition.BOTTOM,
                       );
                       return;
                     }
@@ -174,7 +186,7 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
                       name: nameController.text,
                       iconName: iconName,
                       color:
-                          '#${pickedColor.value.toRadixString(16).substring(2)}',
+                          '#${pickerColor.value.toRadixString(16).substring(2)}',
                     );
 
                     if (widget.category == null) {
@@ -184,6 +196,8 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
                       widget.categoryController.updateCategory(
                           widget.category!.id!, categoryUpdateRequest);
                     }
+
+                    Navigator.of(context).pop();
                   },
                   child: Text(widget.category == null ? 'Create' : 'Update'),
                 ),
