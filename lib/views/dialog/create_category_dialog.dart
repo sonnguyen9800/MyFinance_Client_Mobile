@@ -173,7 +173,7 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
 
                     // Check if trying to create a new "Default" category
                     if (widget.category == null &&
-                        nameController.text == 'Default') {
+                        nameController.text.trim() == 'Default') {
                       Get.snackbar(
                         'Error',
                         'Cannot create a new category named "Default"',
@@ -183,7 +183,7 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
                     }
 
                     final categoryUpdateRequest = CategoryUpdateRequest(
-                      name: nameController.text,
+                      name: nameController.text.trim(),
                       iconName: iconName,
                       color:
                           '#${pickerColor.value.toRadixString(16).substring(2)}',
