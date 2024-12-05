@@ -50,7 +50,7 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
     IconPickerIcon? icon = await showIconPicker(
       context,
       configuration: SinglePickerConfiguration(
-        iconPackModes: [IconPack.cupertino],
+        iconPackModes: [IconPack.fontAwesomeIcons],
       ),
     );
 

@@ -12,6 +12,7 @@ class HomeView extends StatelessWidget {
 
   Future<void> fetchData() async {
     await _expenseController.loadExpenses();
+    await _expenseController.loadLastExpenses();
   }
 
   @override

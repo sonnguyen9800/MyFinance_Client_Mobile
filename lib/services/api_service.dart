@@ -1,6 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:myfinance_client_flutter/models/api/expense_response_model.dart';
+import 'package:myfinance_client_flutter/models/api/last_expenses_model.dart';
 import '../models/user_model.dart';
 import '../models/expense_model.dart';
 import '../models/api/auth_response.dart';
@@ -92,7 +93,7 @@ class ApiService {
           'limit': limit,
         },
       );
-      
+
       if (response.data == null) {
         return [];
       }
@@ -100,8 +101,16 @@ class ApiService {
       final expenseResponse = ExpensesResponse.fromJson(response.data);
       return expenseResponse.expenses;
     } catch (e) {
-      developer.log('getExpenses error: $e');
       throw Exception('Failed to load expenses: $e');
+    }
+  }
+
+  Future<LastExpensesModel> getTotalSpendLastExpenses() async {
+    try {
+      final response = await _dio.get('$baseUrl/expenses_last');
+      return LastExpensesModel.fromJson(response.data);
+    } catch (e) {
+      throw Exception('Failed to load last expenses: $e');
     }
   }
 

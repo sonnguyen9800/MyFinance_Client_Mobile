@@ -5,6 +5,8 @@ import '../services/api_service.dart';
 class ExpenseController extends GetxController {
   final ApiService _apiService = ApiService();
   final RxList<Expense> expenses = <Expense>[].obs;
+  int last7DaysExpenses = 0;
+  int last30DaysExpenses = 0;
   final RxBool isLoading = false.obs;
   final RxBool hasError = false.obs;
   final RxString errorMessage = ''.obs;
@@ -12,7 +14,8 @@ class ExpenseController extends GetxController {
   final int limit = 10;
   bool _hasCache = false;
 
-  Future<void> loadExpenses({bool loadMore = false, bool forceRefresh = false}) async {
+  Future<void> loadExpenses(
+      {bool loadMore = false, bool forceRefresh = false}) async {
     if (isLoading.value) return; // Prevent multiple simultaneous loads
 
     try {
@@ -55,6 +58,21 @@ class ExpenseController extends GetxController {
       hasError.value = true;
       errorMessage.value = e.toString();
       Get.snackbar('Error', 'Failed to load expenses: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> loadLastExpenses() async {
+    try {
+      isLoading.value = true;
+      final lastExpenses = await _apiService.getTotalSpendLastExpenses();
+      last7DaysExpenses = lastExpenses.expensesLast7Days;
+      last30DaysExpenses = lastExpenses.expensesLast30Days;
+    } catch (e) {
+      hasError.value = true;
+      errorMessage.value = e.toString();
+      Get.snackbar('Error', 'Failed to load last expenses: $e');
     } finally {
       isLoading.value = false;
     }
@@ -110,16 +128,10 @@ class ExpenseController extends GetxController {
   }
 
   double get totalLast30Days {
-    final thirtyDaysAgo = DateTime.now().subtract(const Duration(days: 30));
-    return expenses
-        .where((e) => e.date.isAfter(thirtyDaysAgo))
-        .fold(0, (sum, e) => sum + e.amount);
+    return last30DaysExpenses.toDouble();
   }
 
   double get totalLast7Days {
-    final sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-    return expenses
-        .where((e) => e.date.isAfter(sevenDaysAgo))
-        .fold(0, (sum, e) => sum + e.amount);
+    return last7DaysExpenses.toDouble();
   }
 }
