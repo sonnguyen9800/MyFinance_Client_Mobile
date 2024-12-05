@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import '../models/expense_model.dart';
+import '../models/expense/expense_model.dart';
 import '../services/api_service.dart';
 
 class ExpenseController extends GetxController {

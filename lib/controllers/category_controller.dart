@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import '../models/category_model.dart';
+import '../models/category/category_model.dart';
 import '../services/api_service.dart';
 
 class CategoryController extends GetxController {

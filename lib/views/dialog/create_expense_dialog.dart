@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../models/expense_model.dart';
+import '../../models/expense/expense_model.dart';
 import '../../controllers/expense_controller.dart';
 
 class CreateExpenseDialog extends StatelessWidget {

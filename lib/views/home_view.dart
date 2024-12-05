@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myfinance_client_flutter/views/dialog/create_expense_dialog.dart';
 import '../controllers/expense_controller.dart';
-import '../models/expense_model.dart';
+import '../models/expense/expense_model.dart';
 import 'package:intl/intl.dart';
 
 class HomeView extends StatelessWidget {

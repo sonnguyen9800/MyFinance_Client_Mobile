@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import '../models/user_model.dart';
+import '../models/user/user_model.dart';
 import '../services/api_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:developer' as developer;

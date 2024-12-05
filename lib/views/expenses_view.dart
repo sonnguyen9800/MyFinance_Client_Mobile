@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../controllers/expense_controller.dart';
-import '../models/expense_model.dart';
+import '../models/expense/expense_model.dart';
 import 'dialog/create_expense_dialog.dart';
 
 class ExpensesView extends StatefulWidget {

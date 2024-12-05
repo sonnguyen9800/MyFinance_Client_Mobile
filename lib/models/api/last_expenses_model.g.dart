@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'last_expenses_model.dart';
+part of '../expense/api/last_expenses_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

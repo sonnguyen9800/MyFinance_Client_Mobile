@@ -1,11 +1,11 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
-import 'package:myfinance_client_flutter/models/api/expense_response_model.dart';
-import 'package:myfinance_client_flutter/models/api/last_expenses_model.dart';
-import '../models/user_model.dart';
-import '../models/expense_model.dart';
+import 'package:myfinance_client_flutter/models/expense/api/expense_api_model.dart';
+import 'package:myfinance_client_flutter/models/expense/api/last_expenses_model.dart';
+import '../models/user/user_model.dart';
+import '../models/expense/expense_model.dart';
 import '../models/api/auth_response.dart';
-import '../models/category_model.dart';
+import '../models/category/category_model.dart';
 import 'dart:developer' as developer;
 
 class ApiService {

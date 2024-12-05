@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../controllers/category_controller.dart';
-import '../../models/category_model.dart';
+import '../../models/category/category_model.dart';
 import '../dialog/create_category_dialog.dart';
 import '../utils/icon_helper.dart';
 

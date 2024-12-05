@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../models/category_model.dart';
+import '../../models/category/category_model.dart';
 import '../../controllers/category_controller.dart';
 import '../utils/icon_helper.dart';
 
@@ -170,7 +170,7 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
                     }
 
                     final category = Category(
-                      id: widget.category?.id,
+                      id: widget.category!.id,
                       name: nameController.text,
                       iconName: iconName,
                       color:
