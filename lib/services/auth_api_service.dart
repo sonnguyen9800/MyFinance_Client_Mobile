@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import '../models/api/auth_response.dart';
 import '../models/user/user_model.dart';
 import 'base_api_service.dart';

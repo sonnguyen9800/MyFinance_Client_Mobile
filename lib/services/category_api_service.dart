@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import '../models/category/category_model.dart';
 import '../models/category/api/category_api_model.dart';
 import 'base_api_service.dart';
@@ -31,7 +30,8 @@ class CategoryApiService extends BaseApiService {
     }
   }
 
-  Future<Category> updateCategory(String id, CategoryUpdateRequest category) async {
+  Future<Category> updateCategory(
+      String id, CategoryUpdateRequest category) async {
     try {
       final response = await dio.put(
         '$baseUrl/categories/$id',

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:myfinance_client_flutter/controllers/category_controller.dart';
 import 'package:myfinance_client_flutter/views/dialog/create_expense_dialog.dart';
 import '../controllers/expense_controller.dart';
 import '../models/expense/expense_model.dart';
@@ -9,10 +10,12 @@ class HomeView extends StatelessWidget {
   HomeView({super.key});
 
   final ExpenseController _expenseController = Get.find<ExpenseController>();
+  final CategoryController _categoryController = Get.find<CategoryController>();
 
   Future<void> fetchData() async {
     await _expenseController.loadExpenses();
     await _expenseController.loadLastExpenses();
+    await _categoryController.loadCategories();
   }
 
   @override

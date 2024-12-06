@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/Models/configuration.dart';
 import 'package:get/get.dart';
-import 'dart:developer' as developer;
-import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:myfinance_client_flutter/models/category/api/category_api_model.dart';
 import '../../models/category/category_model.dart';
 import '../../controllers/category_controller.dart';
