@@ -9,7 +9,7 @@ import 'services/connectivity_service.dart';
 import 'views/login_view.dart';
 import 'views/signup_view.dart';
 import 'views/home_view.dart';
-import 'views/expenses_view.dart';
+import 'views/expense/expenses_view.dart';
 import 'views/chart_view.dart';
 import 'views/profile_view.dart';
 import 'views/settings_view.dart';

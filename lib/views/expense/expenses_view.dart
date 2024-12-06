@@ -1,42 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-import '../controllers/expense_controller.dart';
-import '../models/expense/expense_model.dart';
-import 'dialog/create_expense_dialog.dart';
+import '../../controllers/expense_controller.dart';
+import '../../controllers/category_controller.dart';
+import 'create_expense_dialog.dart';
+import 'expense_card.dart';
 
 class ExpensesView extends StatefulWidget {
-  const ExpensesView({super.key});
+  const ExpensesView({Key? key}) : super(key: key);
 
   @override
   State<ExpensesView> createState() => _ExpensesViewState();
 }
 
-class _ExpensesViewState extends State<ExpensesView>
-    with AutomaticKeepAliveClientMixin {
+class _ExpensesViewState extends State<ExpensesView> {
   final ExpenseController _expenseController = Get.find<ExpenseController>();
+  final CategoryController _categoryController = Get.find<CategoryController>();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _expenseController.loadExpenses();
+    _initializeData();
+    _setupScrollListener();
+  }
+
+  Future<void> _initializeData() async {
+    await _categoryController.loadCategories();
+    await _expenseController.loadExpenses();
+  }
+
+  void _setupScrollListener() {
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        _expenseController.loadExpenses();
+      }
     });
   }
 
   @override
-  bool get wantKeepAlive => true;
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _refreshData() async {
+    await _categoryController.loadCategories(force: true);
+    await _expenseController.loadExpenses(
+        forceRefresh: true); // Add this line();
+  }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Expenses'),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () => _expenseController.loadExpenses(),
+            onPressed: _refreshData,
           ),
         ],
       ),
@@ -46,15 +68,14 @@ class _ExpensesViewState extends State<ExpensesView>
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (_expenseController.hasError.value &&
-            _expenseController.expenses.isEmpty) {
+        if (_expenseController.hasError.value) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Error: ${_expenseController.errorMessage.value}'),
+                Text(_expenseController.errorMessage.value),
                 ElevatedButton(
-                  onPressed: () => _expenseController.loadExpenses(),
+                  onPressed: _refreshData,
                   child: const Text('Retry'),
                 ),
               ],
@@ -62,87 +83,53 @@ class _ExpensesViewState extends State<ExpensesView>
           );
         }
 
-        return Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: _expenseController.expenses.length +
-                    1, // +1 for the Show More button
-                itemBuilder: (context, index) {
-                  if (index == _expenseController.expenses.length) {
-                    // Show More button at the last index
-                    return Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Center(
-                        child: _expenseController.isLoading.value
-                            ? const CircularProgressIndicator()
-                            : ElevatedButton(
-                                onPressed: () => _expenseController
-                                    .loadExpenses(loadMore: true),
-                                child: Text(
-                                  'Show more',
-                                ),
-                              ),
-                      ),
-                    );
-                  }
-
-                  final expense = _expenseController.expenses[index];
-                  return _buildExpenseCard(expense);
-                },
-              ),
+        if (_expenseController.expenses.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('No expenses found'),
+                ElevatedButton(
+                  onPressed: () => showExpenseDialog(_expenseController),
+                  child: const Text('Add Expense'),
+                ),
+              ],
             ),
-          ],
+          );
+        }
+
+        return RefreshIndicator(
+          onRefresh: _refreshData,
+          child: ListView.builder(
+            controller: _scrollController,
+            padding: const EdgeInsets.all(8),
+            itemCount: _expenseController.expenses.length +
+                (_expenseController.isLoading.value ? 1 : 0),
+            itemBuilder: (context, index) {
+              if (index == _expenseController.expenses.length) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+
+              final expense = _expenseController.expenses[index];
+              return ExpenseCard(
+                expense: expense,
+                onTap: () => showExpenseDialog(
+                  _expenseController,
+                  expense,
+                ),
+              );
+            },
+          ),
         );
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: () => showExpenseDialog(_expenseController),
         child: const Icon(Icons.add),
-      ),
-    );
-  }
-
-  Widget _buildExpenseCard(Expense expense) {
-    final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
-    var category = expense.categoryId ?? "No Category";
-    var paymentMethod = expense.paymentMethod ?? "No Payment Method";
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Colors.blue.shade100,
-          child: Text(category),
-        ),
-        title: Text(expense.name),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(DateFormat('MMM d, y').format(expense.date)),
-            if (expense.description != null && expense.description!.isNotEmpty)
-              Text(
-                expense.description!,
-                style: const TextStyle(fontSize: 12),
-              ),
-          ],
-        ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              currencyFormat.format(expense.amount),
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-            Text(
-              paymentMethod,
-              style: const TextStyle(fontSize: 12),
-            ),
-          ],
-        ),
-        onTap: () => showExpenseDialog(_expenseController, expense),
       ),
     );
   }
