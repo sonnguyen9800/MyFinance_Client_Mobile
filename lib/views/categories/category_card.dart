@@ -36,7 +36,16 @@ class CategoryCard extends StatelessWidget {
         PopupMenuItem<String>(
           value: 'View Expenses',
           child: const Text('View Expenses'),
-          onTap: () => onViewExpenseTap,
+          onTap: () {
+            // Need to use Future.delayed because onTap is called before the menu is closed
+            Future.delayed(
+              Duration.zero,
+              () => Get.toNamed(
+                '/expenses',
+                parameters: {'categoryId': category.id},
+              ),
+            );
+          },
         ),
         PopupMenuItem<String>(
           value: 'Edit',
@@ -84,7 +93,8 @@ class CategoryCard extends StatelessWidget {
   }
 
   void onViewExpenseTap() {
-    print("Viewi Expense of this category");
+    Get.back();
+    Get.toNamed('/expense', parameters: {'categoryId': category.id});
   }
 
   @override

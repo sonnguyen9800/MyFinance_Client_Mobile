@@ -50,7 +50,8 @@ class CategoryView extends StatelessWidget {
                 const Text('No categories found'),
                 ElevatedButton(
                   onPressed: () => Get.dialog(
-                    CreateCategoryDialog(categoryController: _categoryController),
+                    CreateCategoryDialog(
+                        categoryController: _categoryController),
                   ),
                   child: const Text('Add Category'),
                 ),
@@ -75,9 +76,11 @@ class CategoryView extends StatelessWidget {
         );
       }),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.dialog(
-          CreateCategoryDialog(categoryController: _categoryController),
-        ),
+        onPressed: () {
+          // Get.dialog(
+          //     CreateCategoryDialog(categoryController: _categoryController));
+          Get.toNamed('/expenses');
+        },
         child: const Icon(Icons.add),
       ),
     );

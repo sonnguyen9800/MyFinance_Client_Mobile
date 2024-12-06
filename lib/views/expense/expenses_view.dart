@@ -1,65 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:myfinance_client_flutter/controllers/category_controller.dart';
-import 'package:myfinance_client_flutter/controllers/expense_controller.dart';
-import 'package:myfinance_client_flutter/views/expense/expense_view_utils.dart';
-import 'create_expense_dialog.dart';
+import '../../controllers/expense_controller.dart';
+import '../../controllers/category_controller.dart';
 import 'expense_card.dart';
+import 'expense_view_utils.dart';
 
-class ExpensesView extends StatefulWidget {
-  const ExpensesView({Key? key}) : super(key: key);
-
-  @override
-  State<ExpensesView> createState() => _ExpensesViewState();
-}
-
-class _ExpensesViewState extends State<ExpensesView> {
+class ExpensesView extends StatelessWidget {
   final ExpenseController _expenseController = Get.find<ExpenseController>();
   final CategoryController _categoryController = Get.find<CategoryController>();
-  final ScrollController _scrollController = ScrollController();
+  final String? categoryId;
 
-  @override
-  void initState() {
-    super.initState();
-    _initializeData();
-    _setupScrollListener();
-  }
-
-  Future<void> _initializeData() async {
-    await _categoryController.loadCategories();
-    await _expenseController.loadExpenses();
-  }
-
-  void _setupScrollListener() {
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        _expenseController.loadExpenses();
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _refreshData() async {
-    await _categoryController.loadCategories(force: true);
-    await _expenseController.loadExpenses(
-        forceRefresh: true); // Add this line();
-  }
+  ExpensesView({Key? key})
+      : categoryId = Get.parameters['categoryId'],
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var title = 'All Expenses';
+    if (categoryId != null) {
+      title =
+          'Expenses for ${_categoryController.findCategoryById(categoryId!)!.name}';
+    }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Expenses'),
+        title: Text(title),
         actions: [
+          if (categoryId != null)
+            IconButton(
+              icon: const Icon(Icons.filter_alt_off),
+              tooltip: 'Show All Expenses',
+              onPressed: () => Get.offNamed('/expenses'),
+            ),
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _refreshData,
+            onPressed: () =>
+                _expenseController.loadExpenses(forceRefresh: true),
           ),
         ],
       ),
@@ -76,7 +51,7 @@ class _ExpensesViewState extends State<ExpensesView> {
               children: [
                 Text(_expenseController.errorMessage.value),
                 ElevatedButton(
-                  onPressed: _refreshData,
+                  onPressed: () => _expenseController.loadExpenses(),
                   child: const Text('Retry'),
                 ),
               ],
@@ -84,12 +59,20 @@ class _ExpensesViewState extends State<ExpensesView> {
           );
         }
 
-        if (_expenseController.expenses.isEmpty) {
+        final filteredExpenses = categoryId != null
+            ? _expenseController.expenses
+                .where((e) => e.categoryId == categoryId)
+                .toList()
+            : _expenseController.expenses;
+
+        if (filteredExpenses.isEmpty) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('No expenses found'),
+                Text(categoryId != null
+                    ? 'No expenses found for this category'
+                    : 'No expenses found'),
                 ElevatedButton(
                   onPressed: () => showExpenseUpdateDialog(_expenseController),
                   child: const Text('Add Expense'),
@@ -100,14 +83,13 @@ class _ExpensesViewState extends State<ExpensesView> {
         }
 
         return RefreshIndicator(
-          onRefresh: _refreshData,
+          onRefresh: () => _expenseController.loadExpenses(forceRefresh: true),
           child: ListView.builder(
-            controller: _scrollController,
             padding: const EdgeInsets.all(8),
-            itemCount: _expenseController.expenses.length +
+            itemCount: filteredExpenses.length +
                 (_expenseController.isLoading.value ? 1 : 0),
             itemBuilder: (context, index) {
-              if (index == _expenseController.expenses.length) {
+              if (index == filteredExpenses.length) {
                 return const Center(
                   child: Padding(
                     padding: EdgeInsets.all(8.0),
@@ -116,7 +98,7 @@ class _ExpensesViewState extends State<ExpensesView> {
                 );
               }
 
-              final expense = _expenseController.expenses[index];
+              final expense = filteredExpenses[index];
               return ExpenseCard(
                 expense: expense,
               );

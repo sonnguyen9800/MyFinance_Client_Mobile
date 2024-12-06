@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myfinance_client_flutter/controllers/category_controller.dart';
-import 'package:myfinance_client_flutter/views/dialog/create_expense_dialog.dart';
+import 'package:myfinance_client_flutter/views/expense/expense_view_utils.dart';
 import '../controllers/expense_controller.dart';
 import '../models/expense/expense_model.dart';
 import 'package:intl/intl.dart';
@@ -126,7 +126,7 @@ class HomeView extends StatelessWidget {
               ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => showExpenseDialog(_expenseController),
+        onPressed: () => showExpenseUpdateDialog(_expenseController),
         child: const Icon(Icons.add),
       ),
     );
