@@ -85,6 +85,7 @@ class ExpenseController extends GetxController {
       // Add to cache and maintain order
       expenses.insert(0, expense);
       currentOffset.value += 1;
+      Get.snackbar('Success', 'Expense added successfully');
     } catch (e) {
       Get.snackbar('Error', 'Failed to add expense: $e');
     } finally {
