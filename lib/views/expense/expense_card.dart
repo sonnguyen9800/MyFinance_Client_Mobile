@@ -8,6 +8,7 @@ import '../../controllers/category_controller.dart';
 import '../../models/expense/expense_model.dart';
 import '../../models/category/category_model.dart';
 import '../utils/icon_helper.dart';
+import 'view_expense_dialog.dart';
 
 class ExpenseCard extends StatelessWidget {
   final Expense expense;
@@ -118,7 +119,7 @@ class ExpenseCard extends StatelessWidget {
         PopupMenuItem<String>(
           value: 'View',
           child: const Text('View'),
-          onTap: () => print('View action triggered'),
+          onTap: () => Get.dialog(ViewExpenseDialog(expense: expense)),
         ),
         PopupMenuItem<String>(
           value: 'Edit',
