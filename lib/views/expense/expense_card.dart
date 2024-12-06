@@ -123,7 +123,7 @@ class ExpenseCard extends StatelessWidget {
         PopupMenuItem<String>(
           value: 'Edit',
           child: Text('Edit'),
-          onTap: () => showExpenseDialog(
+          onTap: () => showExpenseUpdateDialog(
             Get.find<ExpenseController>(),
             expense,
           ),

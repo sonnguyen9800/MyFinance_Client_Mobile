@@ -91,7 +91,7 @@ class _ExpensesViewState extends State<ExpensesView> {
               children: [
                 const Text('No expenses found'),
                 ElevatedButton(
-                  onPressed: () => showExpenseDialog(_expenseController),
+                  onPressed: () => showExpenseUpdateDialog(_expenseController),
                   child: const Text('Add Expense'),
                 ),
               ],
@@ -125,7 +125,7 @@ class _ExpensesViewState extends State<ExpensesView> {
         );
       }),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => showExpenseDialog(_expenseController),
+        onPressed: () => showExpenseUpdateDialog(_expenseController),
         child: const Icon(Icons.add),
       ),
     );

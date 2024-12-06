@@ -6,21 +6,21 @@ import '../../models/expense/expense_model.dart';
 import '../../models/category/category_model.dart';
 import 'package:intl/intl.dart';
 
-class CreateExpenseDialog extends StatefulWidget {
+class UpdateExpenseDialog extends StatefulWidget {
   final Expense? expense;
   final ExpenseController expenseController;
 
-  const CreateExpenseDialog({
+  const UpdateExpenseDialog({
     Key? key,
     this.expense,
     required this.expenseController,
   }) : super(key: key);
 
   @override
-  State<CreateExpenseDialog> createState() => _CreateExpenseDialogState();
+  State<UpdateExpenseDialog> createState() => _UpdateExpenseDialogState();
 }
 
-class _CreateExpenseDialogState extends State<CreateExpenseDialog> {
+class _UpdateExpenseDialogState extends State<UpdateExpenseDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _amountController = TextEditingController();
