@@ -73,8 +73,8 @@ class AboutView extends StatelessWidget {
           _buildInfoCard(
             title: 'Contact Us',
             content: '''
-Email: sonnguyen9800@gmail.com
-Website: www.sonnguyen9800.com''',
+              Email: sonnguyen9800@gmail.com
+              Website: www.sonnguyen9800.com''',
           ),
           const SizedBox(height: 32),
           const Text(
