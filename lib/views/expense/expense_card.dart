@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:myfinance_client_flutter/controllers/expense_controller.dart';
+import 'package:myfinance_client_flutter/views/dialog/create_expense_dialog.dart';
 import 'package:myfinance_client_flutter/views/utils/color_helper.dart';
 import '../../controllers/category_controller.dart';
 import '../../models/expense/expense_model.dart';
@@ -74,6 +76,8 @@ class ExpenseCard extends StatelessWidget {
           child: _buildCategoryIcon(category),
         ),
         title: Text(
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
           expense.name,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
@@ -121,9 +125,23 @@ class ExpenseCard extends StatelessWidget {
         PopupMenuItem<String>(
           value: 'Edit',
           child: Text('Edit'),
-          onTap: () => print('Edit action triggered'),
+          onTap: () => showExpenseDialog(
+            Get.find<ExpenseController>(),
+            expense,
+          ),
         ),
       ],
+    );
+  }
+
+  // Helper function to show the dialog
+  void showExpenseDialog(ExpenseController expenseController,
+      [Expense? expense]) {
+    Get.dialog(
+      CreateExpenseDialog(
+        expense: expense,
+        expenseController: expenseController,
+      ),
     );
   }
 }
