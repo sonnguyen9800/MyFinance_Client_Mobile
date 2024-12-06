@@ -98,35 +98,32 @@ class ExpenseCard extends StatelessWidget {
   }
 
   showDropDownMenu(BuildContext context) {
-    final RenderBox renderBox = context.findRenderObject() as RenderBox;
-    final Offset offset = renderBox.localToGlobal(Offset.zero);
-
+    final button = context!.findRenderObject() as RenderBox;
+    final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+    final position = RelativeRect.fromRect(
+      Rect.fromPoints(
+        button.localToGlobal(button.size.bottomRight(Offset.zero),
+            ancestor: overlay),
+        button.localToGlobal(button.size.bottomRight(Offset.zero),
+            ancestor: overlay),
+      ),
+      Offset.zero & overlay.size,
+    );
     showMenu(
       context: context,
-      position: RelativeRect.fromLTRB(
-        offset.dx,
-        offset.dy,
-        offset.dx + renderBox.size.width,
-        offset.dy + renderBox.size.height,
-      ),
+      position: position,
       items: [
-        const PopupMenuItem<String>(
+        PopupMenuItem<String>(
           value: 'View',
-          child: Text('View'),
+          child: const Text('View'),
+          onTap: () => print('View action triggered'),
         ),
-        const PopupMenuItem<String>(
+        PopupMenuItem<String>(
           value: 'Edit',
           child: Text('Edit'),
+          onTap: () => print('Edit action triggered'),
         ),
       ],
-    ).then((value) {
-      if (value == 'Edit') {
-        onTap?.call();
-      } else if (value == 'View') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('View action triggered')),
-        );
-      }
-    });
+    );
   }
 }
