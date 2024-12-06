@@ -13,7 +13,7 @@ Expense _$ExpenseFromJson(Map<String, dynamic> json) => Expense(
       paymentMethod: json['payment_method'] as String? ?? "No Payment Method",
       currencyCode: json['currency_code'] as String? ?? 'VND',
       categoryId: json['category_id'] as String? ?? "No Category",
-      amount: (json['amount'] as num).toDouble(),
+      amount: (json['amount'] as num).toInt(),
       name: json['name'] as String,
       date: DateTime.parse(json['date'] as String),
     );

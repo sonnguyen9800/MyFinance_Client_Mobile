@@ -16,7 +16,7 @@ class Expense {
 
   final String name;
   final DateTime date;
-  final double amount;
+  final int amount;
   final String? description;
 
   Expense({

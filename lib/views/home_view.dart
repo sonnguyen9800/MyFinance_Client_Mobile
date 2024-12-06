@@ -75,6 +75,14 @@ class HomeView extends StatelessWidget {
                 Get.toNamed('/expenses');
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.calendar_month),
+              title: const Text('Montly Expenses'),
+              onTap: () {
+                Get.back();
+                Get.toNamed('/monthly');
+              },
+            ),
             // ListTile(
             //   leading: const Icon(Icons.pie_chart),
             //   title: const Text('Charts'),

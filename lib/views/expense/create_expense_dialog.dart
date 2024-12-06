@@ -165,7 +165,7 @@ class _UpdateExpenseDialogState extends State<UpdateExpenseDialog> {
               final expense = Expense(
                 id: widget.expense?.id,
                 name: _nameController.text,
-                amount: double.parse(_amountController.text),
+                amount: int.parse(_amountController.text),
                 date: _selectedDate,
                 description: _descriptionController.text,
                 categoryId: _selectedCategoryId,

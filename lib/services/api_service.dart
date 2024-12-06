@@ -71,4 +71,8 @@ class ApiService {
   Future<LastExpensesModel> getTotalSpendLastExpenses() async {
     return await _expenseService.getTotalSpendLastExpenses();
   }
+
+  Future<MontlyExpensesModel> getMontlyExpenses(int month, int year) async {
+    return await _expenseService.getMontlyExpenses(month, year);
+  }
 }

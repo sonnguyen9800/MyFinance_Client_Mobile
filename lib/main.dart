@@ -10,6 +10,7 @@ import 'views/login_view.dart';
 import 'views/signup_view.dart';
 import 'views/home_view.dart';
 import 'views/expense/expenses_view.dart';
+import 'views/expense/monthly_view.dart';
 import 'views/chart_view.dart';
 import 'views/profile_view.dart';
 import 'views/settings_view.dart';
@@ -64,6 +65,11 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: '/expenses',
           page: () => ExpensesView(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/monthly',
+          page: () => MonthlyView(),
           middlewares: [AuthMiddleware()],
         ),
         GetPage(
