@@ -6,6 +6,8 @@ import '../controllers/expense_controller.dart';
 import '../models/expense/expense_model.dart';
 import 'package:intl/intl.dart';
 
+import 'expense/expense_card.dart';
+
 class HomeView extends StatelessWidget {
   HomeView({super.key});
 
@@ -198,7 +200,7 @@ class HomeView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(10.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -234,21 +236,12 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildExpenseItem(Expense expense) {
-    final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
-    var category = expense.categoryId ?? "No Category";
-    return ListTile(
-      leading: CircleAvatar(
-        child: Text(category),
+    return ExpenseCard(
+      expense: expense,
+      onTap: () => showExpenseDialog(
+        _expenseController,
+        expense,
       ),
-      title: Text(expense.name),
-      subtitle: Text(DateFormat('MMM d, y').format(expense.date)),
-      trailing: Text(
-        currencyFormat.format(expense.amount),
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      onTap: () => Get.toNamed('/expenses/${expense.id}'),
     );
   }
 }
