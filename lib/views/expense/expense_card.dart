@@ -92,8 +92,41 @@ class ExpenseCard extends StatelessWidget {
             fontSize: 16,
           ),
         ),
-        onTap: onTap,
+        onTap: () => {showDropDownMenu(context)},
       ),
     );
+  }
+
+  showDropDownMenu(BuildContext context) {
+    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
+
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        offset.dx,
+        offset.dy,
+        offset.dx + renderBox.size.width,
+        offset.dy + renderBox.size.height,
+      ),
+      items: [
+        const PopupMenuItem<String>(
+          value: 'View',
+          child: Text('View'),
+        ),
+        const PopupMenuItem<String>(
+          value: 'Edit',
+          child: Text('Edit'),
+        ),
+      ],
+    ).then((value) {
+      if (value == 'Edit') {
+        onTap?.call();
+      } else if (value == 'View') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('View action triggered')),
+        );
+      }
+    });
   }
 }
