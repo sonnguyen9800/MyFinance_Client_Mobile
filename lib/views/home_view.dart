@@ -41,10 +41,10 @@ class HomeView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('MyFinance'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.person),
-            onPressed: () => Get.toNamed('/profile'),
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.person),
+          //   onPressed: () => Get.toNamed('/profile'),
+          // ),
         ],
       ),
       drawer: Drawer(

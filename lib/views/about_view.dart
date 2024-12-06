@@ -21,7 +21,7 @@ class AboutView extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           const Text(
-            'MyFinance',
+            'MyFinance (alpha)',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -29,7 +29,7 @@ class AboutView extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const Text(
-            'Version 1.0.0',
+            'Version 0.0.1',
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey,
@@ -38,12 +38,18 @@ class AboutView extends StatelessWidget {
           ),
           const SizedBox(height: 32),
           _buildInfoCard(
-            title: 'About MyFinance',
+            title: 'About MyFinance (alpha)',
             content:
-                'MyFinance is a personal expense tracking app designed for families. '
+                'MyFinance is a self-host, personal expense tracking app designed for families. '
                 'It helps you manage your expenses, track spending patterns, and '
-                'maintain financial transparency within your family group.',
+                'maintain financial transparency within your family group.\n',
           ),
+          const SizedBox(height: 16),
+          _buildInfoCard(
+              title: 'Disclaimer',
+              content:
+                  'The app is ongoing development, and it is still in alpha stage. So don\'t use it for serious financial matters yet.'
+                  ' We are working hard to make it stable and secure. Please be patient and report any bugs or issues you find. We appreciate your feedback and suggestions.'),
           const SizedBox(height: 16),
           _buildInfoCard(
             title: 'Features',
@@ -67,9 +73,8 @@ class AboutView extends StatelessWidget {
           _buildInfoCard(
             title: 'Contact Us',
             content: '''
-Email: support@myfinance.com
-Website: www.myfinance.com
-Phone: +1 (123) 456-7890''',
+Email: sonnguyen9800@gmail.com
+Website: www.sonnguyen9800.com''',
           ),
           const SizedBox(height: 32),
           const Text(

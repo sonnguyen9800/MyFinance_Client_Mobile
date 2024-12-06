@@ -85,6 +85,7 @@ class ExpenseController extends GetxController {
       // Add to cache and maintain order
       expenses.insert(0, expense);
       currentOffset.value += 1;
+      await loadLastExpenses();
       Get.snackbar('Success', 'Expense added successfully');
     } catch (e) {
       Get.snackbar('Error', 'Failed to add expense: $e');
@@ -102,6 +103,7 @@ class ExpenseController extends GetxController {
       if (index != -1) {
         expenses[index] = expense;
       }
+      await loadLastExpenses();
       Get.snackbar('Success', 'Expense updated successfully');
     } catch (e) {
       Get.snackbar('Error', 'Failed to update expense: $e');
@@ -117,6 +119,7 @@ class ExpenseController extends GetxController {
       // Remove from cache
       expenses.removeWhere((e) => e.id == id);
       currentOffset.value -= 1;
+      await loadLastExpenses();
     } catch (e) {
       Get.snackbar('Error', 'Failed to delete expense: $e');
     } finally {
