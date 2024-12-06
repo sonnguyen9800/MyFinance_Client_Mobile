@@ -19,7 +19,7 @@ class CategoryView extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _categoryController.loadCategories,
+            onPressed: () => _categoryController.loadCategories(force: true),
           ),
         ],
       ),

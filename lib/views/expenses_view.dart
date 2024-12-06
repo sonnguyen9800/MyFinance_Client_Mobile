@@ -104,7 +104,7 @@ class _ExpensesViewState extends State<ExpensesView>
 
   Widget _buildExpenseCard(Expense expense) {
     final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
-    var category = expense.category ?? "No Category";
+    var category = expense.categoryId ?? "No Category";
     var paymentMethod = expense.paymentMethod ?? "No Payment Method";
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),

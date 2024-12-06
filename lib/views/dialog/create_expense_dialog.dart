@@ -22,7 +22,7 @@ class CreateExpenseDialog extends StatelessWidget {
         TextEditingController(text: expense?.amount.toString() ?? '');
     final paymentMethodController =
         TextEditingController(text: expense?.paymentMethod);
-    final categoryController = TextEditingController(text: expense?.category);
+    final categoryController = TextEditingController(text: expense?.categoryId);
     final selectedDate = expense?.date ?? DateTime.now();
 
     return Dialog(
@@ -109,7 +109,7 @@ class CreateExpenseDialog extends StatelessWidget {
                       amount: double.parse(amountController.text),
                       date: selectedDate,
                       paymentMethod: paymentMethodController.text,
-                      category: categoryController.text,
+                      categoryId: categoryController.text,
                     );
 
                     if (expense == null) {

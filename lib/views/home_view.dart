@@ -13,9 +13,10 @@ class HomeView extends StatelessWidget {
   final CategoryController _categoryController = Get.find<CategoryController>();
 
   Future<void> fetchData() async {
+    //category loaded first
+    await _categoryController.loadCategories();
     await _expenseController.loadExpenses();
     await _expenseController.loadLastExpenses();
-    await _categoryController.loadCategories();
   }
 
   @override
@@ -234,7 +235,7 @@ class HomeView extends StatelessWidget {
 
   Widget _buildExpenseItem(Expense expense) {
     final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
-    var category = expense.category ?? "No Category";
+    var category = expense.categoryId ?? "No Category";
     return ListTile(
       leading: CircleAvatar(
         child: Text(category),

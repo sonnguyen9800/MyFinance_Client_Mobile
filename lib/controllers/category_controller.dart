@@ -12,15 +12,10 @@ class CategoryController extends GetxController {
   final RxString errorMessage = ''.obs;
   bool _isInitialized = false;
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
   bool get isInitialized => _isInitialized;
 
-  Future<void> loadCategories() async {
-    if (isLoading.value || _isInitialized) return;
+  Future<void> loadCategories({bool force = false}) async {
+    if (isLoading.value || _isInitialized && !force) return;
 
     try {
       isLoading.value = true;
