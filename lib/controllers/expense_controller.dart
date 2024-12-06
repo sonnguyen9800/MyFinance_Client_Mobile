@@ -101,6 +101,7 @@ class ExpenseController extends GetxController {
       if (index != -1) {
         expenses[index] = expense;
       }
+      Get.snackbar('Success', 'Expense updated successfully');
     } catch (e) {
       Get.snackbar('Error', 'Failed to update expense: $e');
     } finally {
