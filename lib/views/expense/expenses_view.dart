@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:myfinance_client_flutter/controllers/category_controller.dart';
+import 'package:myfinance_client_flutter/controllers/expense_controller.dart';
 import 'package:myfinance_client_flutter/views/expense/expense_view_utils.dart';
-import '../../controllers/expense_controller.dart';
-import '../../controllers/category_controller.dart';
 import 'create_expense_dialog.dart';
 import 'expense_card.dart';
 
