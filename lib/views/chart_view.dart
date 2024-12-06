@@ -199,7 +199,6 @@ class _ChartViewState extends State<ChartView> {
       }
 
       final total = categoryExpenses.values.reduce((a, b) => a + b);
-      double startAngle = 0;
 
       final sections = categoryExpenses.entries.map((e) {
         final percentage = e.value / total;
