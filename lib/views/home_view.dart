@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myfinance_client_flutter/controllers/category_controller.dart';
+import 'package:myfinance_client_flutter/views/dialog/create_expense_dialog.dart';
 import 'package:myfinance_client_flutter/views/expense/create_expense_dialog.dart';
 import '../controllers/expense_controller.dart';
 import '../models/expense/expense_model.dart';
@@ -238,10 +239,6 @@ class HomeView extends StatelessWidget {
   Widget _buildExpenseItem(Expense expense) {
     return ExpenseCard(
       expense: expense,
-      onTap: () => showExpenseDialog(
-        _expenseController,
-        expense,
-      ),
     );
   }
 }

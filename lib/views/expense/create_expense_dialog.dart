@@ -184,14 +184,3 @@ class _CreateExpenseDialogState extends State<CreateExpenseDialog> {
     );
   }
 }
-
-// Helper function to show the dialog
-void showExpenseDialog(ExpenseController expenseController,
-    [Expense? expense]) {
-  Get.dialog(
-    CreateExpenseDialog(
-      expense: expense,
-      expenseController: expenseController,
-    ),
-  );
-}

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:myfinance_client_flutter/views/expense/expense_view_utils.dart';
 import '../../controllers/expense_controller.dart';
 import '../../controllers/category_controller.dart';
 import 'create_expense_dialog.dart';
@@ -118,10 +119,6 @@ class _ExpensesViewState extends State<ExpensesView> {
               final expense = _expenseController.expenses[index];
               return ExpenseCard(
                 expense: expense,
-                onTap: () => showExpenseDialog(
-                  _expenseController,
-                  expense,
-                ),
               );
             },
           ),

@@ -11,13 +11,11 @@ import '../utils/icon_helper.dart';
 
 class ExpenseCard extends StatelessWidget {
   final Expense expense;
-  final VoidCallback? onTap;
   final CategoryController _categoryController = Get.find<CategoryController>();
 
   ExpenseCard({
     Key? key,
     required this.expense,
-    this.onTap,
   }) : super(key: key);
 
   Category _getCategory() {
@@ -131,17 +129,6 @@ class ExpenseCard extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  // Helper function to show the dialog
-  void showExpenseDialog(ExpenseController expenseController,
-      [Expense? expense]) {
-    Get.dialog(
-      CreateExpenseDialog(
-        expense: expense,
-        expenseController: expenseController,
-      ),
     );
   }
 }
