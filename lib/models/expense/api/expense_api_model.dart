@@ -46,3 +46,21 @@ class LastExpensesModel {
       _$LastExpensesModelFromJson(json);
   Map<String, dynamic> toJson() => _$LastExpensesModelToJson(this);
 }
+
+@JsonSerializable()
+class MontlyExpensesModel {
+  @JsonKey(name: 'expenses')
+  final List<Expense> expenses;
+
+  @JsonKey(name: 'total_amount')
+  final int totalAmount;
+
+  MontlyExpensesModel({
+    required this.expenses,
+    required this.totalAmount,
+  });
+
+  factory MontlyExpensesModel.fromJson(Map<String, dynamic> json) =>
+      _$MontlyExpensesModelFromJson(json);
+  Map<String, dynamic> toJson() => _$MontlyExpensesModelToJson(this);
+}

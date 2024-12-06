@@ -96,4 +96,19 @@ class ExpenseApiService extends BaseApiService {
       throw Exception('Failed to load last expenses: $e');
     }
   }
+
+  Future<MontlyExpensesModel> getMontlyExpenses(int month, int year) async {
+    try {
+      final response = await dio.get(
+        '$baseUrl/expenses_montly',
+        queryParameters: {
+          'month': month,
+          'year': year,
+        },
+      );
+      return MontlyExpensesModel.fromJson(response.data);
+    } catch (e) {
+      throw Exception('Failed to load montly expenses: $e');
+    }
+  }
 }
