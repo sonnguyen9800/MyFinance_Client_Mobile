@@ -86,14 +86,21 @@ class ExpensesView extends StatelessWidget {
           onRefresh: () => _expenseController.loadExpenses(forceRefresh: true),
           child: ListView.builder(
             padding: const EdgeInsets.all(8),
-            itemCount: filteredExpenses.length +
-                (_expenseController.isLoading.value ? 1 : 0),
+            itemCount: filteredExpenses.length + 1,
             itemBuilder: (context, index) {
               if (index == filteredExpenses.length) {
-                return const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: CircularProgressIndicator(),
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Center(
+                    child: _expenseController.isLoading.value
+                        ? const CircularProgressIndicator()
+                        : ElevatedButton(
+                            onPressed: () =>
+                                _expenseController.loadExpenses(loadMore: true),
+                            child: Text(
+                              'Show more',
+                            ),
+                          ),
                   ),
                 );
               }
