@@ -9,11 +9,12 @@ import 'create_category_dialog.dart';
 class CategoryCard extends StatelessWidget {
   final Category category;
   final CategoryController categoryController;
-
+  final bool isAllowControl;
   const CategoryCard({
     Key? key,
     required this.category,
     required this.categoryController,
+    required this.isAllowControl,
   }) : super(key: key);
 
   void _showOptionsMenu(BuildContext context) {
@@ -105,7 +106,7 @@ class CategoryCard extends StatelessWidget {
     return Card(
       color: categoryColor.withOpacity(0.4),
       child: InkWell(
-        onTap: () => _showOptionsMenu(context),
+        onTap: (isAllowControl) ? onViewExpenseTap : null,
         child: ListTile(
           leading: CircleAvatar(
             backgroundColor: categoryColor,
@@ -120,7 +121,7 @@ class CategoryCard extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          trailing: const Icon(Icons.more_vert),
+          trailing: (isAllowControl) ? const Icon(Icons.more_vert) : null,
         ),
       ),
     );

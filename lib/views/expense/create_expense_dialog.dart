@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
+import 'package:myfinance_client_flutter/views/categories/category_card.dart';
 import '../../controllers/expense_controller.dart';
 import '../../controllers/category_controller.dart';
 import '../../models/expense/expense_model.dart';
@@ -39,6 +41,9 @@ class _UpdateExpenseDialogState extends State<UpdateExpenseDialog> {
       _selectedDate = widget.expense!.date;
       _selectedCategoryId = widget.expense!.categoryId;
     }
+    if (_selectedCategoryId == null || _selectedCategoryId!.isEmpty) {
+      _selectedCategoryId = _getDefaultCategory().id;
+    }
     // Ensure categories are loaded
     _categoryController.loadCategories();
   }
@@ -49,6 +54,18 @@ class _UpdateExpenseDialogState extends State<UpdateExpenseDialog> {
     _amountController.dispose();
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  Category _getDefaultCategory() {
+    return _categoryController.categories.firstWhere(
+      (category) => category.name == "Default",
+      orElse: () => Category(
+        id: "default",
+        name: "Default",
+        color: "#FF5733",
+        iconName: "question_mark",
+      ),
+    );
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -67,6 +84,7 @@ class _UpdateExpenseDialogState extends State<UpdateExpenseDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final lengthCategory = _categoryController.categories.length;
     return AlertDialog(
       title: Text(widget.expense == null ? 'Create Expense' : 'Edit Expense'),
       content: SingleChildScrollView(
@@ -85,6 +103,7 @@ class _UpdateExpenseDialogState extends State<UpdateExpenseDialog> {
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _amountController,
                 decoration: const InputDecoration(labelText: 'Amount'),
@@ -100,31 +119,48 @@ class _UpdateExpenseDialogState extends State<UpdateExpenseDialog> {
                 },
               ),
               const SizedBox(height: 16),
-              Obx(() => DropdownButtonFormField<String>(
-                    value: _selectedCategoryId,
-                    decoration: const InputDecoration(
-                      labelText: 'Category',
-                      border: OutlineInputBorder(),
-                    ),
-                    items:
-                        _categoryController.categories.map((Category category) {
-                      return DropdownMenuItem<String>(
-                        value: category.id,
-                        child: Text(category.name),
+              lengthCategory > 1
+                  ? Obx(() => DropdownButtonFormField<String>(
+                        value: _selectedCategoryId!.isEmpty
+                            ? _getDefaultCategory().id
+                            : _selectedCategoryId,
+                        hint: const Text('Select a category'),
+                        decoration: const InputDecoration(
+                          labelText: 'Category',
+                          border: OutlineInputBorder(),
+                        ),
+                        items: _categoryController.categories
+                            .map((Category category) {
+                          return DropdownMenuItem<String>(
+                            value: category.id,
+                            child: Text(category.name),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedCategoryId = newValue;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select a category';
+                          }
+                          return null;
+                        },
+                      ))
+                  : const SizedBox(height: 0),
+              const SizedBox(height: 16),
+              Obx(() {
+                Category? category =
+                    _categoryController.findCategoryById(_selectedCategoryId!);
+                return category == null
+                    ? const SizedBox(height: 0)
+                    : CategoryCard(
+                        category: category,
+                        categoryController: _categoryController,
+                        isAllowControl: false,
                       );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedCategoryId = newValue;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select a category';
-                      }
-                      return null;
-                    },
-                  )),
+              }),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _descriptionController,
@@ -132,12 +168,16 @@ class _UpdateExpenseDialogState extends State<UpdateExpenseDialog> {
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
-              ListTile(
-                title: Text(
-                  'Date: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}',
+              TextFormField(
+                readOnly: true,
+                controller: TextEditingController(
+                  text: DateFormat('yyyy-MM-dd').format(_selectedDate),
                 ),
-                trailing: const Icon(Icons.calendar_today),
                 onTap: () => _selectDate(context),
+                decoration: const InputDecoration(
+                  labelText: 'Date',
+                  suffixIcon: Icon(Icons.calendar_today),
+                ),
               ),
             ],
           ),

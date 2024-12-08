@@ -75,6 +75,7 @@ class CategoryView extends StatelessWidget {
             itemBuilder: (context, index) {
               final category = _categoryController.categories[index];
               return CategoryCard(
+                isAllowControl: true,
                 category: category,
                 categoryController: _categoryController,
               );
@@ -84,9 +85,8 @@ class CategoryView extends StatelessWidget {
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Get.dialog(
-          //     CreateCategoryDialog(categoryController: _categoryController));
-          Get.toNamed('/expenses');
+          Get.dialog(
+              CreateCategoryDialog(categoryController: _categoryController));
         },
         child: const Icon(Icons.add),
       ),
