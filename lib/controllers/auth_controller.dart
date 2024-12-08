@@ -20,7 +20,8 @@ class AuthController extends GetxController {
   final Rx<User?> user = Rx<User?>(null);
   final RxBool isLoading = false.obs;
   final RxBool isInitialized = false.obs;
-
+  final RxBool isServerAddressSet = false.obs;
+  final RxString serverAddress = ''.obs;
   @override
   void onInit() {
     super.onInit();
@@ -134,6 +135,7 @@ class AuthController extends GetxController {
     try {
       developer.log('Logging out...');
       await _storage.delete(key: 'token');
+      await _storage.delete(key: 'server_address');
 
       // Verify token was deleted
       final storedToken = await _storage.read(key: 'token');
@@ -150,4 +152,12 @@ class AuthController extends GetxController {
       );
     }
   }
+
+  pingServer(String text) {}
+
+  setServerAddress(String text) {}
+
+  void toggleServerSelection() {}
+
+  connect() {}
 }

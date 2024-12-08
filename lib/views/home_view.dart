@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myfinance_client_flutter/controllers/category_controller.dart';
 import 'package:myfinance_client_flutter/views/expense/expense_view_utils.dart';
+import '../controllers/auth_controller.dart';
 import '../controllers/expense_controller.dart';
 import '../models/expense/expense_model.dart';
 import 'package:intl/intl.dart';
@@ -115,6 +116,16 @@ class HomeView extends StatelessWidget {
                 Get.toNamed('/about');
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.close),
+              title: const Text('Logout'),
+              onTap: () {
+                Get.back();
+                final AuthController _authController =
+                    Get.find<AuthController>();
+                _authController.logout();
+              },
+            )
           ],
         ),
       ),
