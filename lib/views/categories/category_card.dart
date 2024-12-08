@@ -106,7 +106,7 @@ class CategoryCard extends StatelessWidget {
     return Card(
       color: categoryColor.withOpacity(0.4),
       child: InkWell(
-        onTap: (isAllowControl) ? onViewExpenseTap : null,
+        onTap: (isAllowControl) ? () => _showOptionsMenu(context) : null,
         child: ListTile(
           leading: CircleAvatar(
             backgroundColor: categoryColor,
