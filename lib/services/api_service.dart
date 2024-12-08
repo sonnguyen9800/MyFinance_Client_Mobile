@@ -42,7 +42,7 @@ class ApiService extends GetxService {
         Get.snackbar('Error', 'Server code does not match');
         return false;
       }
-
+      Get.snackbar('Success', 'Server is online');
       return true;
     } catch (e) {
       Get.snackbar('Error', 'Failed to ping server: $e');

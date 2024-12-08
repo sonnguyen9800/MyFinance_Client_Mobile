@@ -39,6 +39,7 @@ dependencies:
   flutter_secure_storage: ^9.0.0  # Secure storage for tokens
   json_annotation: ^4.8.1  # JSON serialization
   connectivity_plus: ^6.1.0
+  google_fonts: ^6.1.0
   flutter_localizations:
     sdk: flutter
 

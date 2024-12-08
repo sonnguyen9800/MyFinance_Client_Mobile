@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
   LoginView({super.key});
 
+  @override
+  // ignore: library_private_types_in_public_api
+  _LoginViewState createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _authController = Get.find<AuthController>();
@@ -54,9 +60,10 @@ class LoginView extends StatelessWidget {
         const SizedBox(height: 16),
         ElevatedButton(
           onPressed: () async {
-            await _authController.connect(serverAddress);
-            setState() {}
-            ;
+            final canConnect = await _authController.connect(serverAddress);
+            if (canConnect) {
+              setState(() {}); // refresh the UI  to show the login form
+            }
           },
           child: const Text('Connect'),
         ),
