@@ -4,6 +4,8 @@ import 'base_api_service.dart';
 import 'dart:developer' as developer;
 
 class CategoryApiService extends BaseApiService {
+  CategoryApiService({required super.baseUrl});
+
   Future<List<Category>> getCategories() async {
     try {
       developer.log('Getting categories');

@@ -4,6 +4,8 @@ import 'base_api_service.dart';
 import 'dart:developer' as developer;
 
 class AuthApiService extends BaseApiService {
+  AuthApiService({required super.baseUrl});
+
   Future<AuthResponse> login(String email, String password) async {
     try {
       developer.log('Attempting login');

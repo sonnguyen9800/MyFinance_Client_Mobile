@@ -38,6 +38,7 @@ class LoginView extends StatelessWidget {
   }
 
   _renderServerAddressForm() {
+    String serverAddress = "";
     return Column(
       children: [
         const SizedBox(height: 48),
@@ -47,13 +48,13 @@ class LoginView extends StatelessWidget {
             border: OutlineInputBorder(),
           ),
           onChanged: (value) {
-            _authController.serverAddress.value = value;
+            serverAddress = value;
           },
         ),
         const SizedBox(height: 16),
         ElevatedButton(
           onPressed: () async {
-            await _authController.connect();
+            await _authController.connect(serverAddress);
           },
           child: const Text('Connect'),
         ),

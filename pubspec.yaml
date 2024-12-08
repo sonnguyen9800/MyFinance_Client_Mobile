@@ -59,6 +59,14 @@ dev_dependencies:
   build_runner: ^2.4.8
   json_serializable: ^6.7.1
 
+# Environment variables
+environment_config:
+  fields:
+    server_code:
+      type: String
+      default: "MF_SERVER_2024DEC_0.0.1"
+      description: "Server code"
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

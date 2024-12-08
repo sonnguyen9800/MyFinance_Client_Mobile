@@ -1,6 +1,10 @@
+import 'package:dio/dio.dart';
+import 'package:get/get.dart';
+import 'package:myfinance_client_flutter/config/environment_config.dart';
 import 'package:myfinance_client_flutter/models/api/auth_response.dart';
 import 'package:myfinance_client_flutter/models/expense/api/expense_api_model.dart';
 import 'package:myfinance_client_flutter/models/user/user_model.dart';
+import '../models/api/ping_model.dart';
 import '../models/expense/expense_model.dart';
 import '../models/category/category_model.dart';
 import '../models/category/api/category_api_model.dart';
@@ -9,15 +13,50 @@ import 'category_api_service.dart';
 import 'expense_api_service.dart';
 
 /// ApiService acts as a facade for all API services
-class ApiService {
+class ApiService extends GetxService {
   late final AuthApiService _authService;
   late final CategoryApiService _categoryService;
   late final ExpenseApiService _expenseService;
+  late String baseUrl;
 
   ApiService() {
-    _authService = AuthApiService();
-    _categoryService = CategoryApiService();
-    _expenseService = ExpenseApiService();
+    baseUrl = 'http://10.0.2.2:8080/api';
+    _authService = AuthApiService(baseUrl: baseUrl);
+    _categoryService = CategoryApiService(baseUrl: baseUrl);
+    _expenseService = ExpenseApiService(baseUrl: baseUrl);
+  }
+
+  Future<bool> _ping(String address) async {
+    try {
+      final response = await Dio().get('$address/ping');
+
+      PingResponse pingResponse = PingResponse.fromJson(response.data);
+
+      if (response.statusCode != 200) {
+        return false;
+      }
+      final serverCodeResponse = pingResponse.serverCode;
+      final serverCode = EnvironmentConfig.serverCode;
+      if (serverCode != serverCodeResponse) {
+        return false;
+      }
+
+      return true;
+    } catch (e) {
+      print('Failed to connect to server: $e');
+    }
+    return false;
+  }
+
+  Future<bool> ping(String address) async {
+    return await _ping(address);
+  }
+
+  void updateBaseUrl(String newBaseUrl) {
+    baseUrl = newBaseUrl;
+    _authService.updateBaseUrl(newBaseUrl);
+    _categoryService.updateBaseUrl(newBaseUrl);
+    _expenseService.updateBaseUrl(newBaseUrl);
   }
 
   // Auth methods

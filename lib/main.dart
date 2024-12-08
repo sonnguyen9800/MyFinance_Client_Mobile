@@ -5,6 +5,7 @@ import 'package:myfinance_client_flutter/controllers/category_controller.dart';
 import 'package:myfinance_client_flutter/views/categories/category_view.dart';
 import 'controllers/auth_controller.dart';
 import 'controllers/expense_controller.dart';
+import 'services/api_service.dart';
 import 'services/connectivity_service.dart';
 import 'views/login_view.dart';
 import 'views/signup_view.dart';
@@ -21,6 +22,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize controllers
+  final apiService = Get.put(ApiService());
   final authController = Get.put(AuthController());
   final expenseController = Get.put(ExpenseController());
   final categoryController = Get.put(CategoryController());

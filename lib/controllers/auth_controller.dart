@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:developer' as developer;
 
 class AuthController extends GetxController {
-  final ApiService _apiService = ApiService();
+  final ApiService _apiService = Get.find<ApiService>();
   // Initialize storage with Android-specific encryption
   final FlutterSecureStorage _storage = const FlutterSecureStorage(
     aOptions: AndroidOptions(
@@ -20,7 +20,6 @@ class AuthController extends GetxController {
   final Rx<User?> user = Rx<User?>(null);
   final RxBool isLoading = false.obs;
   final RxBool isInitialized = false.obs;
-  final RxBool isServerAddressSet = false.obs;
   final RxString serverAddress = ''.obs;
   @override
   void onInit() {
@@ -41,6 +40,17 @@ class AuthController extends GetxController {
 
     try {
       final token = await _storage.read(key: 'token');
+      final storedServerAddress = await _storage.read(key: 'server_address');
+      if (storedServerAddress != null && storedServerAddress.isNotEmpty) {
+        final canConnect = await _apiService.ping(storedServerAddress);
+        if (!canConnect) {
+          Get.snackbar("Error", "Can't connect to server");
+          Get.offAllNamed('/login');
+
+          return;
+        }
+        serverAddress.value = storedServerAddress;
+      }
 
       if (token != null && token.isNotEmpty) {
         try {
@@ -140,6 +150,9 @@ class AuthController extends GetxController {
       // Verify token was deleted
       final storedToken = await _storage.read(key: 'token');
       developer.log('Token deleted successfully: ${storedToken == null}');
+      // Verify address was deleted
+      final storedAddress = await _storage.read(key: 'server_address');
+      developer.log('Address deleted successfully: ${storedAddress == null}');
 
       user.value = null;
       Get.offAllNamed('/login');
@@ -153,11 +166,21 @@ class AuthController extends GetxController {
     }
   }
 
-  pingServer(String text) {}
-
-  setServerAddress(String text) {}
+  setServerAddress(String text) {
+    _apiService.updateBaseUrl(serverAddress.value);
+  }
 
   void toggleServerSelection() {}
 
-  connect() {}
+  Future<bool> connect(String address) async {
+    bool canConnect = await _apiService.ping(address);
+    if (canConnect) {
+      serverAddress.value = address;
+      _apiService.updateBaseUrl(serverAddress.value);
+      return true;
+    } else {
+      Get.snackbar("Error", "Can't connect to server");
+      return false;
+    }
+  }
 }
