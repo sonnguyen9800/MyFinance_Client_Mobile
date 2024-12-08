@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import '../../controllers/expense_controller.dart';
 import '../../controllers/category_controller.dart';
 import 'expense_card.dart';
@@ -105,6 +106,26 @@ class ExpensesView extends StatelessWidget {
                 );
               }
 
+              if (index > 0) {
+                if (filteredExpenses[index - 1].date.month !=
+                    filteredExpenses[index].date.month) {
+                  return Column(
+                    children: [
+                      const Divider(),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          DateFormat('MMMM yyyy')
+                              .format(filteredExpenses[index].date),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              }
               final expense = filteredExpenses[index];
               return ExpenseCard(
                 expense: expense,
