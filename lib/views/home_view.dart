@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
+import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
 import 'package:myfinance_client_flutter/controllers/category_controller.dart';
+import 'package:myfinance_client_flutter/controllers/theme_controller.dart';
 import 'package:myfinance_client_flutter/views/expense/expense_view_utils.dart';
 import '../controllers/auth_controller.dart';
 import '../controllers/expense_controller.dart';
@@ -41,7 +44,10 @@ class HomeView extends StatelessWidget {
   Widget _buildHomeView(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('MyFinance'),
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        title: Text('MyFinance',
+            style: AppTypography.textTheme.headlineMedium!
+                .copyWith(color: AppColors.primaryDark)),
         actions: [
           // IconButton(
           //   icon: const Icon(Icons.person),
@@ -56,7 +62,7 @@ class HomeView extends StatelessWidget {
             : RefreshIndicator(
                 onRefresh: _expenseController.loadExpenses,
                 child: ListView(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(5.0),
                   children: [
                     _buildOverviewPanel(),
                     const SizedBox(height: 16),
@@ -90,12 +96,18 @@ class HomeView extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.home),
-            title: const Text('Home'),
+            title: Text(
+              'Home',
+              style: AppTypography.textTheme.titleMedium,
+            ),
             onTap: () => Get.back(),
           ),
           ListTile(
             leading: const Icon(Icons.list),
-            title: const Text('Expenses'),
+            title: Text(
+              'Expenses',
+              style: AppTypography.textTheme.titleMedium,
+            ),
             onTap: () {
               Get.back();
               Get.toNamed('/expenses');
@@ -103,7 +115,10 @@ class HomeView extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.calendar_month),
-            title: const Text('Montly Expenses'),
+            title: Text(
+              'Montly Expenses',
+              style: AppTypography.textTheme.titleMedium,
+            ),
             onTap: () {
               Get.back();
               Get.toNamed('/monthly');
@@ -119,7 +134,10 @@ class HomeView extends StatelessWidget {
           // ),
           ListTile(
             leading: const Icon(Icons.grade),
-            title: const Text('Categories'),
+            title: Text(
+              'Categories',
+              style: AppTypography.textTheme.titleMedium,
+            ),
             onTap: () {
               Get.back();
               Get.toNamed('/categories');
@@ -135,17 +153,23 @@ class HomeView extends StatelessWidget {
           // ),
           ListTile(
             leading: const Icon(Icons.info),
-            title: const Text('About'),
+            title: Text(
+              'About',
+              style: AppTypography.textTheme.titleMedium,
+            ),
             onTap: () {
               Get.back();
               Get.toNamed('/about');
             },
           ),
-          const ThemeSwitch(),
+          // const ThemeSwitch(),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.close),
-            title: const Text('Logout'),
+            title: Text(
+              'Logout',
+              style: AppTypography.textTheme.titleMedium,
+            ),
             onTap: () {
               Get.back();
               final AuthController _authController = Get.find<AuthController>();
@@ -165,12 +189,9 @@ class HomeView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Overview',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: AppTypography.textTheme.headlineMedium,
             ),
             const SizedBox(height: 16),
             Row(
@@ -202,61 +223,53 @@ class HomeView extends StatelessWidget {
       children: [
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Colors.grey,
-          ),
+          style: AppTypography.textTheme.titleMedium,
         ),
         const SizedBox(height: 4),
         Text(
           amount,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: AppTypography.textTheme.bodyLarge,
         ),
       ],
     );
   }
 
   Widget _buildExpensesPanel() {
-    return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Recent Expenses',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Recent Expenses',
+                style: AppTypography.textTheme.titleLarge,
+              ),
+              TextButton(
+                onPressed: () => Get.toNamed('/expenses'),
+                child: Text(
+                  'View All',
+                  style: AppTypography.textTheme.bodyLarge,
                 ),
-                TextButton(
-                  onPressed: () => Get.toNamed('/expenses'),
-                  child: const Text('View All'),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-          Obx(() {
-            final recentExpenses = _expenseController.expenses.take(5).toList();
-            return ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: recentExpenses.length,
-              itemBuilder: (context, index) {
-                final expense = recentExpenses[index];
-                return _buildExpenseItem(expense);
-              },
-            );
-          }),
-        ],
-      ),
+        ),
+        Obx(() {
+          final recentExpenses = _expenseController.expenses.take(5).toList();
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: recentExpenses.length,
+            itemBuilder: (context, index) {
+              final expense = recentExpenses[index];
+              return _buildExpenseItem(expense);
+            },
+          );
+        }),
+      ],
     );
   }
 

@@ -103,7 +103,7 @@ class CategoryCard extends StatelessWidget {
     final IconData? iconData = IconDataHelper.getIconData(category.iconName);
 
     return Card(
-      color: categoryColor.withOpacity(0.2),
+      color: categoryColor.withOpacity(0.4),
       child: InkWell(
         onTap: () => _showOptionsMenu(context),
         child: ListTile(

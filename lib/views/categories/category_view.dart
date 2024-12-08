@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
+import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
 import '../../controllers/category_controller.dart';
 import 'create_category_dialog.dart';
 import 'category_card.dart';
@@ -13,7 +15,12 @@ class CategoryView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Categories'),
+        title: Text(
+          'Categories',
+          style: AppTypography.textTheme.titleLarge!.copyWith(
+            color: AppColors.primaryDark,
+          ),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),

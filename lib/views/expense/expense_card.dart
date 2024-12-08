@@ -68,7 +68,7 @@ class ExpenseCard extends StatelessWidget {
     final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
 
     return Card(
-      color: cardColor.withOpacity(0.2),
+      color: cardColor.withOpacity(0.4),
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: cardColor,

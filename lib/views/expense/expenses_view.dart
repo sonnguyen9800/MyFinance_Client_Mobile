@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
+import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
 import '../../controllers/expense_controller.dart';
 import '../../controllers/category_controller.dart';
 import 'expense_card.dart';
@@ -24,7 +26,11 @@ class ExpensesView extends StatelessWidget {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(
+          title,
+          style: AppTypography.textTheme.headlineMedium!
+              .copyWith(color: AppColors.primaryDark),
+        ),
         actions: [
           if (categoryId != null)
             IconButton(
