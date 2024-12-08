@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:myfinance_client_flutter/controllers/category_controller.dart';
 import 'package:myfinance_client_flutter/views/categories/category_view.dart';
 import 'controllers/auth_controller.dart';
 import 'controllers/expense_controller.dart';
+import 'controllers/theme_controller.dart';
 import 'services/api_service.dart';
 import 'services/connectivity_service.dart';
 import 'views/login_view.dart';
@@ -22,7 +24,12 @@ import 'config/theme/app_theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize SharedPreferences
+  final prefs = await SharedPreferences.getInstance();
+  Get.put(prefs);
+
   // Initialize controllers
+  final ThemService = Get.put(ThemeController());
   final apiService = Get.put(ApiService());
   final authController = Get.put(AuthController());
   final expenseController = Get.put(ExpenseController());
@@ -44,7 +51,7 @@ class MyApp extends StatelessWidget {
       title: 'MyFinance',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: ThemeController.to.themeMode,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

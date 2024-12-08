@@ -8,7 +8,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      
+
       // Colors
       colorScheme: ColorScheme.light(
         primary: AppColors.primary,
@@ -16,13 +16,13 @@ class AppTheme {
         secondary: AppColors.secondary,
         secondaryContainer: AppColors.secondaryLight,
         surface: AppColors.surface,
-        background: AppColors.background,
+        surfaceDim: AppColors.background,
         error: AppColors.error,
       ),
 
       // Typography
       textTheme: AppTypography.textTheme,
-      
+
       // AppBar Theme
       appBarTheme: AppBarTheme(
         elevation: 0,
@@ -115,7 +115,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      
+
       // Colors for dark theme
       colorScheme: ColorScheme.dark(
         primary: AppColors.primaryLight,
@@ -123,13 +123,13 @@ class AppTheme {
         secondary: AppColors.secondaryLight,
         secondaryContainer: AppColors.secondary,
         surface: Color(0xFF1E1E1E),
-        background: Color(0xFF121212),
+        surfaceDim: Color(0xFF121212),
         error: AppColors.error,
       ),
 
       // Typography
       textTheme: AppTypography.textTheme,
-      
+
       // AppBar Theme
       appBarTheme: AppBarTheme(
         elevation: 0,

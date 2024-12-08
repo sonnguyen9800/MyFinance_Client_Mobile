@@ -8,6 +8,7 @@ import '../models/expense/expense_model.dart';
 import 'package:intl/intl.dart';
 
 import 'expense/expense_card.dart';
+import '../widgets/theme_switch.dart';
 
 class HomeView extends StatelessWidget {
   HomeView({super.key});
@@ -32,12 +33,12 @@ class HomeView extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
-            return _buildHomeView();
+            return _buildHomeView(context);
           }
         });
   }
 
-  Widget _buildHomeView() {
+  Widget _buildHomeView(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('MyFinance'),
@@ -48,87 +49,7 @@ class HomeView extends StatelessWidget {
           // ),
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text(
-                'MyFinance',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
-              onTap: () => Get.back(),
-            ),
-            ListTile(
-              leading: const Icon(Icons.list),
-              title: const Text('Expenses'),
-              onTap: () {
-                Get.back();
-                Get.toNamed('/expenses');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.calendar_month),
-              title: const Text('Montly Expenses'),
-              onTap: () {
-                Get.back();
-                Get.toNamed('/monthly');
-              },
-            ),
-            // ListTile(
-            //   leading: const Icon(Icons.pie_chart),
-            //   title: const Text('Charts'),
-            //   onTap: () {
-            //     Get.back();
-            //     Get.toNamed('/chart');
-            //   },
-            // ),
-            ListTile(
-              leading: const Icon(Icons.grade),
-              title: const Text('Categories'),
-              onTap: () {
-                Get.back();
-                Get.toNamed('/categories');
-              },
-            ),
-            // ListTile(
-            //   leading: const Icon(Icons.settings),
-            //   title: const Text('Settings'),
-            //   onTap: () {
-            //     Get.back();
-            //     Get.toNamed('/settings');
-            //   },
-            // ),
-            ListTile(
-              leading: const Icon(Icons.info),
-              title: const Text('About'),
-              onTap: () {
-                Get.back();
-                Get.toNamed('/about');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.close),
-              title: const Text('Logout'),
-              onTap: () {
-                Get.back();
-                final AuthController _authController =
-                    Get.find<AuthController>();
-                _authController.logout();
-              },
-            )
-          ],
-        ),
-      ),
+      drawer: _buildDrawer(context),
       body: Obx(
         () => _expenseController.isLoading.value
             ? const Center(child: CircularProgressIndicator())
@@ -147,6 +68,91 @@ class HomeView extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () => showExpenseUpdateDialog(_expenseController),
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            child: Text(
+              'MyFinance',
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.home),
+            title: const Text('Home'),
+            onTap: () => Get.back(),
+          ),
+          ListTile(
+            leading: const Icon(Icons.list),
+            title: const Text('Expenses'),
+            onTap: () {
+              Get.back();
+              Get.toNamed('/expenses');
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.calendar_month),
+            title: const Text('Montly Expenses'),
+            onTap: () {
+              Get.back();
+              Get.toNamed('/monthly');
+            },
+          ),
+          // ListTile(
+          //   leading: const Icon(Icons.pie_chart),
+          //   title: const Text('Charts'),
+          //   onTap: () {
+          //     Get.back();
+          //     Get.toNamed('/chart');
+          //   },
+          // ),
+          ListTile(
+            leading: const Icon(Icons.grade),
+            title: const Text('Categories'),
+            onTap: () {
+              Get.back();
+              Get.toNamed('/categories');
+            },
+          ),
+          // ListTile(
+          //   leading: const Icon(Icons.settings),
+          //   title: const Text('Settings'),
+          //   onTap: () {
+          //     Get.back();
+          //     Get.toNamed('/settings');
+          //   },
+          // ),
+          ListTile(
+            leading: const Icon(Icons.info),
+            title: const Text('About'),
+            onTap: () {
+              Get.back();
+              Get.toNamed('/about');
+            },
+          ),
+          const ThemeSwitch(),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.close),
+            title: const Text('Logout'),
+            onTap: () {
+              Get.back();
+              final AuthController _authController = Get.find<AuthController>();
+              _authController.logout();
+            },
+          )
+        ],
       ),
     );
   }
