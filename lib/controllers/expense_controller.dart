@@ -74,7 +74,7 @@ class ExpenseController extends GetxController {
       }
 
       final loadedExpenses = await _apiService.getExpenses(
-        page: currentOffset.value,
+        offset: currentOffset.value,
         limit: limit,
       );
 

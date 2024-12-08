@@ -42,14 +42,14 @@ class ApiService {
 
   // Expense methods
   Future<ExpensesResponse> getExpenses({
-    required int page,
+    required int offset,
     required int limit,
     String? search,
     String? sortBy,
     bool? ascending,
   }) =>
       _expenseService.getExpenses(
-        page: page,
+        offset: offset,
         limit: limit,
         search: search,
         sortBy: sortBy,

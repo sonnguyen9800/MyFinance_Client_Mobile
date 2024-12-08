@@ -6,7 +6,7 @@ import 'base_api_service.dart';
 
 class ExpenseApiService extends BaseApiService {
   Future<ExpensesResponse> getExpenses({
-    required int page,
+    required int offset,
     required int limit,
     String? search,
     String? sortBy,
@@ -15,7 +15,7 @@ class ExpenseApiService extends BaseApiService {
     try {
       developer.log('Getting expenses');
       final Map<String, dynamic> queryParameters = {
-        'page': page,
+        'offset': offset,
         'limit': limit,
         if (search != null && search.isNotEmpty) 'search': search,
         if (sortBy != null) 'sort_by': sortBy,

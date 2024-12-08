@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:myfinance_client_flutter/views/expense/expense_card.dart';
 import '../../../controllers/expense_controller.dart';
-import '../../../models/expense/expense_model.dart';
 
 class MonthlyView extends StatelessWidget {
   final ExpenseController controller = Get.find<ExpenseController>();
