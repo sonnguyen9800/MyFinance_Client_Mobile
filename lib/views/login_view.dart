@@ -55,6 +55,8 @@ class LoginView extends StatelessWidget {
         ElevatedButton(
           onPressed: () async {
             await _authController.connect(serverAddress);
+            setState() {}
+            ;
           },
           child: const Text('Connect'),
         ),

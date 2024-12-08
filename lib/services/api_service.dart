@@ -28,6 +28,7 @@ class ApiService extends GetxService {
 
   Future<bool> _ping(String address) async {
     try {
+      address = address.trim();
       final response = await Dio().get('$address/ping');
 
       PingResponse pingResponse = PingResponse.fromJson(response.data);
@@ -38,12 +39,13 @@ class ApiService extends GetxService {
       final serverCodeResponse = pingResponse.serverCode;
       final serverCode = EnvironmentConfig.serverCode;
       if (serverCode != serverCodeResponse) {
+        Get.snackbar('Error', 'Server code does not match');
         return false;
       }
 
       return true;
     } catch (e) {
-      print('Failed to connect to server: $e');
+      Get.snackbar('Error', 'Failed to ping server: $e');
     }
     return false;
   }

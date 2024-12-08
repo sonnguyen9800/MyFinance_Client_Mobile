@@ -4,9 +4,16 @@ part 'ping_model.g.dart';
 
 @JsonSerializable()
 class PingResponse {
+  @JsonKey(name: 'version')
   final String version;
+
+  @JsonKey(name: 'go_version')
   final String goVersion;
+
+  @JsonKey(name: 'server_code')
   final String serverCode;
+
+  @JsonKey(name: 'server_env')
   final String serverEnv;
 
   PingResponse({

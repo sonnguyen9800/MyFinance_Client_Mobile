@@ -177,6 +177,7 @@ class AuthController extends GetxController {
     if (canConnect) {
       serverAddress.value = address;
       _apiService.updateBaseUrl(serverAddress.value);
+      await _storage.write(key: 'server_address', value: address);
       return true;
     } else {
       Get.snackbar("Error", "Can't connect to server");
