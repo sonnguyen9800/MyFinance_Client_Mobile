@@ -25,7 +25,7 @@ class Expense {
     this.description,
     this.paymentMethod = "No Payment Method",
     this.currencyCode = 'VND',
-    this.categoryId = "No Category",
+    this.categoryId = "",
     required this.amount,
     required this.name,
     required this.date,

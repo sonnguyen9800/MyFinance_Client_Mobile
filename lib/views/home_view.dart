@@ -65,7 +65,7 @@ class HomeView extends StatelessWidget {
                   padding: const EdgeInsets.all(5.0),
                   children: [
                     _buildOverviewPanel(),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 0),
                     _buildExpensesPanel(),
                   ],
                 ),
