@@ -12,9 +12,24 @@ class CategoryController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool hasError = false.obs;
   final RxString errorMessage = ''.obs;
+  late Category _defaultCategory;
   bool _isInitialized = false;
 
   bool get isInitialized => _isInitialized;
+
+  Category get defaultCategory => _defaultCategory;
+
+  void cacheDefaultCategory() {
+    _defaultCategory = categories.firstWhere(
+      (category) => category.name == "Default",
+      orElse: () => Category(
+        id: "default",
+        name: "Default",
+        color: "#FF5733",
+        iconName: "question_mark",
+      ),
+    );
+  }
 
   Future<void> loadCategories({bool force = false}) async {
     if (isLoading.value || _isInitialized && !force) return;
@@ -27,6 +42,8 @@ class CategoryController extends GetxController {
       final loadedCategories = await _apiService.getCategories();
       categories.value = loadedCategories;
       _isInitialized = true;
+      cacheDefaultCategory();
+      print(_defaultCategory.name);
       developer.log('Categories loaded successfully: ${categories.length}');
     } catch (e) {
       hasError.value = true;

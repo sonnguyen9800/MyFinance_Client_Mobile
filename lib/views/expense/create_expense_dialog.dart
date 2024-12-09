@@ -42,7 +42,7 @@ class _UpdateExpenseDialogState extends State<UpdateExpenseDialog> {
       _selectedCategoryId = widget.expense!.categoryId;
     }
     if (_selectedCategoryId == null || _selectedCategoryId!.isEmpty) {
-      _selectedCategoryId = _getDefaultCategory().id;
+      _selectedCategoryId = _categoryController.defaultCategory.id;
     }
     // Ensure categories are loaded
     _categoryController.loadCategories();
@@ -54,18 +54,6 @@ class _UpdateExpenseDialogState extends State<UpdateExpenseDialog> {
     _amountController.dispose();
     _descriptionController.dispose();
     super.dispose();
-  }
-
-  Category _getDefaultCategory() {
-    return _categoryController.categories.firstWhere(
-      (category) => category.name == "Default",
-      orElse: () => Category(
-        id: "default",
-        name: "Default",
-        color: "#FF5733",
-        iconName: "question_mark",
-      ),
-    );
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -85,6 +73,11 @@ class _UpdateExpenseDialogState extends State<UpdateExpenseDialog> {
   @override
   Widget build(BuildContext context) {
     final lengthCategory = _categoryController.categories.length;
+    print("All category IDs:");
+    for (var category in _categoryController.categories) {
+      print(category.id);
+    }
+
     return AlertDialog(
       title: Text(widget.expense == null ? 'Create Expense' : 'Edit Expense'),
       content: SingleChildScrollView(
@@ -121,12 +114,13 @@ class _UpdateExpenseDialogState extends State<UpdateExpenseDialog> {
               const SizedBox(height: 16),
               lengthCategory > 1
                   ? Obx(() => DropdownButtonFormField<String>(
-                        value: _selectedCategoryId!.isEmpty
-                            ? _getDefaultCategory().id
-                            : _selectedCategoryId,
                         hint: const Text('Select a category'),
-                        decoration: const InputDecoration(
-                          labelText: 'Category',
+                        decoration: InputDecoration(
+                          labelText: _categoryController
+                                      .findCategoryById(_selectedCategoryId!) !=
+                                  null
+                              ? "Category: ${_categoryController.findCategoryById(_selectedCategoryId!)!.name}"
+                              : 'Select a category',
                           border: OutlineInputBorder(),
                         ),
                         items: _categoryController.categories
@@ -208,7 +202,10 @@ class _UpdateExpenseDialogState extends State<UpdateExpenseDialog> {
                 amount: int.parse(_amountController.text),
                 date: _selectedDate,
                 description: _descriptionController.text,
-                categoryId: _selectedCategoryId,
+                categoryId: _selectedCategoryId !=
+                        _categoryController.defaultCategory.id
+                    ? _selectedCategoryId
+                    : null,
               );
               if (widget.expense == null) {
                 widget.expenseController.addExpense(expense);
