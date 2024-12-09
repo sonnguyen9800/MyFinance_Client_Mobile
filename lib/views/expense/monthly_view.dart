@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
+import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
 import 'package:myfinance_client_flutter/views/expense/expense_card.dart';
 import '../../../controllers/expense_controller.dart';
 
@@ -37,11 +39,14 @@ class MonthlyView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         title: Obx(() => Text(
               _getMonthYearText(
                 controller.currentMonth.value,
                 controller.currentYear.value,
               ),
+              style: AppTypography.textTheme.headlineMedium!
+                  .copyWith(color: AppColors.primaryDark),
             )),
         actions: [
           IconButton(

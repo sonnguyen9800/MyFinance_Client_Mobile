@@ -15,11 +15,11 @@ class CategoryView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         title: Text(
           'Categories',
-          style: AppTypography.textTheme.titleLarge!.copyWith(
-            color: AppColors.primaryDark,
-          ),
+          style: AppTypography.textTheme.headlineMedium!
+              .copyWith(color: AppColors.primaryDark),
         ),
         actions: [
           IconButton(

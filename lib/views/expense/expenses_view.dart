@@ -26,6 +26,7 @@ class ExpensesView extends StatelessWidget {
     }
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         title: Text(
           title,
           style: AppTypography.textTheme.headlineMedium!
