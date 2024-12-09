@@ -45,6 +45,47 @@ class ExpenseCard extends StatelessWidget {
     return ColorHelper.getColor(category.color) ?? Colors.grey;
   }
 
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final category = _getCategory();
+      final cardColor = _getCategoryColor(category);
+      final currencyFormat =
+          NumberFormat.currency(locale: 'vi_VN', symbol: ' ');
+
+      return Card(
+        color: cardColor.withOpacity(0.4),
+        child: ListTile(
+          leading: CircleAvatar(
+            backgroundColor: cardColor,
+            child: _buildCategoryIcon(context, category),
+          ),
+          title: Text(
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            expense.name,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          subtitle: Text(
+            DateFormat('MMM d, y').format(expense.date),
+            style: TextStyle(
+              color: Theme.of(context).textTheme.bodySmall?.color,
+            ),
+          ),
+          trailing: Text(
+            currencyFormat.format(expense.amount),
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          onTap: () => {showDropDownMenu(context)},
+        ),
+      );
+    });
+  }
+
   Widget _buildCategoryIcon(BuildContext context, Category category) {
     final IconData? iconData = IconDataHelper.getIconData(category.iconName);
     return Container(
@@ -62,45 +103,6 @@ class ExpenseCard extends StatelessWidget {
         iconData ?? Icons.question_mark,
         color: AppColors.primary,
         size: 25,
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final category = _getCategory();
-    final cardColor = _getCategoryColor(category);
-    final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
-
-    return Card(
-      color: cardColor.withOpacity(0.4),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: cardColor,
-          child: _buildCategoryIcon(context, category),
-        ),
-        title: Text(
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          expense.name,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        subtitle: Text(
-          DateFormat('MMM d, y').format(expense.date),
-          style: TextStyle(
-            color: Theme.of(context).textTheme.bodySmall?.color,
-          ),
-        ),
-        trailing: Text(
-          currencyFormat.format(expense.amount),
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-        onTap: () => {showDropDownMenu(context)},
       ),
     );
   }
