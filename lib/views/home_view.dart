@@ -251,7 +251,9 @@ class HomeView extends StatelessWidget {
                 onPressed: () => Get.toNamed('/expenses'),
                 child: Text(
                   'View All',
-                  style: AppTypography.textTheme.bodyLarge,
+                  style: AppTypography.textTheme.titleMedium!.copyWith(
+                    color: Theme.of(Get.context!).colorScheme.primary,
+                  ),
                 ),
               ),
             ],
