@@ -45,8 +45,6 @@ class AuthController extends GetxController {
         final canConnect = await _apiService.ping(storedServerAddress);
         if (!canConnect) {
           Get.snackbar("Error", "Can't connect to server");
-          Get.offAllNamed('/login');
-
           return;
         }
         serverAddress.value = storedServerAddress;
@@ -57,20 +55,16 @@ class AuthController extends GetxController {
           final User currentUser = await _apiService.getCurrentUser();
           developer.log('Current user retrieved successfully');
           user.value = currentUser;
-          Get.offAllNamed('/home');
         } catch (e) {
           developer.log('Failed to get current user: $e');
           await _storage.delete(key: 'token');
-          Get.offAllNamed('/login');
         }
       } else {
         developer.log('No valid token found, redirecting to login');
-        Get.offAllNamed('/login');
       }
     } catch (e) {
       developer.log('Error in checkAuthStatus: $e');
       await _storage.delete(key: 'token');
-      Get.offAllNamed('/login');
     } finally {
       isLoading.value = false;
       isInitialized.value = true;

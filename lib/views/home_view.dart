@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
 import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
 import 'package:myfinance_client_flutter/controllers/category_controller.dart';
-import 'package:myfinance_client_flutter/controllers/theme_controller.dart';
 import 'package:myfinance_client_flutter/views/expense/expense_view_utils.dart';
 import '../controllers/auth_controller.dart';
 import '../controllers/expense_controller.dart';

@@ -11,6 +11,7 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+  final _serverAddressController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _authController = Get.find<AuthController>();
@@ -45,21 +46,26 @@ class _LoginViewState extends State<LoginView> {
 
   _renderServerAddressForm() {
     String serverAddress = "";
+    final serverAddressField = TextField(
+      decoration: const InputDecoration(
+        labelText: 'Server address',
+        border: OutlineInputBorder(),
+      ),
+      controller: _serverAddressController,
+      onChanged: (value) {
+        serverAddress = value;
+      },
+    );
+    _serverAddressController.text = "http://10.0.2.2:8080/api";
     return Column(
       children: [
         const SizedBox(height: 48),
-        TextField(
-          decoration: const InputDecoration(
-            labelText: 'Server address',
-            border: OutlineInputBorder(),
-          ),
-          onChanged: (value) {
-            serverAddress = value;
-          },
-        ),
+        serverAddressField,
         const SizedBox(height: 16),
         ElevatedButton(
           onPressed: () async {
+            serverAddress = serverAddressField.controller!.text;
+
             final canConnect = await _authController.connect(serverAddress);
             if (canConnect) {
               setState(() {}); // refresh the UI  to show the login form

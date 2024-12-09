@@ -3,9 +3,31 @@ import 'package:flutter_svg/svg.dart';
 import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
 import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:get/get.dart';
 
 class AboutView extends StatelessWidget {
   const AboutView({super.key});
+
+  Future<void> _launchUrl(String urlString) async {
+    try {
+      final Uri url = Uri.parse(urlString);
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        Get.snackbar(
+          'Error',
+          'Could not launch $urlString',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Invalid URL: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,17 +75,6 @@ class AboutView extends StatelessWidget {
                   ' We are working hard to make it stable and secure. Please be patient and report any bugs or issues you find. We appreciate your feedback and suggestions.'),
           const SizedBox(height: 16),
           _buildInfoCard(
-            title: 'Features',
-            content: '''
-• Multi-user support for family members
-• Expense tracking with categories
-• Detailed expense analytics
-• Multiple currency support
-• Customizable settings
-• Secure data storage''',
-          ),
-          const SizedBox(height: 16),
-          _buildInfoCard(
             title: 'Privacy Policy',
             content:
                 'We take your privacy seriously. All your financial data is encrypted '
@@ -73,14 +84,13 @@ class AboutView extends StatelessWidget {
           const SizedBox(height: 16),
           _buildInfoCard(
             title: 'Contact Us',
-            content: 'Email (1): support@sisyphuslab.com\n'
-                'Email (2): sonnguyen9800@gmail.com\n'
-                'Website: www.sisyphuslab.com',
+            content: 'Email: sonnguyen9800@gmail.com\n'
+                'Website: www.sonnguyen9800.com',
           ),
           const SizedBox(height: 32),
           _buildExtraInfoCard(title: "More"),
           Text(
-            '© 2024 MyFinance. All rights reserved.',
+            ' 2024 MyFinance. All rights reserved.',
             style: AppTypography.textTheme.bodyMedium!.copyWith(
               color: AppColors.primary,
             ),
@@ -132,14 +142,13 @@ class AboutView extends StatelessWidget {
               children: [
                 TextButton(
                   onPressed: () {
-                    launchUrl(
-                      Uri.parse('https://github.com/sisyphuslab/myfinance'),
-                    );
+                    _launchUrl(
+                        "https://github.com/sonnguyen9800/MyFinance_Client_Mobile");
                   },
                   child: SvgPicture.asset(
                     'assets/github-mark.svg',
-                    width: 45,
-                    height: 45,
+                    width: 24,
+                    height: 24,
                     colorFilter: ColorFilter.mode(
                       AppColors.primary,
                       BlendMode.srcIn,
@@ -148,13 +157,24 @@ class AboutView extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    launchUrl(
-                      Uri.parse('https://github.com/sisyphuslab/myfinance'),
-                    );
+                    _launchUrl("https://www.linkedin.com/in/sonnguyen9800/");
+                  },
+                  child: SvgPicture.asset(
+                    'assets/iconmonstr-linkedin-3.svg',
+                    width: 24,
+                    height: 24,
+                    colorFilter: ColorFilter.mode(
+                      AppColors.primary,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    _launchUrl("https://www.sonnguyen9800.com");
                   },
                   child: Icon(
                     Icons.home,
-                    size: 50,
                     color: AppColors.primary,
                   ),
                 ),

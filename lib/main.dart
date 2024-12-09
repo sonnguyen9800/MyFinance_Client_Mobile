@@ -29,11 +29,11 @@ void main() async {
   Get.put(prefs);
 
   // Initialize controllers
-  final ThemService = Get.put(ThemeController());
-  final apiService = Get.put(ApiService());
-  final authController = Get.put(AuthController());
-  final expenseController = Get.put(ExpenseController());
-  final categoryController = Get.put(CategoryController());
+  Get.put(ThemeController());
+  Get.put(ApiService());
+  Get.put(AuthController());
+  Get.put(ExpenseController());
+  Get.put(CategoryController());
 
   // Initialize and start connectivity monitoring
   final connectivityService = Get.put(ConnectivityService());

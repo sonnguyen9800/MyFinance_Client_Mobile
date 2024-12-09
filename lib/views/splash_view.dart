@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
 
 class SplashView extends StatelessWidget {
@@ -10,48 +10,35 @@ class SplashView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    authController.checkAuthStatus();
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      body: FutureBuilder<void>(
+        future:
+            authController.checkAuthStatus(), // Ensure this returns a Future
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            Future.delayed(const Duration(seconds: 5), () {
+              Get.offAllNamed('/login'); // Navigate to home after loading
+            });
+          } else {
+            // After checking auth status, navigate to the appropriate screen
+            Future.delayed(const Duration(seconds: 5), () {
+              Get.offAllNamed('/home'); // Navigate to home after loading
+            });
+          }
+
+          return Center(
+            child: SvgPicture.asset(
               'assets/logo.svg',
               width: 120,
               height: 120,
             ),
-            const SizedBox(height: 24),
-            Text(
-              'MyFinance',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-            ),
-            const SizedBox(height: 32),
-            Obx(() {
-              if (!authController.isLoading.value) {
-                Future.delayed(const Duration(milliseconds: 5000), () {
-                  Get.offAllNamed('/home');
-                });
-              }
-              return SizedBox(
-                width: 48,
-                height: 48,
-                child: authController.isLoading.value
-                    ? CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          Theme.of(context).colorScheme.primary,
-                        ),
-                        strokeWidth: 3,
-                      )
-                    : const SizedBox(),
-              );
-            }),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
