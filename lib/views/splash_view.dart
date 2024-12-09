@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
+import '../config/theme/app_typography.dart';
 import '../controllers/auth_controller.dart';
 
 class SplashView extends StatefulWidget {
@@ -15,8 +16,8 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   final AuthController authController = Get.find<AuthController>();
   late AnimationController _logoController;
   late Animation<double> _logoOpacity;
-  late AnimationController _fadeController;
-  late Animation<double> _fadeToBlack;
+  late AnimationController _blackoutController;
+  late Animation<double> _blackoutOpacity;
   bool _isRouting = false;
 
   @override
@@ -32,14 +33,17 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
       CurvedAnimation(parent: _logoController, curve: Curves.easeIn),
     );
 
-    _fadeController = AnimationController(
+    _blackoutController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 1),
-    );
-    _fadeToBlack = Tween<double>(begin: 1.0, end: 0.0).animate(
-      CurvedAnimation(parent: _fadeController, curve: Curves.easeOut),
+      duration: const Duration(milliseconds: 800),
     );
 
+    _blackoutOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _blackoutController,
+        curve: Curves.easeOut,
+      ),
+    );
     _startAnimationSequence();
   }
 
@@ -59,20 +63,20 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   void _navigateTo(String route) async {
     if (_isRouting) return; // Prevent multiple routing
     _isRouting = true;
-
-    // Step 3: Fade out the logo and black out the screen
-    await _fadeController.forward();
+    _logoController.reverse();
+    // Step 3: Fade to black
+    await _blackoutController.forward();
 
     // Step 4: Perform navigation
-    Get.offAllNamed(route);
-
-    // Step 5: Fade in the new page (handled by the next page's animation)
+    Future.delayed(Duration.zero, () {
+      Get.offAllNamed(route);
+    });
   }
 
   @override
   void dispose() {
     _logoController.dispose();
-    _fadeController.dispose();
+    _blackoutController.dispose();
     super.dispose();
   }
 
@@ -82,25 +86,38 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
       backgroundColor: AppColors.accent,
       body: Stack(
         children: [
-          // Background color (initially blank screen)
-          AnimatedBuilder(
-            animation: _fadeToBlack,
-            builder: (context, child) => Container(
-              color: AppColors.accent.withOpacity(_fadeToBlack.value),
-            ),
-          ),
+          // Background color (default is AppColors.accent)
+          Container(color: AppColors.accent),
 
-          // Logo
-          Center(
-            child: FadeTransition(
-              opacity: _logoOpacity,
-              child: SvgPicture.asset(
-                'assets/logo.svg',
-                width: 120,
-                height: 120,
+          // Blackout layer to hide the transition
+          AnimatedBuilder(
+            animation: _blackoutOpacity,
+            builder: (context, child) => Container(
+              color: Colors.black.withOpacity(_blackoutOpacity.value),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'MyFinance',
+                      style: AppTypography.textTheme.headlineMedium!.copyWith(
+                        color: AppColors.primaryDark,
+                      ),
+                    ),
+                    FadeTransition(
+                      opacity: _logoOpacity,
+                      child: SvgPicture.asset(
+                        'assets/logo.svg',
+                        width: 120,
+                        height: 120,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
+          // Logo
         ],
       ),
     );
