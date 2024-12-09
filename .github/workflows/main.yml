@@ -1,45 +1,68 @@
-name: Build APK
+name: Build APK (Dev)
 
 on:
   workflow_dispatch:
-      inputs:
-        branch:
-          description: 'Branch to build'
-          required: true
-          default: 'dev'
+    inputs:
+      branch:
+        description: 'Branch to build'
+        required: true
+        default: 'dev'
 
 jobs:
   build-apk:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
+    # Step 1: Checkout the specified branch
     - name: Checkout Code
       uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.inputs.branch }}
 
-    - name: Setup Flutter
+    # Step 2: Install Java JDK
+    - name: Install Java
+      run: |
+        sudo apt update
+        sudo apt install -y openjdk-11-jdk
+        java -version
+
+    # Step 3: Set up Flutter
+    - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.24.5'
 
+    # Step 4: Install Flutter dependencies
     - name: Install Dependencies
       run: flutter pub get
 
+    # Step 5: Set up Android SDK (Version 34.0.0)
     - name: Set up Android SDK
-      env:
-        ANDROID_HOME: ${{ env.ANDROID_HOME }}
       run: |
-        echo "Setting up Android SDK"
-        setx ANDROID_HOME C:\Android
-        setx PATH "%PATH%;%ANDROID_HOME%\tools;%ANDROID_HOME%\platform-tools"
+        sudo apt install -y wget unzip
+        mkdir -p $ANDROID_HOME
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-8502546_latest.zip -O /tmp/cmdline-tools.zip
+        unzip -q /tmp/cmdline-tools.zip -d $ANDROID_HOME
+        mkdir -p $ANDROID_HOME/cmdline-tools
+        mv $ANDROID_HOME/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest
+        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-34"
+        
+        echo "ANDROID_HOME set to $ANDROID_HOME"
+      env:
+        ANDROID_HOME: /home/runner/android-sdk
 
+    # Step 6: Run flutter doctor to validate setup
     - name: Flutter Doctor
       run: flutter doctor
 
+    # Step 7: Build the APK
     - name: Build APK
       run: flutter build apk --release
 
+    # Step 8: Upload APK as an artifact
     - name: Upload APK
       uses: actions/upload-artifact@v3
       with:
-        name: app-release.apk
-        path: build/app/outputs/flutter-apk/app-release.apk
+        name: app-release-dev.apk
+        path: build/app/outputs/flutter-apk/app-release-dev.apk
