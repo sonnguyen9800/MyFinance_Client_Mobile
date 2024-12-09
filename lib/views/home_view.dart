@@ -228,7 +228,10 @@ class HomeView extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           amount,
-          style: AppTypography.textTheme.bodyLarge,
+          style: AppTypography.textTheme.bodyLarge!.copyWith(
+            color: Theme.of(Get.context!).colorScheme.primary,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ],
     );
