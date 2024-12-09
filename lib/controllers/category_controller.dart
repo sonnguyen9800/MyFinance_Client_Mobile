@@ -116,6 +116,9 @@ class CategoryController extends GetxController {
       // API call
       final updatedCategory = await _apiService.updateCategory(id, request);
 
+      // Refresh expenses after successful category deletion
+      final expenseController = Get.find<ExpenseController>();
+      await expenseController.loadExpenses(forceRefresh: true);
       // Update with the real response
       categories[originalIndex] = updatedCategory;
 
@@ -156,7 +159,6 @@ class CategoryController extends GetxController {
       // Refresh expenses after successful category deletion
       final expenseController = Get.find<ExpenseController>();
       await expenseController.loadExpenses(forceRefresh: true);
-      await expenseController.loadLastExpenses();
 
       developer.log('Category deleted successfully: $id');
     } catch (e) {
