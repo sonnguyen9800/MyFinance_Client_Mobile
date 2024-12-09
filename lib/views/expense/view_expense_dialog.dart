@@ -13,9 +13,9 @@ class ViewExpenseDialog extends StatelessWidget {
   final CategoryController _categoryController = Get.find<CategoryController>();
 
   ViewExpenseDialog({
-    Key? key,
+    super.key,
     required this.expense,
-  }) : super(key: key);
+  });
 
   Category _getCategory() {
     if (expense.categoryId == null || expense.categoryId!.isEmpty) {

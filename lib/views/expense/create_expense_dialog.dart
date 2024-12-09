@@ -13,10 +13,10 @@ class UpdateExpenseDialog extends StatefulWidget {
   final ExpenseController expenseController;
 
   const UpdateExpenseDialog({
-    Key? key,
+    super.key,
     this.expense,
     required this.expenseController,
-  }) : super(key: key);
+  });
 
   @override
   State<UpdateExpenseDialog> createState() => _UpdateExpenseDialogState();

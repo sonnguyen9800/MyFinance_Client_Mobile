@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
 import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
@@ -87,11 +88,20 @@ class HomeView extends StatelessWidget {
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary,
             ),
-            child: Text(
-              'MyFinance',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimary,
+            child: Row(
+              children: [
+                Text(
+                  'MyFinance',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                ),
+                Expanded(
+                  child: SvgPicture.asset(
+                    'assets/logo.svg',
                   ),
+                ),
+              ],
             ),
           ),
           ListTile(
@@ -172,8 +182,8 @@ class HomeView extends StatelessWidget {
             ),
             onTap: () {
               Get.back();
-              final AuthController _authController = Get.find<AuthController>();
-              _authController.logout();
+              final AuthController authController = Get.find<AuthController>();
+              authController.logout();
             },
           )
         ],

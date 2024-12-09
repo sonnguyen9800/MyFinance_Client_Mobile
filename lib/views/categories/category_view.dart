@@ -9,7 +9,7 @@ import 'category_card.dart';
 class CategoryView extends StatelessWidget {
   final CategoryController _categoryController = Get.find<CategoryController>();
 
-  CategoryView({Key? key}) : super(key: key);
+  CategoryView({super.key});
 
   @override
   Widget build(BuildContext context) {

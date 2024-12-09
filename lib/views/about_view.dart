@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
+import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutView extends StatelessWidget {
   const AboutView({super.key});
@@ -7,31 +11,28 @@ class AboutView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About'),
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        title: Text('About',
+            style: AppTypography.textTheme.headlineMedium!
+                .copyWith(color: AppColors.primaryDark)),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          const CircleAvatar(
-            radius: 50,
-            child: Icon(
-              Icons.account_balance_wallet,
-              size: 50,
-            ),
+          SvgPicture.asset(
+            'assets/logo.svg',
+            width: 120,
+            height: 120,
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'MyFinance (alpha)',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppTypography.textTheme.headlineMedium,
             textAlign: TextAlign.center,
           ),
-          const Text(
+          Text(
             'Version 0.0.1',
-            style: TextStyle(
-              fontSize: 16,
+            style: AppTypography.textTheme.bodyMedium!.copyWith(
               color: Colors.grey,
             ),
             textAlign: TextAlign.center,
@@ -72,16 +73,16 @@ class AboutView extends StatelessWidget {
           const SizedBox(height: 16),
           _buildInfoCard(
             title: 'Contact Us',
-            content: '''
-              Email: sonnguyen9800@gmail.com
-              Website: www.sonnguyen9800.com''',
+            content: 'Email (1): support@sisyphuslab.com\n'
+                'Email (2): sonnguyen9800@gmail.com\n'
+                'Website: www.sisyphuslab.com',
           ),
           const SizedBox(height: 32),
-          const Text(
+          _buildExtraInfoCard(title: "More"),
+          Text(
             '© 2024 MyFinance. All rights reserved.',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
+            style: AppTypography.textTheme.bodyMedium!.copyWith(
+              color: AppColors.primary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -99,18 +100,65 @@ class AboutView extends StatelessWidget {
           children: [
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: AppTypography.textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
             Text(
               content,
-              style: const TextStyle(
-                fontSize: 14,
+              style: AppTypography.textTheme.bodyMedium!.copyWith(
                 height: 1.5,
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildExtraInfoCard({required String title}) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: AppTypography.textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    launchUrl(
+                      Uri.parse('https://github.com/sisyphuslab/myfinance'),
+                    );
+                  },
+                  child: SvgPicture.asset(
+                    'assets/github-mark.svg',
+                    width: 45,
+                    height: 45,
+                    colorFilter: ColorFilter.mode(
+                      AppColors.primary,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    launchUrl(
+                      Uri.parse('https://github.com/sisyphuslab/myfinance'),
+                    );
+                  },
+                  child: Icon(
+                    Icons.home,
+                    size: 50,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

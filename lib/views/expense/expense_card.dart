@@ -16,9 +16,9 @@ class ExpenseCard extends StatelessWidget {
   final CategoryController _categoryController = Get.find<CategoryController>();
 
   ExpenseCard({
-    Key? key,
+    super.key,
     required this.expense,
-  }) : super(key: key);
+  });
 
   Category _getCategory() {
     if (expense.categoryId == null || expense.categoryId!.isEmpty) {
@@ -45,6 +45,7 @@ class ExpenseCard extends StatelessWidget {
     return ColorHelper.getColor(category.color) ?? Colors.grey;
   }
 
+  @override
   Widget build(BuildContext context) {
     return Obx(() {
       final category = _getCategory();
@@ -108,7 +109,7 @@ class ExpenseCard extends StatelessWidget {
   }
 
   showDropDownMenu(BuildContext context) {
-    final button = context!.findRenderObject() as RenderBox;
+    final button = context.findRenderObject() as RenderBox;
     final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
     final position = RelativeRect.fromRect(
       Rect.fromPoints(

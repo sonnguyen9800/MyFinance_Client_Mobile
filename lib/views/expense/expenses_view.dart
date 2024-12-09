@@ -13,9 +13,7 @@ class ExpensesView extends StatelessWidget {
   final CategoryController _categoryController = Get.find<CategoryController>();
   final String? categoryId;
 
-  ExpensesView({Key? key})
-      : categoryId = Get.parameters['categoryId'],
-        super(key: key);
+  ExpensesView({super.key}) : categoryId = Get.parameters['categoryId'];
 
   @override
   Widget build(BuildContext context) {

@@ -10,7 +10,7 @@ class MonthlyView extends StatelessWidget {
   final ExpenseController controller = Get.find<ExpenseController>();
   final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
 
-  MonthlyView({Key? key}) : super(key: key);
+  MonthlyView({super.key});
 
   String _getMonthYearText(int month, int year) {
     final date = DateTime(year, month);

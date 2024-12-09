@@ -6,16 +6,16 @@ class LimitedWordText extends StatelessWidget {
   final TextStyle? style;
 
   const LimitedWordText({
-    Key? key,
+    super.key,
     required this.text,
     required this.maxChars,
     this.style,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     final truncatedText =
-        text.length > maxChars ? text.substring(0, maxChars) + '...' : text;
+        text.length > maxChars ? '${text.substring(0, maxChars)}...' : text;
     return Text(
       truncatedText,
       style: style,

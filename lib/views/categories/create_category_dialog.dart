@@ -15,10 +15,10 @@ class CreateCategoryDialog extends StatefulWidget {
   final Category? category;
 
   const CreateCategoryDialog({
-    Key? key,
+    super.key,
     required this.categoryController,
     this.category,
-  }) : super(key: key);
+  });
 
   @override
   State<CreateCategoryDialog> createState() => _CreateCategoryDialogState();
@@ -230,7 +230,7 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
                           .createCategory(categoryUpdateRequest);
                     } else {
                       widget.categoryController.updateCategory(
-                          widget.category!.id!, categoryUpdateRequest);
+                          widget.category!.id, categoryUpdateRequest);
                     }
                   },
                   child: Text(widget.category == null ? 'Create' : 'Update'),

@@ -11,11 +11,11 @@ class CategoryCard extends StatelessWidget {
   final CategoryController categoryController;
   final bool isAllowControl;
   const CategoryCard({
-    Key? key,
+    super.key,
     required this.category,
     required this.categoryController,
     required this.isAllowControl,
-  }) : super(key: key);
+  });
 
   void _showOptionsMenu(BuildContext context) {
     final button = context.findRenderObject() as RenderBox;
