@@ -157,7 +157,7 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
                   child: const Text('Cancel'),
                 ),
                 const SizedBox(width: 8),
-                ElevatedButton(
+                TextButton(
                   onPressed: () {
                     if (nameController.text.isEmpty) {
                       Get.snackbar(

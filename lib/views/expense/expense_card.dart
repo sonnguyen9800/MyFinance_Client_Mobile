@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
 import 'package:myfinance_client_flutter/controllers/expense_controller.dart';
 import 'package:myfinance_client_flutter/views/expense/expense_view_utils.dart';
 import 'package:myfinance_client_flutter/views/utils/color_helper.dart';
@@ -44,20 +45,24 @@ class ExpenseCard extends StatelessWidget {
     return ColorHelper.getColor(category.color) ?? Colors.grey;
   }
 
-  Widget _buildCategoryIcon(Category category) {
+  Widget _buildCategoryIcon(BuildContext context, Category category) {
     final IconData? iconData = IconDataHelper.getIconData(category.iconName);
-    if (iconData == null) {
-      return const Icon(
-        Icons.question_mark,
-        color: Colors.white,
-        size: 24,
-      );
-    }
-
-    return Icon(
-      iconData,
-      color: Colors.white,
-      size: 24,
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width * 0.6,
+        maxHeight: MediaQuery.of(context).size.height * 0.6,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.accentLight,
+        shape: BoxShape.circle,
+      ),
+      child: Icon(
+        iconData ?? Icons.question_mark,
+        color: AppColors.primary,
+        size: 25,
+      ),
     );
   }
 
@@ -72,7 +77,7 @@ class ExpenseCard extends StatelessWidget {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: cardColor,
-          child: _buildCategoryIcon(category),
+          child: _buildCategoryIcon(context, category),
         ),
         title: Text(
           maxLines: 2,

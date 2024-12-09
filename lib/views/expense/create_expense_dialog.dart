@@ -199,7 +199,7 @@ class _UpdateExpenseDialogState extends State<UpdateExpenseDialog> {
               style: TextStyle(color: Colors.red),
             ),
           ),
-        ElevatedButton(
+        TextButton(
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               final expense = Expense(
