@@ -95,6 +95,7 @@ class HomeView extends StatelessWidget {
                         color: Theme.of(context).colorScheme.onPrimary,
                       ),
                 ),
+                SizedBox(width: 10),
                 Expanded(
                   child: SvgPicture.asset(
                     'assets/logo.svg',
