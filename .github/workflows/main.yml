@@ -1,10 +1,5 @@
 name: Build APK
 
-on:
-  push:
-    branches:
-      - dev
-
 jobs:
   build-apk:
     runs-on: windows-latest
