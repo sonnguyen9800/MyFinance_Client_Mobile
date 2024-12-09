@@ -3,10 +3,12 @@ import 'package:flutter_iconpicker/Models/configuration.dart';
 import 'package:get/get.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
+import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
 import 'package:myfinance_client_flutter/models/category/api/category_api_model.dart';
 import '../../models/category/category_model.dart';
 import '../../controllers/category_controller.dart';
 import '../utils/icon_helper.dart';
+import 'category_card.dart';
 
 class CreateCategoryDialog extends StatefulWidget {
   final CategoryController categoryController;
@@ -96,6 +98,14 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
 
   @override
   Widget build(BuildContext context) {
+    // Create a preview category with current values
+    final previewCategory = Category(
+      id: 'preview',
+      name: nameController.text.isEmpty ? 'Preview' : nameController.text,
+      iconName: iconName,
+      color: '#${pickerColor.value.toRadixString(16).substring(2)}',
+    );
+
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -110,6 +120,8 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
             TextField(
               controller: nameController,
               enabled: !isDefaultCategory || widget.category == null,
+              onChanged: (value) =>
+                  setState(() {}), // Trigger rebuild for preview
               decoration: InputDecoration(
                 labelText: 'Name',
                 hintText: isDefaultCategory
@@ -122,29 +134,56 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
             Row(
               children: [
                 Expanded(
-                  child: ElevatedButton.icon(
+                  child: ElevatedButton(
                     onPressed: _pickIcon,
-                    icon: Icon(IconDataHelper.getIconData(iconName)),
-                    label: const Text('Pick Icon'),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          WidgetStateProperty.all<Color>(AppColors.accentLight),
+                    ),
+                    child: Text(
+                      'Pick Icon',
+                      style: TextStyle(
+                        color: AppColors.primary,
+                      ),
+                    ),
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(
+                  width: 10,
+                ),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: _showColorPicker,
-                    style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStateProperty.all<Color>(pickerColor),
-                    ),
+                    style: ButtonStyle(),
                     child: const Text(
                       'Pick Color',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.primary,
                       ),
                     ),
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 16),
+            // Preview Card
+            Container(
+              padding: const EdgeInsets.all(0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Preview',
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        fontWeight: FontWeight.bold, color: AppColors.primary),
+                  ),
+                  CategoryCard(
+                    category: previewCategory,
+                    categoryController: widget.categoryController,
+                    isAllowControl: false,
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
             Row(
@@ -193,8 +232,6 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
                       widget.categoryController.updateCategory(
                           widget.category!.id!, categoryUpdateRequest);
                     }
-
-                    //Navigator.of(context).pop();
                   },
                   child: Text(widget.category == null ? 'Create' : 'Update'),
                 ),

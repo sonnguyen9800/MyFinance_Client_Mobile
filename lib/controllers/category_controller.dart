@@ -4,6 +4,8 @@ import '../models/category/category_model.dart';
 import '../services/api_service.dart';
 import 'dart:developer' as developer;
 
+import 'expense_controller.dart';
+
 class CategoryController extends GetxController {
   final ApiService _apiService = Get.find<ApiService>();
   final RxList<Category> categories = <Category>[].obs;
@@ -133,6 +135,12 @@ class CategoryController extends GetxController {
 
       // API call
       await _apiService.deleteCategory(id);
+
+      // Refresh expenses after successful category deletion
+      final expenseController = Get.find<ExpenseController>();
+      await expenseController.loadExpenses(forceRefresh: true);
+      await expenseController.loadLastExpenses();
+
       developer.log('Category deleted successfully: $id');
     } catch (e) {
       // Rollback optimistic update if we have the deleted category
