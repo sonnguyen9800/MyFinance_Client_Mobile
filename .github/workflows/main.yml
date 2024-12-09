@@ -2,6 +2,11 @@ name: Build APK
 
 on:
   workflow_dispatch:
+      inputs:
+        branch:
+          description: 'Branch to build'
+          required: true
+          default: 'dev'
 
 jobs:
   build-apk:
