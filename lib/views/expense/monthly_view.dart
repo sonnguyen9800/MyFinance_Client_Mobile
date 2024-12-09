@@ -35,90 +35,106 @@ class MonthlyView extends StatelessWidget {
     controller.loadMonthlyExpenses();
   }
 
+  Future<void> loadData() async {
+    await controller.loadMonthlyExpenses(
+        callSnackBar: false, loadingControl: false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        title: Obx(() => Text(
-              _getMonthYearText(
-                controller.currentMonth.value,
-                controller.currentYear.value,
-              ),
-              style: AppTypography.textTheme.headlineMedium!
-                  .copyWith(color: AppColors.primaryDark),
-            )),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => controller.loadMonthlyExpenses(forceRefresh: true),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            color: Theme.of(context).primaryColor.withOpacity(0.1),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.chevron_left),
-                  onPressed: () => _navigateMonth(-1),
-                ),
-                Obx(() => Text(
-                      currencyFormat
-                          .format(controller.monthlyTotalAmount.value),
-                      style: Theme.of(context).textTheme.headlineSmall,
+    return FutureBuilder(
+        future: loadData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Scaffold(
+              appBar: AppBar(
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                title: Obx(() => Text(
+                      _getMonthYearText(
+                        controller.currentMonth.value,
+                        controller.currentYear.value,
+                      ),
+                      style: AppTypography.textTheme.headlineMedium!
+                          .copyWith(color: AppColors.primaryDark),
                     )),
-                IconButton(
-                  icon: const Icon(Icons.chevron_right),
-                  onPressed: () => _navigateMonth(1),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Obx(() {
-              final expenses = controller.getExpensesForMonth(
-                controller.currentMonth.value,
-                controller.currentYear.value,
-              );
-
-              if (controller.isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              if (expenses.isEmpty) {
-                return Center(
-                  child: Text(
-                    'No expenses for ${_getMonthYearText(
-                      controller.currentMonth.value,
-                      controller.currentYear.value,
-                    )}',
-                    style: Theme.of(context).textTheme.titleMedium,
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.refresh),
+                    onPressed: () =>
+                        controller.loadMonthlyExpenses(forceRefresh: true),
                   ),
-                );
-              }
+                ],
+              ),
+              body: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    color: Theme.of(context).primaryColor.withOpacity(0.1),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.chevron_left),
+                          onPressed: () => _navigateMonth(-1),
+                        ),
+                        Obx(() {
+                          controller.loadMonthlyExpenses(callSnackBar: false);
+                          return Text(
+                              'Total: ${currencyFormat.format(controller.monthlyTotalAmount.value)}',
+                              style: AppTypography.textTheme.headlineSmall!
+                                  .copyWith(color: AppColors.primary));
+                        }),
+                        IconButton(
+                          icon: const Icon(Icons.chevron_right),
+                          onPressed: () => _navigateMonth(1),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Obx(() {
+                      final expenses = controller.getExpensesForMonth(
+                        controller.currentMonth.value,
+                        controller.currentYear.value,
+                      );
 
-              return RefreshIndicator(
-                onRefresh: () =>
-                    controller.loadMonthlyExpenses(forceRefresh: true),
-                child: ListView.builder(
-                  itemCount: expenses.length,
-                  itemBuilder: (context, index) {
-                    final expense = expenses[index];
-                    return ExpenseCard(
-                      expense: expense,
-                    );
-                  },
-                ),
-              );
-            }),
-          ),
-        ],
-      ),
-    );
+                      if (controller.isLoading.value) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      if (expenses.isEmpty) {
+                        return Center(
+                          child: Text(
+                            'No expenses for ${_getMonthYearText(
+                              controller.currentMonth.value,
+                              controller.currentYear.value,
+                            )}',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        );
+                      }
+
+                      return RefreshIndicator(
+                        onRefresh: () =>
+                            controller.loadMonthlyExpenses(forceRefresh: true),
+                        child: ListView.builder(
+                          itemCount: expenses.length,
+                          itemBuilder: (context, index) {
+                            final expense = expenses[index];
+                            return ExpenseCard(
+                              expense: expense,
+                            );
+                          },
+                        ),
+                      );
+                    }),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        });
   }
 }

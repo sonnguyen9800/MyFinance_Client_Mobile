@@ -102,7 +102,10 @@ class ExpenseController extends GetxController {
     }
   }
 
-  Future<void> loadMonthlyExpenses({bool forceRefresh = false}) async {
+  Future<void> loadMonthlyExpenses(
+      {bool forceRefresh = false,
+      bool callSnackBar = true,
+      bool loadingControl = true}) async {
     try {
       // Check if we have expenses for this month in cache
       final monthlyExpenses =
@@ -116,7 +119,9 @@ class ExpenseController extends GetxController {
         return;
       }
 
-      isLoading.value = true;
+      if (loadingControl) {
+        isLoading.value = true;
+      }
       hasError.value = false;
       errorMessage.value = '';
 
@@ -141,9 +146,13 @@ class ExpenseController extends GetxController {
     } catch (e) {
       hasError.value = true;
       errorMessage.value = e.toString();
-      Get.snackbar('Error', 'Failed to load monthly expenses: $e');
+      if (callSnackBar) {
+        Get.snackbar('Error', 'Failed to load monthly expenses: $e');
+      }
     } finally {
-      isLoading.value = false;
+      if (loadingControl) {
+        isLoading.value = false;
+      }
     }
   }
 
