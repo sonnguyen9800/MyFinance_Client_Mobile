@@ -54,11 +54,12 @@ jobs:
     - name: Clone font_awesome_flutter and Run configurator.sh
       run: |
         git clone https://github.com/fluttercommunity/font_awesome_flutter.git
+        flutter pub get
         cd font_awesome_flutter/util
+        
         chmod +x configurator.sh
         ./configurator.sh --dynamic
         cd ..
-        flutter pub get
         cd ..  
     - name: Show Current Working Directory (#2)
       run: | 
