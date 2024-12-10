@@ -26,7 +26,6 @@ jobs:
 
     - name: Locate font_awesome_flutter and Run configurator.sh
       run: |
-        cd MyFinance_Client_Mobile
         flutter pub get
   
         # Locate package_config.json
