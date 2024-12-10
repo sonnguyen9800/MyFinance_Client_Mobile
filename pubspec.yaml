@@ -56,7 +56,6 @@ dependency_overrides:
     git:
       url: https://github.com/fluttercommunity/font_awesome_flutter
       ref: master
-      path: ./packages/font_awesome_flutter
 #    path: D:/Projects/font_awesome_flutter-master
     
 dev_dependencies:
