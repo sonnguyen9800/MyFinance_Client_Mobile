@@ -13,6 +13,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+    # Step 0: Clone font_awesome_flutter and configure it
+    - name: Clone font_awesome_flutter and Run configurator.sh
+      run: |
+        git clone https://github.com/fluttercommunity/font_awesome_flutter.git
+        cd font_awesome_flutter/util
+        chmod +x configurator.sh
+        ./configurator.sh --dynamic
+        cd ..
+        flutter pub get
+        cd ..
     # Step 1: Checkout the specified branch
     - name: Checkout Code
       uses: actions/checkout@v3
@@ -24,35 +35,7 @@ jobs:
       with:
         flutter-version: '3.24.5'
 
-    - name: Locate font_awesome_flutter and Run configurator.sh
-      run: |
-        flutter pub get
-  
-        # Locate package_config.json
-        CONFIG_PATH=".dart_tool/package_config.json"
-        if [ ! -f "$CONFIG_PATH" ]; then
-          echo "Error: package_config.json not found."
-          exit 1
-        fi
-  
-        # Parse package_config.json to find font_awesome_flutter's rootUri
-        ROOT_URI=$(jq -r '.packages[] | select(.name == "font_awesome_flutter") | .rootUri' $CONFIG_PATH)
-  
-        if [ "$ROOT_URI" == "" ]; then
-          echo "Error: font_awesome_flutter not found in package_config.json."
-          exit 1
-        fi
-  
-        # Navigate to the dependency's util folder
-        DEPENDENCY_DIR="$(echo $ROOT_URI | sed 's|file://||')"
-        cd "$DEPENDENCY_DIR/"
-        flutter pub get
 
-        cd "$DEPENDENCY_DIR/util"
-  
-        # Run configurator.sh
-        chmod +x configurator.sh
-        ./configurator.sh
     # Step 5: Set up Android SDK (Version 34.0.0)
     - name: Set up Android SDK
       run: |
