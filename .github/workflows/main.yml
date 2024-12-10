@@ -11,8 +11,15 @@ on:
 jobs:
   build-apk:
     runs-on: ubuntu-latest
+    
 
+    
     steps:
+
+    - name: Show Current Working Directory
+      run: | 
+          pwd
+    
      # Set up Android SDK (Version 34.0.0)
     - name: Set up JDK 21
       uses: actions/setup-java@v3
@@ -23,7 +30,9 @@ jobs:
     
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
-    
+
+      
+
       
     # Install flutter
     - name: Install Flutter
@@ -46,7 +55,10 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: ${{ github.event.inputs.branch }}
-
+    - name: Show Current Working Directory
+      run: | 
+          pwd
+          ls
                  
 
     # Step 4: Install Flutter dependencies
