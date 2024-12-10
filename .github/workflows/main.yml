@@ -40,16 +40,6 @@ jobs:
       with:
         flutter-version: '3.24.5'
 
-    # Step 0: Clone font_awesome_flutter and configure it
-    - name: Clone font_awesome_flutter and Run configurator.sh
-      run: |
-        git clone https://github.com/fluttercommunity/font_awesome_flutter.git
-        cd font_awesome_flutter/util
-        chmod +x configurator.sh
-        ./configurator.sh --dynamic
-        cd ..
-        flutter pub get
-        cd ..
     # Step 1: Checkout the specified branch
     - name: Checkout Code
       uses: actions/checkout@v3
@@ -59,8 +49,22 @@ jobs:
       run: | 
           pwd
           ls
-                 
-
+    
+    # Clone font_awesome_flutter and configure it    
+    - name: Clone font_awesome_flutter and Run configurator.sh
+      run: |
+        git clone https://github.com/fluttercommunity/font_awesome_flutter.git
+        cd font_awesome_flutter/util
+        chmod +x configurator.sh
+        ./configurator.sh --dynamic
+        cd ..
+        flutter pub get
+        cd ..  
+    - name: Show Current Working Directory (#2)
+      run: | 
+          pwd
+          ls
+          
     # Step 4: Install Flutter dependencies
     - name: Install Dependencies
       run: flutter pub get
