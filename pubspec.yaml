@@ -50,6 +50,7 @@ dependencies:
   dropdown_button2: ^2.3.9
   flutter_svg: ^2.0.9  # For SVG support
   url_launcher: ^6.3.1
+  flutter_launcher_icons: ^0.14.2
 
 dependency_overrides:
   font_awesome_flutter:
