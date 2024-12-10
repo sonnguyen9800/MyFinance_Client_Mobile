@@ -18,24 +18,39 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: ${{ github.event.inputs.branch }}
-
-    # Step 2: Install Java JDK
-    - name: Install Java
-      run: |
-        sudo apt update
-        sudo apt install -y openjdk-11-jdk
-        java -version
-
-    # Step 3: Set up Flutter
-    - name: Set up Flutter
+    # Install flutter
+    - name: Install Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.24.5'
 
-    # Step 4: Install Flutter dependencies
-    - name: Install Dependencies
-      run: flutter pub get
-
+    - name: Locate font_awesome_flutter and Run configurator.sh
+      run: |
+        cd MyFinance_Client_Mobile
+        flutter pub get
+  
+        # Locate package_config.json
+        CONFIG_PATH=".dart_tool/package_config.json"
+        if [ ! -f "$CONFIG_PATH" ]; then
+          echo "Error: package_config.json not found."
+          exit 1
+        fi
+  
+        # Parse package_config.json to find font_awesome_flutter's rootUri
+        ROOT_URI=$(jq -r '.packages[] | select(.name == "font_awesome_flutter") | .rootUri' $CONFIG_PATH)
+  
+        if [ "$ROOT_URI" == "" ]; then
+          echo "Error: font_awesome_flutter not found in package_config.json."
+          exit 1
+        fi
+  
+        # Navigate to the dependency's util folder
+        DEPENDENCY_DIR="$(echo $ROOT_URI | sed 's|file://||')"
+        cd "$DEPENDENCY_DIR/util"
+  
+        # Run configurator.sh
+        chmod +x configurator.sh
+        ./configurator.sh
     # Step 5: Set up Android SDK (Version 34.0.0)
     - name: Set up Android SDK
       run: |
@@ -50,7 +65,11 @@ jobs:
         
         echo "ANDROID_HOME set to $ANDROID_HOME"
       env:
-        ANDROID_HOME: /home/runner/android-sdk
+        ANDROID_HOME: /home/runner/android-sdk      
+
+    # Step 4: Install Flutter dependencies
+    - name: Install Dependencies
+      run: flutter pub get
 
     # Step 6: Run flutter doctor to validate setup
     - name: Flutter Doctor
