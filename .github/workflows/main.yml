@@ -54,7 +54,7 @@ jobs:
     - name: Clone font_awesome_flutter and Run configurator.sh
       run: |
         git clone https://github.com/fluttercommunity/font_awesome_flutter.git
-        flutter pub get
+        flutter pub get --verbose
         cd font_awesome_flutter/util
         
         chmod +x configurator.sh
