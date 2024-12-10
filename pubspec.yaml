@@ -53,7 +53,7 @@ dependencies:
 
 dependency_overrides:
   font_awesome_flutter:
-    path: ../font_awesome_flutter
+    path: ./font_awesome_flutter
 dev_dependencies:
   flutter_test:
     sdk: flutter
