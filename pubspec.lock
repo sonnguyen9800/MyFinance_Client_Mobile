@@ -453,11 +453,9 @@ packages:
   font_awesome_flutter:
     dependency: "direct main"
     description:
-      path: "."
-      ref: master
-      resolved-ref: "9777a6a5196d7f68e4181049909362ed707d0ab7"
-      url: "https://github.com/fluttercommunity/font_awesome_flutter"
-    source: git
+      path: "../font_awesome_flutter"
+      relative: true
+    source: path
     version: "10.8.0"
   frontend_server_client:
     dependency: transitive

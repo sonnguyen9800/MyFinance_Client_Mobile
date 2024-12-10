@@ -53,11 +53,7 @@ dependencies:
 
 dependency_overrides:
   font_awesome_flutter:
-    git:
-      url: https://github.com/fluttercommunity/font_awesome_flutter
-      ref: master
-#    path: D:/Projects/font_awesome_flutter-master
-    
+    path: ../font_awesome_flutter
 dev_dependencies:
   flutter_test:
     sdk: flutter
