@@ -1,0 +1,109 @@
+name: Build APK (Dev)
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to build'
+        required: true
+        default: 'dev'
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    
+
+    
+    steps:
+
+    - name: Show Current Working Directory
+      run: | 
+          pwd
+        # Install flutter
+    - name: Install Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.5'
+
+    # Step 1: Checkout the specified branch
+    - name: Checkout Code
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.inputs.branch }}
+    - name: Show Current Working Directory
+      run: | 
+          pwd
+          ls
+    
+    # Clone font_awesome_flutter and configure it    
+    - name: Clone font_awesome_flutter and Run configurator.sh
+      run: |
+        git clone https://github.com/fluttercommunity/font_awesome_flutter.git
+        flutter pub add ansicolor
+        flutter pub add recase
+        flutter pub add version
+        cd font_awesome_flutter/util
+        
+        chmod +x configurator.sh
+        ./configurator.sh --dynamic
+        cd ..
+        cd ..  
+    - name: Show Current Working Directory (#2)
+      run: | 
+          pwd
+          ls
+          
+     # Set up Android SDK (Version 34.0.0)
+    - name: Set up JDK 21
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+          
+    # Step 4: Install Flutter dependencies
+    - name: Install Dependencies
+      run: flutter pub get
+
+    # Step 6: Run flutter doctor to validate setup
+    - name: Flutter Doctor
+      run: flutter doctor
+
+    # Step 7: Build the APK
+    - name: Build APK
+      run: flutter build apk --release
+      
+
+    - name: Update CHANGELOG
+      id: changelog
+      uses: requarks/changelog-action@v1
+      with:
+        token: ${{ github.token }}
+        tag: ${{ github.ref_name }}
+
+    - name: Create Release
+      uses: ncipollo/release-action@v1.12.0
+      with:
+        allowUpdates: true
+        draft: false
+        makeLatest: true
+        name: ${{ github.ref_name }}
+        body: ${{ steps.changelog.outputs.changes }}
+        token: ${{ github.token }}
+
+    - name: Commit CHANGELOG.md
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        branch: main
+        commit_message: 'docs: update CHANGELOG.md for ${{ github.ref_name }} [skip ci]'
+        file_pattern: CHANGELOG.md
+            
+    # Step 8: Upload APK as an artifact
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: app-release-dev.apk
+        path: build/app/outputs/flutter-apk/app-release.apk
