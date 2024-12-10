@@ -71,7 +71,17 @@ jobs:
     # Step 7: Build the APK
     - name: Build APK
       run: flutter build apk --release
-    
+
+    - name: Create Release
+      id: create_release
+      uses: comnoco/create-release@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: true
             
     # Step 8: Upload APK as an artifact
     - name: Upload APK
