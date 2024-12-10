@@ -75,10 +75,13 @@ jobs:
     # Step 7: Build the APK
     - name: Build APK
       run: flutter build apk --release
-
+      
+    - name: Changelog from Conventional Commits
+      uses: requarks/changelog-action@v1.10.2
+            
     # Step 8: Upload APK as an artifact
     - name: Upload APK
       uses: actions/upload-artifact@v3
       with:
         name: app-release-dev.apk
-        path: build/app/outputs/flutter-apk/app-release-dev.apk
+        path: build/app/outputs/flutter-apk/app-release.apk
