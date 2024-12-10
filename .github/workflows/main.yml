@@ -45,6 +45,9 @@ jobs:
   
         # Navigate to the dependency's util folder
         DEPENDENCY_DIR="$(echo $ROOT_URI | sed 's|file://||')"
+        cd "$DEPENDENCY_DIR/"
+        flutter pub get
+
         cd "$DEPENDENCY_DIR/util"
   
         # Run configurator.sh
