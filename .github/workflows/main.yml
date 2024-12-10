@@ -24,8 +24,6 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
     
-    - name: Build SampleApplication
-      run: ./gradlew --no-daemon build
       
     # Install flutter
     - name: Install Flutter
