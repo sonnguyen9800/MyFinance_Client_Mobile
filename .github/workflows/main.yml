@@ -72,25 +72,31 @@ jobs:
     - name: Build APK
       run: flutter build apk --release
 
+    - name: Load .env file 2
+      run: |
+        echo "Loading environment variables..."
+        export $(cat .env | xargs)
+
+
     - name: Load .env file
       run: |
         echo "Loading environment variables..."
         export $(cat .env | xargs)
 
-    - name: Create Release
-      id: create_release
-      uses: comnoco/create-release@v2
-      env:
-        GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: true
+    # - name: Create Release
+    #   id: create_release
+    #   uses: comnoco/create-release@v2
+    #   env:
+    #     GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+    #   with:
+    #     tag_name: ${{ github.ref }}
+    #     release_name: Release ${{ github.ref }}
+    #     draft: false
+    #     prerelease: true
             
-    # Step 8: Upload APK as an artifact
-    - name: Upload APK
-      uses: actions/upload-artifact@v3
-      with:
-        name: app-release-dev.apk
-        path: build/app/outputs/flutter-apk/app-release.apk
+    # # Step 8: Upload APK as an artifact
+    # - name: Upload APK
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: app-release-dev.apk
+    #     path: build/app/outputs/flutter-apk/app-release.apk
