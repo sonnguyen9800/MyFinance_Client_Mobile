@@ -48,7 +48,10 @@ class AuthApiService extends BaseApiService {
   Future<User> getCurrentUser() async {
     try {
       developer.log('Getting current user');
+      dio.options.headers['Authorization'] =
+          'Bearer ${storage.read(key: 'token')}';
       final response = await dio.post('$baseUrl/user');
+
       return User.fromJson(response.data);
     } catch (e) {
       developer.log('getCurrentUser error: $e');

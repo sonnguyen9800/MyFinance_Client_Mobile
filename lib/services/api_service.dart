@@ -28,8 +28,10 @@ class ApiService extends GetxService {
 
   Future<bool> _ping(String address) async {
     try {
+      final dio = Dio()..options.connectTimeout = Duration(seconds: 5);
+
       address = address.trim();
-      final response = await Dio().get('$address/ping');
+      final response = await dio.get('$address/ping');
 
       PingResponse pingResponse = PingResponse.fromJson(response.data);
 

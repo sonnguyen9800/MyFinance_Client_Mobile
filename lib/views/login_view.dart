@@ -114,6 +114,13 @@ class _LoginViewState extends State<LoginView> {
         onPressed: () => Get.toNamed('/signup'),
         child: const Text('Don\'t have an account? Sign up'),
       ),
+      TextButton(
+        onPressed: () {
+          _authController.serverAddress.value = '';
+          setState(() {});
+        },
+        child: const Text('Select different server?'),
+      ),
     ]);
   }
 }
