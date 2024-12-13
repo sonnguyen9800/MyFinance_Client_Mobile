@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 import '../models/api/auth_response.dart';
 import '../models/user/user_model.dart';
 import 'base_api_service.dart';
@@ -48,8 +50,7 @@ class AuthApiService extends BaseApiService {
   Future<User> getCurrentUser() async {
     try {
       developer.log('Getting current user');
-      dio.options.headers['Authorization'] =
-          'Bearer ${storage.read(key: 'token')}';
+      final dio = Dio()..options.connectTimeout = Duration(seconds: 5);
       final response = await dio.post('$baseUrl/user');
 
       return User.fromJson(response.data);

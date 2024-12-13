@@ -48,6 +48,7 @@ class AuthController extends GetxController {
           return;
         }
         serverAddress.value = storedServerAddress;
+        _apiService.updateBaseUrl(serverAddress.value);
       }
 
       if (token != null && token.isNotEmpty) {
