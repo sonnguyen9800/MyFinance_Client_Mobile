@@ -8,16 +8,16 @@ jobs:
   build:
     name: Build Flutter Project
     runs-on: ubuntu-latest
-
+    container:
+      image: catthehacker/ubuntu:act-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up Flutter
-        run: |
-          git clone https://github.com/flutter/flutter.git -b stable
-          export PATH="$PWD/flutter/bin:$PATH"
-          flutter doctor
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
 
       - name: Install dependencies
         run: flutter pub get
