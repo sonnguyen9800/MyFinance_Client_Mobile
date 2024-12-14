@@ -15,11 +15,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Show Git Status
-        run: git status
-    
 
-          # Clone font_awesome_flutter and configure it    
+      - name: Install Node.js
+        run: |
+          curl -sL https://deb.nodesource.com/setup_20.x | bash -
+          apt-get install -y nodejs
+
+      # Clone font_awesome_flutter and configure it    
       - name: Clone font_awesome_flutter and Run configurator.sh
         run: |
           if [ -d "font_awesome_flutter" ]; then rm -rf font_awesome_flutter; fi
@@ -64,13 +66,13 @@ jobs:
           cp build/app/outputs/flutter-apk/app-release.apk artifacts/
           cp build/app/outputs/bundle/release/app-release.aab artifacts/
       - name: Upload APK to GitHub Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.4.3
         with:
           name: app-release-apk
           path: artifacts/app-release.apk
   
       - name: Upload AAB to GitHub Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.4.3
         with:
           name: app-release-aab
           path: artifacts/app-release.aab
@@ -85,6 +87,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+
+      - name: Install Node.js
+        run: |
+          curl -sL https://deb.nodesource.com/setup_20.x | bash -
+          apt-get install -y nodejs
+
+        
 
       - name: Download APK and AAB
         uses: actions/download-artifact@v3
@@ -106,13 +116,13 @@ jobs:
           cat changelog.md
 
       - name: Upload APK to release assets
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.4.3
         with:
           name: app-release.apk
           path: artifacts/app-release.apk
 
       - name: Upload AAB to release assets
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.4.3
         with:
           name: app-release.aab
           path: artifacts/app-release.aab
