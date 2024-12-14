@@ -9,21 +9,51 @@ jobs:
     name: Build Flutter Project
     runs-on: ubuntu-latest
     container:
-      image: catthehacker/ubuntu:act-latest
+      image: ghcr.io/cirruslabs/flutter:3.24.5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.24.5'
+      - name: Show Git Status
+        run: git status
+    
 
+          # Clone font_awesome_flutter and configure it    
+      - name: Clone font_awesome_flutter and Run configurator.sh
+        run: |
+          if [ -d "font_awesome_flutter" ]; then rm -rf font_awesome_flutter; fi
+          
+          
+          git clone https://github.com/fluttercommunity/font_awesome_flutter.git
+          flutter pub add ansicolor
+          flutter pub add recase
+          flutter pub add version
+          cd font_awesome_flutter/util
+          
+          chmod +x configurator.sh
+          ./configurator.sh --dynamic
+          cd ..
+          cd ..  
+
+            
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Show Current Working Directory
+        run: | 
+          pwd
+          ls
+
+      - name: Remove Gradle Caches
+        run: |
+          rm -rf /root/.gradle/daemon
+          rm -rf /root/.gradle/caches
+
+      
       - name: Build APK
-        run: flutter build apk --release
+        run:  flutter build apk --release --verbose
+
 
       - name: Build AppBundle
         run: flutter build appbundle
@@ -33,15 +63,34 @@ jobs:
           mkdir -p artifacts
           cp build/app/outputs/flutter-apk/app-release.apk artifacts/
           cp build/app/outputs/bundle/release/app-release.aab artifacts/
+      - name: Upload APK to GitHub Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: artifacts/app-release.apk
+  
+      - name: Upload AAB to GitHub Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-aab
+          path: artifacts/app-release.aab
 
   release:
     name: Create Release
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/cirruslabs/flutter:3.24.5
     needs: build
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Download APK and AAB
+        uses: actions/download-artifact@v3
+        with:
+          name: app-release-apk
+          path: ./artifacts
 
       - name: Get contributors and commits
         id: changelog
@@ -56,7 +105,14 @@ jobs:
           echo "Release changelog:"
           cat changelog.md
 
-      - name: Upload release assets
-        run: |
-          echo "Uploading APK and AAB to release artifacts"
-          ls -l artifacts
+      - name: Upload APK to release assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release.apk
+          path: artifacts/app-release.apk
+
+      - name: Upload AAB to release assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release.aab
+          path: artifacts/app-release.aab
