@@ -12,6 +12,9 @@ jobs:
       image: ghcr.io/cirruslabs/flutter:3.24.5
 
     steps:
+      - name: Git config safe.directory
+        run: git config --global --add safe.directory '*'
+        
       - name: Checkout code
         uses: actions/checkout@v4
 
