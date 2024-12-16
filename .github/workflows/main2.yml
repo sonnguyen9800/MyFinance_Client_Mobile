@@ -71,14 +71,22 @@ jobs:
           cp build/app/outputs/flutter-apk/app-release.apk artifacts/
           cp build/app/outputs/bundle/release/app-release.aab artifacts/
 
-      - name: Generate Changelog
+    #   - name: Generate Changelog
+    #     id: changelog
+    #     run: |
+    #       changelog=$(git log --pretty=format:'- %an: %s' -n 10)
+    #       changelog="${changelog//'%'/'%25'}"
+    #       changelog="${changelog//$'\n'/'%0A'}"
+    #       changelog="${changelog//$'\r'/'%0D'}"
+    #       echo "content=$changelog" >> $GITHUB_OUTPUT
+
+      - name: Get contributors and commits
         id: changelog
         run: |
-          changelog=$(git log --pretty=format:'- %an: %s' -n 10)
-          changelog="${changelog//'%'/'%25'}"
-          changelog="${changelog//$'\n'/'%0A'}"
-          changelog="${changelog//$'\r'/'%0D'}"
-          echo "content=$changelog" >> $GITHUB_OUTPUT
+          echo "# Changelog" > changelog.md
+          echo "\n## Contributors and Commits" >> changelog.md
+          git log --pretty=format:'- %an: %s' >> changelog.md
+
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
