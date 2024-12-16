@@ -6,7 +6,7 @@ import '../config/theme/app_typography.dart';
 import '../controllers/auth_controller.dart';
 
 class SplashView extends StatefulWidget {
-  const SplashView({Key? key}) : super(key: key);
+  const SplashView({super.key});
 
   @override
   State<SplashView> createState() => _SplashViewState();

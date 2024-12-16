@@ -11,7 +11,6 @@ import '../models/expense/expense_model.dart';
 import 'package:intl/intl.dart';
 
 import 'expense/expense_card.dart';
-import '../widgets/theme_switch.dart';
 
 class HomeView extends StatelessWidget {
   HomeView({super.key});

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
 import 'package:myfinance_client_flutter/views/categories/category_card.dart';
 import '../../controllers/expense_controller.dart';
 import '../../controllers/category_controller.dart';
