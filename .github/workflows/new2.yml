@@ -12,6 +12,9 @@ jobs:
       image: ghcr.io/cirruslabs/flutter:3.24.5
 
     steps:
+      - name: Git config safe.directory
+        run: git config --global --add safe.directory '*'
+        
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -77,30 +80,6 @@ jobs:
           name: app-release-aab
           path: artifacts/app-release.aab
 
-  release:
-    name: Create Release
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/cirruslabs/flutter:3.24.5
-    needs: build
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-
-      - name: Install Node.js
-        run: |
-          curl -sL https://deb.nodesource.com/setup_20.x | bash -
-          apt-get install -y nodejs
-
-        
-
-      - name: Download APK and AAB
-        uses: actions/download-artifact@v3
-        with:
-          name: app-release-apk
-          path: ./artifacts
 
       - name: Get contributors and commits
         id: changelog
@@ -114,15 +93,16 @@ jobs:
           echo "Creating GitHub release for tag $GITHUB_REF_NAME"
           echo "Release changelog:"
           cat changelog.md
-
       - name: Upload APK to release assets
         uses: actions/upload-artifact@v4.4.3
         with:
           name: app-release.apk
           path: artifacts/app-release.apk
-
+  
       - name: Upload AAB to release assets
         uses: actions/upload-artifact@v4.4.3
         with:
           name: app-release.aab
           path: artifacts/app-release.aab
+          
+  
