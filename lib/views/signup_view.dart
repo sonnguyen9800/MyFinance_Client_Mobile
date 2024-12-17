@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
+import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
 import '../controllers/auth_controller.dart';
 
 class SignupView extends StatelessWidget {
@@ -15,7 +17,11 @@ class SignupView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sign Up'),
+        title: Text(
+          'Sign Up',
+          style: AppTypography.textTheme.headlineMedium!
+              .copyWith(color: AppColors.primaryDark),
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(

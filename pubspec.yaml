@@ -55,6 +55,14 @@ dependencies:
 dependency_overrides:
   font_awesome_flutter:
     path: ./font_awesome_flutter
+
+flutter_launcher_icons:
+  image_path: "assets/icon/icon.png"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/icon/icon.png"
+  android: "launcher_icon"
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

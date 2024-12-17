@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
 
@@ -26,6 +27,12 @@ class _LoginViewState extends State<LoginView> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                SvgPicture.asset(
+                  'assets/logo.svg',
+                  width: 120,
+                  height: 120,
+                ),
+                const SizedBox(height: 20),
                 const Text(
                   'MyFinance',
                   style: TextStyle(
@@ -78,49 +85,50 @@ class _LoginViewState extends State<LoginView> {
   }
 
   _renderLoginForm() {
-    return Column(children: [
-      const SizedBox(height: 48),
-      TextField(
-        controller: _emailController,
-        decoration: const InputDecoration(
-          labelText: 'Email',
-          border: OutlineInputBorder(),
-        ),
-        keyboardType: TextInputType.emailAddress,
-      ),
-      const SizedBox(height: 16),
-      TextField(
-        controller: _passwordController,
-        decoration: const InputDecoration(
-          labelText: 'Password',
-          border: OutlineInputBorder(),
-        ),
-        obscureText: true,
-      ),
-      const SizedBox(height: 24),
-      Obx(() => ElevatedButton(
-            onPressed: _authController.isLoading.value
-                ? null
-                : () => _authController.login(
-                      _emailController.text,
-                      _passwordController.text,
-                    ),
-            child: _authController.isLoading.value
-                ? const CircularProgressIndicator()
-                : const Text('Login'),
-          )),
-      const SizedBox(height: 16),
-      TextButton(
-        onPressed: () => Get.toNamed('/signup'),
-        child: const Text('Don\'t have an account? Sign up'),
-      ),
-      TextButton(
-        onPressed: () {
-          _authController.serverAddress.value = '';
-          setState(() {});
-        },
-        child: const Text('Select different server?'),
-      ),
-    ]);
+    return Column(
+        verticalDirection: VerticalDirection.down,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          const SizedBox(height: 10),
+          TextField(
+            controller: _emailController,
+            decoration: const InputDecoration(
+              labelText: 'Email',
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.emailAddress,
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: _passwordController,
+            decoration: const InputDecoration(
+              labelText: 'Password',
+              border: OutlineInputBorder(),
+            ),
+            obscureText: true,
+          ),
+          Obx(() => ElevatedButton(
+                onPressed: _authController.isLoading.value
+                    ? null
+                    : () => _authController.login(
+                          _emailController.text,
+                          _passwordController.text,
+                        ),
+                child: _authController.isLoading.value
+                    ? const CircularProgressIndicator()
+                    : const Text('Login'),
+              )),
+          TextButton(
+            onPressed: () => Get.toNamed('/signup'),
+            child: const Text('Don\'t have an account? Sign up'),
+          ),
+          TextButton(
+            onPressed: () {
+              _authController.serverAddress.value = '';
+              setState(() {});
+            },
+            child: const Text('Select different server?'),
+          ),
+        ]);
   }
 }
