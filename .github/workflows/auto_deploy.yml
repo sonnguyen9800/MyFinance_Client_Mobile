@@ -90,8 +90,8 @@ jobs:
                 ## Release Notes
                 This is a ${{ contains(steps.branch_name.outputs.branch, 'dev') && 'prerelease' || 'release' }} for tag **${{ steps.extract_tag.outputs.tag }}**.
             files: |
-                artifacts/*-release.apk
-                artifacts/app-release.aab
+                artifacts/*.apk
+                artifacts/*.aab
             draft: false
             prerelease: ${{ contains(steps.branch_name.outputs.branch, 'dev') }}
 
@@ -99,7 +99,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-release-apks
-          path: artifacts/*-release.apk
+          path: artifacts/*.apk
   
       - name: Upload AAB to GitHub Artifacts
         uses: actions/upload-artifact@v4
