@@ -75,23 +75,6 @@ jobs:
           cp build/app/outputs/flutter-apk/app-release.apk artifacts/
           cp build/app/outputs/bundle/release/app-release.aab artifacts/
 
-    #   - name: Generate Changelog
-    #     id: changelog
-    #     run: |
-    #       changelog=$(git log --pretty=format:'- %an: %s' -n 10)
-    #       changelog="${changelog//'%'/'%25'}"
-    #       changelog="${changelog//$'\n'/'%0A'}"
-    #       changelog="${changelog//$'\r'/'%0D'}"
-    #       echo "content=$changelog" >> $GITHUB_OUTPUT
-
-      - name: Get contributors and commits
-        id: changelog
-        run: |
-          echo "# Changelog" > changelog.md
-          echo "\n## Contributors and Commits" >> changelog.md
-          git log --pretty=format:'- %an: %s' >> changelog.md
-
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -106,7 +89,7 @@ jobs:
             artifacts/app-release.apk
             artifacts/app-release.aab
           draft: false
-          prerelease: false
+          prerelease: ${{ github.event.inputs.is_release }}
 
       - name: Upload APK to GitHub Artifacts
         uses: actions/upload-artifact@v4
