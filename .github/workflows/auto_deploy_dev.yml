@@ -1,8 +1,14 @@
-name: Build and Release Flutter App
+name: Build and Release on Dev Tag
 
 on:
-  workflow_dispatch:
-
+  push:
+    tags:
+      - 'v*.*.*'  # Matches tags like v1.0.2
+    branches:
+      - dev        # Only triggers if the tag is pushed to the 'dev' branch
+        
+permissions:
+  contents: write # Allow writing releases and uploading assets
 
 jobs:
   build:
@@ -12,12 +18,19 @@ jobs:
       image: ghcr.io/cirruslabs/flutter:3.24.5
 
     steps:
+      - name: Get version tag
+        id: extract_tag
+        run: echo "::set-output name=tag::${GITHUB_REF#refs/tags/}"
+
+      - name: Debug extracted tag
+        run: |
+          echo "Extracted tag: ${{ steps.extract_tag.outputs.tag }}"
+
       - name: Git config safe.directory
         run: git config --global --add safe.directory '*'
         
       - name: Checkout code
         uses: actions/checkout@v4
-
 
       - name: Install Node.js
         run: |
@@ -28,7 +41,6 @@ jobs:
       - name: Clone font_awesome_flutter and Run configurator.sh
         run: |
           if [ -d "font_awesome_flutter" ]; then rm -rf font_awesome_flutter; fi
-          
           
           git clone https://github.com/fluttercommunity/font_awesome_flutter.git
           flutter pub add ansicolor
@@ -41,7 +53,6 @@ jobs:
           cd ..
           cd ..  
 
-            
       - name: Install dependencies
         run: flutter pub get
 
@@ -55,54 +66,40 @@ jobs:
           rm -rf /root/.gradle/daemon
           rm -rf /root/.gradle/caches
 
-      
       - name: Build APK
-        run:  flutter build apk --release --verbose
-
+        run: flutter build apk --release --verbose
 
       - name: Build AppBundle
         run: flutter build appbundle
 
-      - name: Upload artifacts
+      - name: Prepare artifacts
         run: |
           mkdir -p artifacts
           cp build/app/outputs/flutter-apk/app-release.apk artifacts/
           cp build/app/outputs/bundle/release/app-release.aab artifacts/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name:  ${{ steps.extract_tag.outputs.tag }}
+          name: Release ${{ steps.extract_tag.outputs.tag }}
+          body: |
+            ## Release Notes
+            This is a development release for tag **${{ steps.extract_tag.outputs.tag }}**.
+          files: |
+            artifacts/app-release.apk
+            artifacts/app-release.aab
+          draft: false
+          prerelease: true
+
       - name: Upload APK to GitHub Artifacts
-        uses: actions/upload-artifact@v4.4.3
+        uses: actions/upload-artifact@v4
         with:
           name: app-release-apk
           path: artifacts/app-release.apk
   
       - name: Upload AAB to GitHub Artifacts
-        uses: actions/upload-artifact@v4.4.3
+        uses: actions/upload-artifact@v4
         with:
           name: app-release-aab
           path: artifacts/app-release.aab
-
-
-      - name: Get contributors and commits
-        id: changelog
-        run: |
-          echo "# Changelog" > changelog.md
-          echo "\n## Contributors and Commits" >> changelog.md
-          git log --pretty=format:'- %an: %s' >> changelog.md
-
-      - name: Create GitHub Release
-        run: |
-          echo "Creating GitHub release for tag $GITHUB_REF_NAME"
-          echo "Release changelog:"
-          cat changelog.md
-      - name: Upload APK to release assets
-        uses: actions/upload-artifact@v4.4.3
-        with:
-          name: app-release.apk
-          path: artifacts/app-release.apk
-  
-      - name: Upload AAB to release assets
-        uses: actions/upload-artifact@v4.4.3
-        with:
-          name: app-release.aab
-          path: artifacts/app-release.aab
-          
-  
