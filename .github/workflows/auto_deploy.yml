@@ -1,4 +1,4 @@
-name: Build and Release (Auto)
+name: Build and Release (Auto) 
 
 on:
   push:
