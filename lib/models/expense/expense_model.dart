@@ -11,12 +11,12 @@ class Expense {
   final String? paymentMethod;
   @JsonKey(name: 'currency_code')
   final String currencyCode;
+  @JsonKey(name: 'category_id')
+  final String? categoryId;
 
   final String name;
   final DateTime date;
-  final double amount;
-
-  final String? category;
+  final int amount;
   final String? description;
 
   Expense({
@@ -25,7 +25,7 @@ class Expense {
     this.description,
     this.paymentMethod = "No Payment Method",
     this.currencyCode = 'VND',
-    this.category = "No Category",
+    this.categoryId = "",
     required this.amount,
     required this.name,
     required this.date,

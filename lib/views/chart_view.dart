@@ -114,7 +114,8 @@ class _ChartViewState extends State<ChartView> {
       // Group expenses by date
       final Map<DateTime, double> dailyExpenses = {};
       for (var expense in expenses) {
-        final date = DateTime(expense.date.year, expense.date.month, expense.date.day);
+        final date =
+            DateTime(expense.date.year, expense.date.month, expense.date.day);
         dailyExpenses[date] = (dailyExpenses[date] ?? 0) + expense.amount;
       }
 
@@ -133,7 +134,8 @@ class _ChartViewState extends State<ChartView> {
               sideTitles: SideTitles(
                 showTitles: true,
                 getTitlesWidget: (value, meta) {
-                  final date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
+                  final date =
+                      DateTime.fromMillisecondsSinceEpoch(value.toInt());
                   return Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: Text(DateFormat('MMM d').format(date)),
@@ -187,23 +189,23 @@ class _ChartViewState extends State<ChartView> {
       // Group expenses by category
       final Map<String, double> categoryExpenses = {};
       for (var expense in expenses) {
-        var category = expense.category ?? "";
-        if (category.isEmpty){
-            continue;
+        var category = expense.categoryId ?? "";
+        if (category.isEmpty) {
+          continue;
         }
 
         categoryExpenses[category] =
-            (categoryExpenses[expense.category] ?? 0) + expense.amount;
+            (categoryExpenses[expense.categoryId] ?? 0) + expense.amount;
       }
 
       final total = categoryExpenses.values.reduce((a, b) => a + b);
-      double startAngle = 0;
 
       final sections = categoryExpenses.entries.map((e) {
         final percentage = e.value / total;
         final color = Colors.primaries[
-            categoryExpenses.keys.toList().indexOf(e.key) % Colors.primaries.length];
-        
+            categoryExpenses.keys.toList().indexOf(e.key) %
+                Colors.primaries.length];
+
         return PieChartSectionData(
           color: color,
           value: e.value,

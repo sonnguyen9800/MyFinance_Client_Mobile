@@ -56,3 +56,31 @@ In profile scene, users can see their profile. Users can update their profile. U
 In settings scene, users can change their language. Users can change their theme. Users can change their font size. Users can change their currency. Users can change their currency code.
 
 In about scene, users can see the about page.
+
+
+-- 
+Now there is two features to be implemented: Category feature and Tag feature
+
+### Category feature
+Category Model has the following fields (in the database):
+- id (created automatically from mongodb)
+- name (string)
+- icon_name (string)
+- color (string, reprsent the hex code: e.g "#FF0000" for red)
+
+API for Category:
+- GET /api/categories
+- POST /api/categories
+- GET /api/categories/:id
+- PUT /api/categories/:id
+- DELETE /api/categories/:id
+
+ Users can create a category. Users can view the list of categories. Users can delete a category. Users can update a category. User can set icon for a category (using flutter_iconpicker) and select font from (font-awesome-flutter)
+
+The list of all categories will be shown in the "Category Scene" (a seperate scene at the same level as Home Scene, Expenses Scene, Chart Scene, Profile Scene, Settings Scene, About Scene)
+
+The item of each category (shown in list of all Categories) will have the following information:
+- name
+- icon
+
+The background of each category will have the "color" field they has. The icon of each category will have the "icon_name" field they has. This icon is the icon name similar to the font-awesome-flutter (e.g "fa-flutter") Tapping on each category will show Dialog panel to update the category. Users can also delete the category. Users can also update the category.

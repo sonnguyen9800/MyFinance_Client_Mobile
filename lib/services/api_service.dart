@@ -1,140 +1,121 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
-import 'package:myfinance_client_flutter/models/api/expense_response_model.dart';
-import '../models/user_model.dart';
-import '../models/expense_model.dart';
-import '../models/api/auth_response.dart';
-import 'dart:developer' as developer;
+import 'package:get/get.dart';
+import 'package:myfinance_client_flutter/config/environment_config.dart';
+import 'package:myfinance_client_flutter/models/api/auth_response.dart';
+import 'package:myfinance_client_flutter/models/expense/api/expense_api_model.dart';
+import 'package:myfinance_client_flutter/models/user/user_model.dart';
+import '../models/api/ping_model.dart';
+import '../models/expense/expense_model.dart';
+import '../models/category/category_model.dart';
+import '../models/category/api/category_api_model.dart';
+import 'auth_api_service.dart';
+import 'category_api_service.dart';
+import 'expense_api_service.dart';
 
-class ApiService {
-  static const String baseUrl = 'http://10.0.2.2:8080/api';
-  final Dio _dio = Dio();
-  final FlutterSecureStorage _storage = const FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-    ),
-  );
+/// ApiService acts as a facade for all API services
+class ApiService extends GetxService {
+  late final AuthApiService _authService;
+  late final CategoryApiService _categoryService;
+  late final ExpenseApiService _expenseService;
+  late String baseUrl;
 
   ApiService() {
-    _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        final token = await _storage.read(key: 'token');
-        developer.log('Token in interceptor: $token');
-        if (token != null) {
-          options.headers['Authorization'] = 'Bearer $token';
-        }
-        return handler.next(options);
-      },
-      onError: (error, handler) {
-        developer.log('API Error: ${error.message}');
-        return handler.next(error);
-      },
-    ));
+    baseUrl = 'http://10.0.2.2:8080/api';
+    _authService = AuthApiService(baseUrl: baseUrl);
+    _categoryService = CategoryApiService(baseUrl: baseUrl);
+    _expenseService = ExpenseApiService(baseUrl: baseUrl);
   }
 
-  Future<User> getCurrentUser() async {
+  Future<bool> _ping(String address) async {
     try {
-      developer.log('Getting current user');
-      final response = await _dio.post('$baseUrl/user');
-      return User.fromJson(response.data);
-    } catch (e) {
-      developer.log('getCurrentUser error: $e');
-      throw Exception('Failed to get current user: $e');
-    }
-  }
+      final dio = Dio()..options.connectTimeout = Duration(seconds: 5);
 
-  Future<AuthResponse> login(String email, String password) async {
-    try {
-      developer.log('Attempting login');
-      final response = await _dio
-          .post('$baseUrl/login', data: {'email': email, 'password': password});
+      address = address.trim();
+      final response = await dio.get('$address/ping');
 
-      final String token = response.data['token'];
-      final User user = User.fromJson(response.data['user']);
+      PingResponse pingResponse = PingResponse.fromJson(response.data);
 
-      developer.log('Login successful, token: $token');
-      await _storage.write(key: 'token', value: token);
-
-      return AuthResponse(token: token, user: user);
-    } catch (e) {
-      developer.log('Login error: $e');
-      throw Exception('Failed to login: $e');
-    }
-  }
-
-  Future<AuthResponse> signup(
-      String name, String email, String password) async {
-    try {
-      developer.log('Attempting signup');
-      final response = await _dio.post('$baseUrl/signup',
-          data: {'name': name, 'email': email, 'password': password});
-
-      final String token = response.data['token'];
-      final User user = User.fromJson(response.data['user']);
-
-      developer.log('Signup successful, token: $token');
-      await _storage.write(key: 'token', value: token);
-
-      return AuthResponse(token: token, user: user);
-    } catch (e) {
-      developer.log('Signup error: $e');
-      throw Exception('Failed to signup: $e');
-    }
-  }
-
-  Future<List<Expense>> getExpenses({int offset = 0, int limit = 10}) async {
-    try {
-      final response = await _dio.get(
-        '$baseUrl/expenses',
-        queryParameters: {
-          'offset': offset,
-          'limit': limit,
-        },
-      );
-      
-      if (response.data == null) {
-        return [];
+      if (response.statusCode != 200) {
+        return false;
       }
-
-      final expenseResponse = ExpensesResponse.fromJson(response.data);
-      return expenseResponse.expenses;
+      final serverCodeResponse = pingResponse.serverCode;
+      final serverCode = EnvironmentConfig.serverCode;
+      if (serverCode != serverCodeResponse) {
+        Get.snackbar('Error', 'Server code does not match');
+        return false;
+      }
+      Get.snackbar('Success', 'Server is online $address');
+      return true;
     } catch (e) {
-      developer.log('getExpenses error: $e');
-      throw Exception('Failed to load expenses: $e');
+      Get.snackbar('Error', 'Failed to ping server: $e');
     }
+    return false;
   }
 
-  Future<Expense> createExpense(Expense expense) async {
-    try {
-      developer.log('Creating expense');
-      final response =
-          await _dio.post('$baseUrl/expenses', data: expense.toJson());
-      return Expense.fromJson(response.data);
-    } catch (e) {
-      developer.log('createExpense error: $e');
-      throw Exception('Failed to create expense $e');
-    }
+  Future<bool> ping(String address) async {
+    return await _ping(address);
   }
 
-  Future<Expense> updateExpense(String id, Expense expense) async {
-    try {
-      developer.log('Updating expense');
-      final response =
-          await _dio.put('$baseUrl/expenses/$id', data: expense.toJson());
-      return Expense.fromJson(response.data);
-    } catch (e) {
-      developer.log('updateExpense error: $e');
-      throw Exception('Failed to update expense');
-    }
+  void updateBaseUrl(String newBaseUrl) {
+    baseUrl = newBaseUrl;
+    _authService.updateBaseUrl(newBaseUrl);
+    _categoryService.updateBaseUrl(newBaseUrl);
+    _expenseService.updateBaseUrl(newBaseUrl);
   }
 
-  Future<void> deleteExpense(String id) async {
-    try {
-      developer.log('Deleting expense');
-      await _dio.delete('$baseUrl/expenses/$id');
-    } catch (e) {
-      developer.log('deleteExpense error: $e');
-      throw Exception('Failed to delete expense');
-    }
+  // Auth methods
+  Future<AuthResponse> login(String email, String password) =>
+      _authService.login(email, password);
+
+  Future<AuthResponse> signup(String name, String email, String password) =>
+      _authService.signup(name, email, password);
+
+  Future<User> getCurrentUser() => _authService.getCurrentUser();
+
+  // Category methods
+  Future<List<Category>> getCategories() => _categoryService.getCategories();
+
+  Future<Category> createCategory(CategoryUpdateRequest category) =>
+      _categoryService.createCategory(category);
+
+  Future<Category> updateCategory(String id, CategoryUpdateRequest category) =>
+      _categoryService.updateCategory(id, category);
+
+  Future<void> deleteCategory(String id) => _categoryService.deleteCategory(id);
+
+  // Expense methods
+  Future<ExpensesResponse> getExpenses({
+    required int offset,
+    required int limit,
+    String? search,
+    String? sortBy,
+    bool? ascending,
+  }) =>
+      _expenseService.getExpenses(
+        offset: offset,
+        limit: limit,
+        search: search,
+        sortBy: sortBy,
+        ascending: ascending,
+      );
+
+  Future<Expense> createExpense(Expense expense) =>
+      _expenseService.createExpense(expense);
+
+  Future<Expense> updateExpense(String id, Expense expense) =>
+      _expenseService.updateExpense(id, expense);
+
+  Future<void> deleteExpense(String id) => _expenseService.deleteExpense(id);
+
+  Future<List<Expense>> getExpensesByDateRange(
+          DateTime startDate, DateTime endDate) =>
+      _expenseService.getExpensesByDateRange(startDate, endDate);
+
+  Future<LastExpensesModel> getTotalSpendLastExpenses() async {
+    return await _expenseService.getTotalSpendLastExpenses();
+  }
+
+  Future<MontlyExpensesModel> getMontlyExpenses(int month, int year) async {
+    return await _expenseService.getMontlyExpenses(month, year);
   }
 }

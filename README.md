@@ -1,6 +1,6 @@
 # myfinance_client_flutter
 
-A new Flutter project.
+A new Flutter project to manage your finances
 
 ## Getting Started
 
