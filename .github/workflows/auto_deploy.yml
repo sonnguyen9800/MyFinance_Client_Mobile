@@ -1,11 +1,9 @@
-name: Build and Release on Dev Tag
+name: Build and Release (Auto)
 
 on:
   push:
     tags:
       - 'v*.*.*'  # Matches tags like v1.0.2
-    branches:
-      - dev        # Only triggers if the tag is pushed to the 'dev' branch
         
 permissions:
   contents: write # Allow writing releases and uploading assets
@@ -31,6 +29,11 @@ jobs:
         
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Get branch name
+        id: branch_name
+        run: |
+          echo "::set-output name=branch::$(git branch --contains ${GITHUB_SHA} | sed -n -e 's/^[* ] //p')"
 
       - name: Install Node.js
         run: |
@@ -81,16 +84,16 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name:  ${{ steps.extract_tag.outputs.tag }}
-          name: Release ${{ steps.extract_tag.outputs.tag }}
-          body: |
-            ## Release Notes
-            This is a development release for tag **${{ steps.extract_tag.outputs.tag }}**.
-          files: |
-            artifacts/app-release.apk
-            artifacts/app-release.aab
-          draft: false
-          prerelease: true
+            tag_name: ${{ steps.extract_tag.outputs.tag }}
+            name: ${{ contains(steps.branch_name.outputs.branch, 'dev') && 'Prerelease' || 'Release' }} ${{ steps.extract_tag.outputs.tag }}
+            body: |
+                ## Release Notes
+                This is a ${{ contains(steps.branch_name.outputs.branch, 'dev') && 'prerelease' || 'release' }} for tag **${{ steps.extract_tag.outputs.tag }}**.
+            files: |
+                artifacts/app-release.apk
+                artifacts/app-release.aab
+            draft: false
+            prerelease: ${{ contains(steps.branch_name.outputs.branch, 'dev') }}
 
       - name: Upload APK to GitHub Artifacts
         uses: actions/upload-artifact@v4
