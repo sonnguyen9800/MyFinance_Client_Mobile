@@ -1,4 +1,4 @@
-name: Build and Release (Auto) 
+name: Build and Release Version (Auto) 
 
 on:
   push:
@@ -20,9 +20,6 @@ jobs:
         id: extract_tag
         run: echo "::set-output name=tag::${GITHUB_REF#refs/tags/}"
 
-      - name: Debug extracted tag
-        run: |
-          echo "Extracted tag: ${{ steps.extract_tag.outputs.tag }}"
 
       - name: Git config safe.directory
         run: git config --global --add safe.directory '*'
@@ -30,10 +27,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get branch name
-        id: branch_name
-        run: |
-          echo "::set-output name=branch::$(git branch --contains ${GITHUB_SHA} | sed -n -e 's/^[* ] //p')"
 
       - name: Install Node.js
         run: |
@@ -85,15 +78,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
             tag_name: ${{ steps.extract_tag.outputs.tag }}
-            name: ${{ contains(steps.branch_name.outputs.branch, 'dev') && 'Prerelease' || 'Release' }} ${{ steps.extract_tag.outputs.tag }}
+            name:  'Release: ${{ steps.extract_tag.outputs.tag }}'
             body: |
                 ## Release Notes
-                This is a ${{ contains(steps.branch_name.outputs.branch, 'dev') && 'prerelease' || 'release' }} for tag **${{ steps.extract_tag.outputs.tag }}**.
+                This is a release for version **${{ steps.extract_tag.outputs.tag }}**.
             files: |
                 artifacts/*.apk
                 artifacts/*.aab
             draft: false
-            prerelease: ${{ contains(steps.branch_name.outputs.branch, 'dev') }}
+            prerelease: false
 
       - name: Upload APK to GitHub Artifacts
         uses: actions/upload-artifact@v4
