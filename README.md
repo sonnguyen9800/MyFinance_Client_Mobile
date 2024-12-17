@@ -4,8 +4,8 @@ MyFinance App is a self-hosted Flutter-based application designed to work with [
 
 **Warning:** The app is still under ongoing development, multiple features are still being added. Please be patient and check back for updates.
 
-
 ![alt text](images/image.png)
+
 
 ## Features
 
