@@ -69,8 +69,8 @@ jobs:
           rm -rf /root/.gradle/daemon
           rm -rf /root/.gradle/caches
 
-      - name: Build APK
-        run: flutter build apk --release --verbose
+      - name: Build APK (split abi)
+        run: flutter build apk --split-per-abi --release --verbose
 
       - name: Build AppBundle
         run: flutter build appbundle
@@ -78,7 +78,7 @@ jobs:
       - name: Prepare artifacts
         run: |
           mkdir -p artifacts
-          cp build/app/outputs/flutter-apk/app-release.apk artifacts/
+          cp build/app/outputs/flutter-apk/*-release.apk artifacts/
           cp build/app/outputs/bundle/release/app-release.aab artifacts/
 
       - name: Create GitHub Release
@@ -90,7 +90,7 @@ jobs:
                 ## Release Notes
                 This is a ${{ contains(steps.branch_name.outputs.branch, 'dev') && 'prerelease' || 'release' }} for tag **${{ steps.extract_tag.outputs.tag }}**.
             files: |
-                artifacts/app-release.apk
+                artifacts/*-release.apk
                 artifacts/app-release.aab
             draft: false
             prerelease: ${{ contains(steps.branch_name.outputs.branch, 'dev') }}
@@ -98,11 +98,11 @@ jobs:
       - name: Upload APK to GitHub Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-apk
-          path: artifacts/app-release.apk
+          name: app-release-apks
+          path: artifacts/*-release.apk
   
       - name: Upload AAB to GitHub Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: app-release-aab
-          path: artifacts/app-release.aab
+          path: artifacts/*.aab
