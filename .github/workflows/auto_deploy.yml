@@ -4,7 +4,8 @@ on:
   push:
     tags:
       - 'v*.*.*'  # Matches tags like v1.0.2
-        
+    branches:
+      - master
 permissions:
   contents: write # Allow writing releases and uploading assets
 
