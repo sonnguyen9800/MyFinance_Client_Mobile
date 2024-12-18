@@ -50,9 +50,7 @@ class AuthApiService extends BaseApiService {
   Future<User> getCurrentUser() async {
     try {
       developer.log('Getting current user');
-      final dio = Dio()..options.connectTimeout = Duration(seconds: 5);
       final response = await dio.post('$baseUrl/user');
-
       return User.fromJson(response.data);
     } catch (e) {
       developer.log('getCurrentUser error: $e');
