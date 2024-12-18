@@ -49,6 +49,9 @@ jobs:
           cd ..
           cd ..  
 
+      - name: Generate icon packs
+        run: dart run flutter_iconpicker:generate_packs --packs fontAwesomeIcons
+      
       - name: Install dependencies
         run: flutter pub get
 
