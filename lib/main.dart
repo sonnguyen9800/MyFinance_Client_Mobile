@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:myfinance_client_flutter/controllers/category_controller.dart';
 import 'package:myfinance_client_flutter/views/categories/category_view.dart';
@@ -25,6 +26,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize SharedPreferences
+
   final prefs = await SharedPreferences.getInstance();
   Get.put(prefs);
 

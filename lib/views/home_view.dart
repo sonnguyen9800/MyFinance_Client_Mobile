@@ -5,6 +5,7 @@ import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
 import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
 import 'package:myfinance_client_flutter/controllers/category_controller.dart';
 import 'package:myfinance_client_flutter/views/expense/expense_view_utils.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../controllers/auth_controller.dart';
 import '../controllers/expense_controller.dart';
 import '../models/expense/expense_model.dart';
@@ -17,12 +18,18 @@ class HomeView extends StatelessWidget {
 
   final ExpenseController _expenseController = Get.find<ExpenseController>();
   final CategoryController _categoryController = Get.find<CategoryController>();
-
+  late PackageInfo _packageInfo;
   Future<void> fetchData() async {
     //category loaded first
     await _categoryController.loadCategories();
     await _expenseController.loadExpenses();
     await _expenseController.loadLastExpenses();
+    _packageInfo = await PackageInfo.fromPlatform();
+
+    String appName = _packageInfo.appName;
+    String packageName = _packageInfo.packageName;
+    String version = _packageInfo.version;
+    String buildNumber = _packageInfo.buildNumber;
   }
 
   @override
@@ -184,7 +191,14 @@ class HomeView extends StatelessWidget {
               final AuthController authController = Get.find<AuthController>();
               authController.logout();
             },
-          )
+          ),
+          ListTile(
+            leading: const Icon(Icons.info_outline),
+            title: Text(
+              'Version: ${_packageInfo.version}',
+              style: AppTypography.textTheme.titleMedium,
+            ),
+          ),
         ],
       ),
     );
