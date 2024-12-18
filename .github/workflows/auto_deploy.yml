@@ -20,16 +20,16 @@ jobs:
         id: extract_tag
         run: |
           TAG=${GITHUB_REF#refs/tags/}
-          if [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          if echo "$TAG" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
             echo "::set-output name=tag::${TAG}"
             echo "::set-output name=prerelease::false"
             echo "::set-output name=title::Release: ${TAG}"
             echo "::set-output name=body::## Release Notes\n\nThis is a release for version **${TAG}**."
-          elif [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-.*$ ]]; then
+          elif echo "$TAG" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+-.*$'; then
             echo "::set-output name=tag::${TAG}"
             echo "::set-output name=prerelease::true"
             echo "::set-output name=title::Pre-release: ${TAG}"
-            echo "::set-output name=body::## Pre-release Notes\n\nThis is a pre-release for version **${TAG}**."
+            echo "::set-output name=body::## Pre-release Notes\n\nThis is a pre-released version **${TAG}**."
           else
             echo "Invalid tag format: ${TAG}"
             exit 1
