@@ -179,16 +179,16 @@ class ExpenseController extends GetxController {
   Future<void> addExpense(Expense expense) async {
     try {
       isLoading.value = true;
-      await _apiService.createExpense(expense);
-      expenses.insert(0, expense);
+      final newExpense = await _apiService.createExpense(expense);
+      expenses.insert(0, newExpense);
       currentOffset.value += 1;
       await loadLastExpenses();
 
       // Update monthly total if the expense is for the current month
-      final expenseDate = expense.date;
+      final expenseDate = newExpense.date;
       if (expenseDate.month == currentMonth.value &&
           expenseDate.year == currentYear.value) {
-        monthlyTotalAmount.value += expense.amount;
+        monthlyTotalAmount.value += newExpense.amount;
       }
 
       Get.snackbar('Success', 'Expense added successfully');
@@ -202,15 +202,16 @@ class ExpenseController extends GetxController {
   Future<void> updateExpense(Expense expense) async {
     try {
       isLoading.value = true;
-      await _apiService.updateExpense(expense.id!, expense);
+      final updatedExpense =
+          await _apiService.updateExpense(expense.id!, expense);
 
-      final index = expenses.indexWhere((e) => e.id == expense.id);
+      final index = expenses.indexWhere((e) => e.id == updatedExpense.id);
       if (index != -1) {
         final oldExpense = expenses[index];
-        expenses[index] = expense;
+        expenses[index] = updatedExpense;
 
         // Update monthly total if the expense is for the current month
-        final expenseDate = expense.date;
+        final expenseDate = updatedExpense.date;
         final oldExpenseDate = oldExpense.date;
 
         if (oldExpenseDate.month == currentMonth.value &&
@@ -220,7 +221,7 @@ class ExpenseController extends GetxController {
 
         if (expenseDate.month == currentMonth.value &&
             expenseDate.year == currentYear.value) {
-          monthlyTotalAmount.value += expense.amount;
+          monthlyTotalAmount.value += updatedExpense.amount;
         }
       }
 

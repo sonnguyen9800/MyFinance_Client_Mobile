@@ -72,10 +72,6 @@ class _UpdateExpenseDialogState extends State<UpdateExpenseDialog> {
   @override
   Widget build(BuildContext context) {
     final lengthCategory = _categoryController.categories.length;
-    print("All category IDs:");
-    for (var category in _categoryController.categories) {
-      print(category.id);
-    }
 
     return AlertDialog(
       title: Text(widget.expense == null ? 'Create Expense' : 'Edit Expense'),
