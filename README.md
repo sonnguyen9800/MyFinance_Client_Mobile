@@ -38,6 +38,10 @@ The app is still under development and we promise to update more features in the
 - Signin or Signup
 - Enjoy!
 
+## Extra
+
+I would write a small blog post on this app. Including motivation and how I built it using AI (Windsurf Editor) Will upload soon.
+
 ## Acknowledgements
 
 - [Flutter](https://flutter.dev/)
