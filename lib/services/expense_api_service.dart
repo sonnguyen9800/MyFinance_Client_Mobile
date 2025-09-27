@@ -5,7 +5,7 @@ import 'dart:developer' as developer;
 import 'base_api_service.dart';
 
 class ExpenseApiService extends BaseApiService {
-  ExpenseApiService({required super.baseUrl});
+  ExpenseApiService({required super.baseUrl, required super.dio, required super.storage});
 
   Future<ExpensesResponse> getExpenses({
     required int offset,

@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:developer' as developer;
 
 class AuthController extends GetxController {
-  final ApiService _apiService = Get.find<ApiService>();
+late final ApiService _apiService;
   // Initialize storage with Android-specific encryption
   final FlutterSecureStorage _storage = const FlutterSecureStorage(
     aOptions: AndroidOptions(
@@ -16,6 +16,11 @@ class AuthController extends GetxController {
       sharedPreferencesName: 'myfinance_secure_prefs',
     ),
   );
+  
+  AuthController(ApiService apiService) {
+    developer.log('AuthController constructor called');
+    _apiService = apiService;
+  }
 
   final Rx<User?> user = Rx<User?>(null);
   final RxBool isLoading = false.obs;
@@ -25,7 +30,6 @@ class AuthController extends GetxController {
   void onInit() {
     super.onInit();
     developer.log('AuthController initialized');
-    // Remove automatic checkAuthStatus call since it will be triggered from splash screen
   }
 
   void handleOffline() {

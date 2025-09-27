@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 
 import '../models/api/auth_response.dart';
 import '../models/user/user_model.dart';
@@ -6,7 +5,7 @@ import 'base_api_service.dart';
 import 'dart:developer' as developer;
 
 class AuthApiService extends BaseApiService {
-  AuthApiService({required super.baseUrl});
+  AuthApiService({required super.baseUrl, required super.dio, required super.storage});
 
   Future<AuthResponse> login(String email, String password) async {
     try {
@@ -49,6 +48,10 @@ class AuthApiService extends BaseApiService {
 
   Future<User> getCurrentUser() async {
     try {
+      developer.log('Interceptors: ${dio.interceptors}');
+      final token = await storage.read(key: 'token');
+      dio.options.headers['Authorization'] = 'Bearer $token';
+
       developer.log('Getting current user');
       final response = await dio.post('$baseUrl/user');
       return User.fromJson(response.data);

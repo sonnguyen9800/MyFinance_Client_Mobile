@@ -3,7 +3,11 @@ import '../models/expense/expense_model.dart';
 import '../services/api_service.dart';
 
 class ExpenseController extends GetxController {
-  final ApiService _apiService = Get.find<ApiService>();
+  late final ApiService _apiService;
+  ExpenseController(ApiService apiService) {
+    _apiService = apiService;
+  }
+
   final RxList<Expense> expenses = <Expense>[].obs;
   int last7DaysExpenses = 0;
   int last30DaysExpenses = 0;

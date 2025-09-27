@@ -5,7 +5,13 @@ import '../services/api_service.dart';
 import 'dart:developer' as developer;
 
 class CategoryController extends GetxController {
-  final ApiService _apiService = Get.find<ApiService>();
+  late final ApiService _apiService;
+
+  CategoryController(ApiService apiService) {
+    _apiService = apiService;
+    developer.log('CategoryController constructor called');
+  }
+
   final RxList<Category> categories = <Category>[].obs;
   final RxBool isLoading = false.obs;
   final RxBool hasError = false.obs;

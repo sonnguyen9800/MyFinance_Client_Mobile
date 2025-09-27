@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
@@ -15,6 +15,7 @@ class _LoginViewState extends State<LoginView> {
   final _serverAddressController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isPasswordVisible = false;
   final _authController = Get.find<AuthController>();
 
   @override
@@ -101,11 +102,21 @@ class _LoginViewState extends State<LoginView> {
           const SizedBox(height: 10),
           TextField(
             controller: _passwordController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Password',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;
+                  });
+                },
+              ),
             ),
-            obscureText: true,
+            obscureText: !_isPasswordVisible,
           ),
           Obx(() => ElevatedButton(
                 onPressed: _authController.isLoading.value
@@ -132,3 +143,5 @@ class _LoginViewState extends State<LoginView> {
         ]);
   }
 }
+
+

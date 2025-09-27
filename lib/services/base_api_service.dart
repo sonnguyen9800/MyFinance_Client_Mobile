@@ -1,37 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:developer' as developer;
 
 class BaseApiService {
   late String baseUrl;
-  final Dio _dio;
-  final FlutterSecureStorage _storage;
+  late final Dio _dio;
+  late final FlutterSecureStorage _storage;
 
-  BaseApiService({required this.baseUrl})
-      : _dio = Dio(),
-        _storage = const FlutterSecureStorage(
-          aOptions: AndroidOptions(
-            encryptedSharedPreferences: true,
-          ),
-        ) {
-    _dio.interceptors.add(
-      InterceptorsWrapper(
-        onRequest: (options, handler) async {
-          final token = await _storage.read(key: 'token');
-          if (token != null) {
-            options.headers['Authorization'] = 'Bearer $token';
-          }
-          return handler.next(options);
-        },
-        onError: (DioException error, handler) async {
-          if (error.response?.statusCode == 401) {
-            developer.log('Token expired or invalid');
-            await _storage.delete(key: 'token');
-          }
-          return handler.next(error);
-        },
-      ),
-    );
+  BaseApiService({ required this.baseUrl, required Dio dio, required FlutterSecureStorage storage }) {
+    _dio = dio;
+    _storage = storage;
   }
 
   Dio get dio => _dio;

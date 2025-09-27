@@ -1,6 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:myfinance_client_flutter/config/environment_config.dart';
+import 'package:myfinance_client_flutter/controllers/auth_controller.dart';
+import 'package:myfinance_client_flutter/controllers/category_controller.dart';
+import 'package:myfinance_client_flutter/controllers/expense_controller.dart';
 import 'package:myfinance_client_flutter/models/api/auth_response.dart';
 import 'package:myfinance_client_flutter/models/expense/api/expense_api_model.dart';
 import 'package:myfinance_client_flutter/models/user/user_model.dart';
@@ -11,6 +15,7 @@ import '../models/category/api/category_api_model.dart';
 import 'auth_api_service.dart';
 import 'category_api_service.dart';
 import 'expense_api_service.dart';
+import 'dart:developer' as developer;
 
 /// ApiService acts as a facade for all API services
 class ApiService extends GetxService {
@@ -18,13 +23,46 @@ class ApiService extends GetxService {
   late final CategoryApiService _categoryService;
   late final ExpenseApiService _expenseService;
   late String baseUrl;
+  final Dio _dio;
+  final FlutterSecureStorage _storage;
 
-  ApiService() {
-    baseUrl = 'http://10.0.2.2:8080/api';
-    _authService = AuthApiService(baseUrl: baseUrl);
-    _categoryService = CategoryApiService(baseUrl: baseUrl);
-    _expenseService = ExpenseApiService(baseUrl: baseUrl);
+
+  ApiService() : _dio = Dio(),
+  
+  _storage = const FlutterSecureStorage(
+    aOptions: AndroidOptions(
+      encryptedSharedPreferences: true,
+    ),
+  )
+  {
+    baseUrl = 'http://myfinance.sonnguyen9800.com/';
+        _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          final token = await _storage.read(key: 'token');
+          print("Request: ${token}");
+          if (token != null) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          return handler.next(options);
+        },
+        onError: (DioException error, handler) async {
+          if (error.response?.statusCode == 401) {
+            developer.log('Token expired or invalid');
+            await _storage.delete(key: 'token');
+          }
+          return handler.next(error);
+        },
+      ),
+    );
+    _authService = AuthApiService(baseUrl: baseUrl, dio: _dio, storage: _storage);
+    _categoryService = CategoryApiService(baseUrl: baseUrl, dio: _dio, storage: _storage);
+    _expenseService = ExpenseApiService(baseUrl: baseUrl, dio: _dio, storage: _storage);
+    Get.put(AuthController(this));
+    Get.put(ExpenseController(this));
+    Get.put(CategoryController(this));
   }
+
 
   Future<bool> _ping(String address) async {
     try {
