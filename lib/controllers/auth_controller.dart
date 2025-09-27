@@ -1,31 +1,25 @@
-import 'package:get/get.dart';
-import '../models/user/user_model.dart';
-import '../services/api_service.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:developer' as developer;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:get/get.dart';
+
+import '../models/user/user_model.dart';
+import '../services/api_service.dart';
+import '../services/storage/app_storage.dart';
+
 class AuthController extends GetxController {
-late final ApiService _apiService;
-  // Initialize storage with Android-specific encryption
-  final FlutterSecureStorage _storage = const FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-      // Ensure we're using the most secure settings
-      keyCipherAlgorithm:
-          KeyCipherAlgorithm.RSA_ECB_OAEPwithSHA_256andMGF1Padding,
-      sharedPreferencesName: 'myfinance_secure_prefs',
-    ),
-  );
-  
-  AuthController(ApiService apiService) {
+  AuthController(this._apiService, this._storage) {
     developer.log('AuthController constructor called');
-    _apiService = apiService;
   }
+
+  final ApiService _apiService;
+  final AppStorage _storage;
 
   final Rx<User?> user = Rx<User?>(null);
   final RxBool isLoading = false.obs;
   final RxBool isInitialized = false.obs;
   final RxString serverAddress = ''.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -43,13 +37,15 @@ late final ApiService _apiService;
     isLoading.value = true;
 
     try {
-      final token = await _storage.read(key: 'token');
-      final storedServerAddress = await _storage.read(key: 'server_address');
+      final token = await _storage.read('token');
+      final storedServerAddress = await _storage.read('server_address');
       if (storedServerAddress != null && storedServerAddress.isNotEmpty) {
-        final canConnect = await _apiService.ping(storedServerAddress);
-        if (!canConnect) {
-          Get.snackbar("Error", "Can't connect to server");
-          return;
+        if (!kIsWeb) {
+          final canConnect = await _apiService.ping(storedServerAddress);
+          if (!canConnect) {
+            Get.snackbar('Error', "Can't connect to server");
+            return;
+          }
         }
         serverAddress.value = storedServerAddress;
         _apiService.updateBaseUrl(serverAddress.value);
@@ -57,19 +53,19 @@ late final ApiService _apiService;
 
       if (token != null && token.isNotEmpty) {
         try {
-          final User currentUser = await _apiService.getCurrentUser();
+          final currentUser = await _apiService.getCurrentUser();
           developer.log('Current user retrieved successfully');
           user.value = currentUser;
         } catch (e) {
           developer.log('Failed to get current user: $e');
-          await _storage.delete(key: 'token');
+          await _storage.delete('token');
         }
       } else {
         developer.log('No valid token found, redirecting to login');
       }
     } catch (e) {
       developer.log('Error in checkAuthStatus: $e');
-      await _storage.delete(key: 'token');
+      await _storage.delete('token');
     } finally {
       isLoading.value = false;
       isInitialized.value = true;
@@ -87,15 +83,12 @@ late final ApiService _apiService;
         throw Exception('Request timed out');
       });
 
-      // Verify token exists
       if (authResponse.token.isEmpty) {
         throw Exception('Received empty token from server');
       }
-      // Store token
-      await _storage.write(key: 'token', value: authResponse.token);
+      await _storage.write('token', authResponse.token);
 
-      // Verify token was stored
-      final storedToken = await _storage.read(key: 'token');
+      final storedToken = await _storage.read('token');
       developer.log('Token stored successfully: ${storedToken != null}');
 
       user.value = authResponse.user;
@@ -105,7 +98,7 @@ late final ApiService _apiService;
       Get.snackbar(
         'Error',
         'Login failed: ${e.toString()}',
-        duration: Duration(seconds: 3),
+        duration: const Duration(seconds: 3),
       );
     } finally {
       isLoading.value = false;
@@ -119,11 +112,9 @@ late final ApiService _apiService;
 
       final authResponse = await _apiService.signup(name, email, password);
 
-      // Store token
-      await _storage.write(key: 'token', value: authResponse.token);
+      await _storage.write('token', authResponse.token);
 
-      // Verify token was stored
-      final storedToken = await _storage.read(key: 'token');
+      final storedToken = await _storage.read('token');
       developer.log('Token stored successfully: ${storedToken != null}');
 
       user.value = authResponse.user;
@@ -133,7 +124,7 @@ late final ApiService _apiService;
       Get.snackbar(
         'Error',
         'Signup failed: ${e.toString()}',
-        duration: Duration(seconds: 3),
+        duration: const Duration(seconds: 3),
       );
     } finally {
       isLoading.value = false;
@@ -143,14 +134,11 @@ late final ApiService _apiService;
   Future<void> logout() async {
     try {
       developer.log('Logging out...');
-      await _storage.delete(key: 'token');
-      await _storage.delete(key: 'server_address');
+      await _storage.deleteAll(['token', 'server_address']);
 
-      // Verify token was deleted
-      final storedToken = await _storage.read(key: 'token');
+      final storedToken = await _storage.read('token');
       developer.log('Token deleted successfully: ${storedToken == null}');
-      // Verify address was deleted
-      final storedAddress = await _storage.read(key: 'server_address');
+      final storedAddress = await _storage.read('server_address');
       developer.log('Address deleted successfully: ${storedAddress == null}');
 
       user.value = null;
@@ -160,27 +148,26 @@ late final ApiService _apiService;
       Get.snackbar(
         'Error',
         'Logout failed: ${e.toString()}',
-        duration: Duration(seconds: 3),
+        duration: const Duration(seconds: 3),
       );
     }
   }
 
-  setServerAddress(String text) {
-    _apiService.updateBaseUrl(serverAddress.value);
+  Future<void> setServerAddress(String address) async {
+    serverAddress.value = address;
+    _apiService.updateBaseUrl(address);
+    await _storage.write('server_address', address);
   }
 
   void toggleServerSelection() {}
 
   Future<bool> connect(String address) async {
-    bool canConnect = await _apiService.ping(address);
+    final canConnect = kIsWeb ? true : await _apiService.ping(address);
     if (canConnect) {
-      serverAddress.value = address;
-      _apiService.updateBaseUrl(serverAddress.value);
-      await _storage.write(key: 'server_address', value: address);
-
+      await setServerAddress(address);
       return true;
     } else {
-      Get.snackbar("Error", "Can't connect to server");
+      Get.snackbar('Error', "Can't connect to server");
       return false;
     }
   }

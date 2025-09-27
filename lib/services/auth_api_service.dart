@@ -1,11 +1,12 @@
+import 'dart:developer' as developer;
 
 import '../models/api/auth_response.dart';
 import '../models/user/user_model.dart';
 import 'base_api_service.dart';
-import 'dart:developer' as developer;
 
 class AuthApiService extends BaseApiService {
-  AuthApiService({required super.baseUrl, required super.dio, required super.storage});
+  AuthApiService(
+      {required super.baseUrl, required super.dio, required super.storage});
 
   Future<AuthResponse> login(String email, String password) async {
     try {
@@ -17,7 +18,7 @@ class AuthApiService extends BaseApiService {
       final User user = User.fromJson(response.data['user']);
 
       developer.log('Login successful, token: $token');
-      await storage.write(key: 'token', value: token);
+      await storage.write('token', token);
 
       return AuthResponse(token: token, user: user);
     } catch (e) {
@@ -37,7 +38,7 @@ class AuthApiService extends BaseApiService {
       final User user = User.fromJson(response.data['user']);
 
       developer.log('Signup successful, token: $token');
-      await storage.write(key: 'token', value: token);
+      await storage.write('token', token);
 
       return AuthResponse(token: token, user: user);
     } catch (e) {
@@ -49,8 +50,10 @@ class AuthApiService extends BaseApiService {
   Future<User> getCurrentUser() async {
     try {
       developer.log('Interceptors: ${dio.interceptors}');
-      final token = await storage.read(key: 'token');
-      dio.options.headers['Authorization'] = 'Bearer $token';
+      final token = await storage.read('token');
+      if (token != null && token.isNotEmpty) {
+        dio.options.headers['Authorization'] = 'Bearer $token';
+      }
 
       developer.log('Getting current user');
       final response = await dio.post('$baseUrl/user');

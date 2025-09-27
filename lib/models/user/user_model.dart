@@ -7,7 +7,7 @@ class User {
   final String? id;
   final String name;
   final String email;
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   final String? password;
 
   User({

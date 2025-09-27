@@ -128,7 +128,6 @@ class ViewExpenseDialog extends StatelessWidget {
     final category = _getCategory();
     final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
     final categoryColor = ColorHelper.getColor(category.color) ?? Colors.grey;
-    final IconData? iconData = IconDataHelper.getIconData(category.iconName);
 
     return Dialog(
       shape: RoundedRectangleBorder(

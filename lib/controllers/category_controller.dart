@@ -43,11 +43,11 @@ class CategoryController extends GetxController {
       hasError.value = false;
       errorMessage.value = '';
 
-      final loadedCategories = await _apiService.getCategories();
-      categories.value = loadedCategories;
+      final List<Category> loadedCategories = await _apiService.getCategories();
+      categories.assignAll(loadedCategories);
       _isInitialized = true;
       cacheDefaultCategory();
-      print(_defaultCategory.name);
+      developer.log('Default category cached: \\');
       developer.log('Categories loaded successfully: ${categories.length}');
     } catch (e) {
       hasError.value = true;

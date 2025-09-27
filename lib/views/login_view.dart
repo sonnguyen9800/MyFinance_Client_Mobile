@@ -1,6 +1,8 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+
 import '../controllers/auth_controller.dart';
 
 class LoginView extends StatefulWidget {
@@ -52,8 +54,13 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  _renderServerAddressForm() {
-    String serverAddress = "";
+  Widget _renderServerAddressForm() {
+    if (_serverAddressController.text.isEmpty) {
+      _serverAddressController.text =
+          kIsWeb ? '${Uri.base.origin}/api' : 'http://10.0.2.2:8080/api';
+    }
+
+    String serverAddress = '';
     final serverAddressField = TextField(
       decoration: const InputDecoration(
         labelText: 'Server address',
@@ -64,7 +71,7 @@ class _LoginViewState extends State<LoginView> {
         serverAddress = value;
       },
     );
-    _serverAddressController.text = "http://10.0.2.2:8080/api";
+
     return Column(
       children: [
         const SizedBox(height: 48),
@@ -85,7 +92,7 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  _renderLoginForm() {
+  Widget _renderLoginForm() {
     return Column(
         verticalDirection: VerticalDirection.down,
         mainAxisAlignment: MainAxisAlignment.end,
@@ -143,5 +150,3 @@ class _LoginViewState extends State<LoginView> {
         ]);
   }
 }
-
-

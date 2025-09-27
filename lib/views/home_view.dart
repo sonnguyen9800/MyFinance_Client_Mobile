@@ -18,18 +18,13 @@ class HomeView extends StatelessWidget {
 
   final ExpenseController _expenseController = Get.find<ExpenseController>();
   final CategoryController _categoryController = Get.find<CategoryController>();
-  late PackageInfo _packageInfo;
+  late final PackageInfo _packageInfo;
   Future<void> fetchData() async {
     //category loaded first
     await _categoryController.loadCategories();
     await _expenseController.loadExpenses();
     await _expenseController.loadLastExpenses();
     _packageInfo = await PackageInfo.fromPlatform();
-
-    String appName = _packageInfo.appName;
-    String packageName = _packageInfo.packageName;
-    String version = _packageInfo.version;
-    String buildNumber = _packageInfo.buildNumber;
   }
 
   @override
@@ -113,7 +108,7 @@ class HomeView extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.home),
             title: Text(
-              'Home',
+              'Version: ${_packageInfo.version}',
               style: AppTypography.textTheme.titleMedium,
             ),
             onTap: () => Get.back(),

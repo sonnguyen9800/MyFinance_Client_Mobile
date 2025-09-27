@@ -1,7 +1,10 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:get/get.dart';
-import '../controllers/auth_controller.dart';
 import 'dart:developer' as developer;
+
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:get/get.dart';
+
+import '../controllers/auth_controller.dart';
 
 class ConnectivityService extends GetxService {
   final Connectivity _connectivity = Connectivity();
@@ -9,28 +12,24 @@ class ConnectivityService extends GetxService {
   RxBool isOnline = true.obs;
 
   Future<void> init() async {
-    // Check initial connection status
-    List<ConnectivityResult> results;
-
     try {
-      results = await _connectivity.checkConnectivity();
+      final results = await _connectivity.checkConnectivity();
       _handleConnectivityResult(results);
     } catch (e) {
       developer.log('Connectivity check failed: $e');
     }
-    // Listen for connectivity changes
-    _connectivity.onConnectivityChanged.listen(
-        (List<ConnectivityResult> results) =>
-            _handleConnectivityResult(results));
+
+    _connectivity.onConnectivityChanged.listen(_handleConnectivityResult);
   }
 
   void _handleConnectivityResult(List<ConnectivityResult> results) {
-    bool wasOnline = isOnline.value;
+    final wasOnline = isOnline.value;
 
-    for (var connectivity in results) {
+    for (final connectivity in results) {
       if (connectivity == ConnectivityResult.wifi ||
           connectivity == ConnectivityResult.mobile ||
-          connectivity == ConnectivityResult.ethernet) {
+          connectivity == ConnectivityResult.ethernet ||
+          connectivity == ConnectivityResult.other) {
         isOnline.value = true;
         return;
       }
@@ -40,14 +39,15 @@ class ConnectivityService extends GetxService {
     }
 
     if (wasOnline && !isOnline.value) {
-      // Only show message and redirect if we transitioned from online to offline
       Get.snackbar(
         'No Internet Connection',
         'Please check your internet connection and try again.',
         duration: const Duration(seconds: 3),
         snackPosition: SnackPosition.BOTTOM,
       );
-      _authController.handleOffline();
+      if (!kIsWeb) {
+        _authController.handleOffline();
+      }
     }
   }
 }
