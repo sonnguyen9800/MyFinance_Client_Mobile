@@ -52,6 +52,7 @@ dependencies:
   flutter_svg: ^2.0.9  # For SVG support
   url_launcher: ^6.3.1
   flutter_launcher_icons: ^0.14.2
+  loading_indicator: ^3.1.1
 
 dependency_overrides:
   font_awesome_flutter:
