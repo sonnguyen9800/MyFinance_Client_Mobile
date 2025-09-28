@@ -162,9 +162,22 @@ class AuthController extends GetxController {
   void toggleServerSelection() {}
 
   Future<bool> connect(String address) async {
-    final canConnect = kIsWeb ? true : await _apiService.ping(address);
+    final canConnect = await _apiService.ping(address);
     if (canConnect) {
       await setServerAddress(address);
+      return true;
+    } else {
+      Get.snackbar('Error', "Can't connect to server");
+      return false;
+    }
+
+
+  }
+
+        Future<bool> ping(String address) async {
+    final canConnect = await _apiService.ping(address);
+    if (canConnect) {
+      Get.snackbar("Success","Server is online");
       return true;
     } else {
       Get.snackbar('Error', "Can't connect to server");

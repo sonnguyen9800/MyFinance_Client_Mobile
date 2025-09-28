@@ -5,7 +5,7 @@ import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
 import '../controllers/auth_controller.dart';
 
 class SignupView extends StatefulWidget {
-  SignupView({super.key});
+  const SignupView({super.key});
 
   @override
   State<SignupView> createState() => _SignupViewState();

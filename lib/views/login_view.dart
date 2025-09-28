@@ -88,6 +88,15 @@ class _LoginViewState extends State<LoginView> {
           },
           child: const Text('Connect'),
         ),
+              const SizedBox(height: 16),
+  
+         ElevatedButton(
+          onPressed: () async {
+            serverAddress = serverAddressField.controller!.text;
+            await _authController.ping(serverAddress);
+          },
+          child: const Text('Ping'),
+        ),
       ],
     );
   }
