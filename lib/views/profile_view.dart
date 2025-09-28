@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../controllers/auth_controller.dart';
+import 'widget/app_shell.dart';
 
 class ProfileView extends StatelessWidget {
   ProfileView({super.key});
@@ -13,8 +15,9 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return AppShell(
+      appBarBuilder: (isPermanentNavigation) => AppBar(
+        automaticallyImplyLeading: !isPermanentNavigation,
         title: const Text('Profile'),
       ),
       body: Obx(() {

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
 import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:get/get.dart';
+
+import 'widget/app_shell.dart';
 
 class AboutView extends StatelessWidget {
   const AboutView({super.key});
@@ -31,9 +33,10 @@ class AboutView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return AppShell(
+      appBarBuilder: (isPermanentNavigation) => AppBar(
         backgroundColor: Theme.of(context).colorScheme.secondary,
+        automaticallyImplyLeading: !isPermanentNavigation,
         title: Text('About',
             style: AppTypography.textTheme.headlineMedium!
                 .copyWith(color: AppColors.primaryDark)),
@@ -88,7 +91,7 @@ class AboutView extends StatelessWidget {
                 'Website: www.sonnguyen9800.com',
           ),
           const SizedBox(height: 32),
-          _buildExtraInfoCard(title: "More"),
+          _buildExtraInfoCard(title: 'More'),
           Text(
             ' 2024 MyFinance. All rights reserved.',
             style: AppTypography.textTheme.bodyMedium!.copyWith(
@@ -143,7 +146,7 @@ class AboutView extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     _launchUrl(
-                        "https://github.com/sonnguyen9800/MyFinance_Client_Mobile");
+                        'https://github.com/sonnguyen9800/MyFinance_Client_Mobile');
                   },
                   child: SvgPicture.asset(
                     'assets/github-mark.svg',
@@ -157,7 +160,7 @@ class AboutView extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    _launchUrl("https://www.linkedin.com/in/sonnguyen9800/");
+                    _launchUrl('https://www.linkedin.com/in/sonnguyen9800/');
                   },
                   child: SvgPicture.asset(
                     'assets/iconmonstr-linkedin-3.svg',
@@ -171,9 +174,9 @@ class AboutView extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    _launchUrl("https://www.sonnguyen9800.com");
+                    _launchUrl('https://www.sonnguyen9800.com');
                   },
-                  child: Icon(
+                  child: const Icon(
                     Icons.home,
                     color: AppColors.primary,
                   ),

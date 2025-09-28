@@ -1,62 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
 import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
 import 'package:myfinance_client_flutter/controllers/category_controller.dart';
 import 'package:myfinance_client_flutter/views/expense/expense_view_utils.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import '../controllers/auth_controller.dart';
-import '../controllers/expense_controller.dart';
-import '../models/expense/expense_model.dart';
-import 'package:intl/intl.dart';
 
+import '../controllers/expense_controller.dart';
 import 'expense/expense_card.dart';
+import 'widget/app_shell.dart';
 
 class HomeView extends StatelessWidget {
   HomeView({super.key});
 
   final ExpenseController _expenseController = Get.find<ExpenseController>();
   final CategoryController _categoryController = Get.find<CategoryController>();
-  late final PackageInfo _packageInfo;
-  Future<void> fetchData() async {
-    //category loaded first
+
+  Future<void> _initialLoad() async {
     await _categoryController.loadCategories();
     await _expenseController.loadExpenses();
     await _expenseController.loadLastExpenses();
-    _packageInfo = await PackageInfo.fromPlatform();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: fetchData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            return _buildHomeView(context);
-          }
-        });
+      future: _initialLoad(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else {
+          return _buildHomeView(context);
+        }
+      },
+    );
   }
 
   Widget _buildHomeView(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return AppShell(
+      appBarBuilder: (isPermanentNavigation) => AppBar(
         backgroundColor: Theme.of(context).colorScheme.secondary,
-        title: Text('MyFinance',
-            style: AppTypography.textTheme.headlineMedium!
-                .copyWith(color: AppColors.primaryDark)),
-        actions: [
-          // IconButton(
-          //   icon: const Icon(Icons.person),
-          //   onPressed: () => Get.toNamed('/profile'),
-          // ),
-        ],
+        automaticallyImplyLeading: !isPermanentNavigation,
+        title: Text(
+          'MyFinance',
+          style: AppTypography.textTheme.headlineMedium!
+              .copyWith(color: AppColors.primaryDark),
+        ),
       ),
-      drawer: _buildDrawer(context),
       body: Obx(
         () => _expenseController.isLoading.value
             ? const Center(child: CircularProgressIndicator())
@@ -79,128 +71,8 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildDrawer(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            child: Row(
-              children: [
-                Text(
-                  'MyFinance',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: SvgPicture.asset(
-                    'assets/logo.svg',
-                  ),
-                ),
-              ],
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.home),
-            title: Text(
-              'Version: ${_packageInfo.version}',
-              style: AppTypography.textTheme.titleMedium,
-            ),
-            onTap: () => Get.back(),
-          ),
-          ListTile(
-            leading: const Icon(Icons.list),
-            title: Text(
-              'Expenses',
-              style: AppTypography.textTheme.titleMedium,
-            ),
-            onTap: () {
-              Get.back();
-              Get.toNamed('/expenses');
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.calendar_month),
-            title: Text(
-              'Montly Expenses',
-              style: AppTypography.textTheme.titleMedium,
-            ),
-            onTap: () {
-              Get.back();
-              Get.toNamed('/monthly');
-            },
-          ),
-          // ListTile(
-          //   leading: const Icon(Icons.pie_chart),
-          //   title: const Text('Charts'),
-          //   onTap: () {
-          //     Get.back();
-          //     Get.toNamed('/chart');
-          //   },
-          // ),
-          ListTile(
-            leading: const Icon(Icons.grade),
-            title: Text(
-              'Categories',
-              style: AppTypography.textTheme.titleMedium,
-            ),
-            onTap: () {
-              Get.back();
-              Get.toNamed('/categories');
-            },
-          ),
-          // ListTile(
-          //   leading: const Icon(Icons.settings),
-          //   title: const Text('Settings'),
-          //   onTap: () {
-          //     Get.back();
-          //     Get.toNamed('/settings');
-          //   },
-          // ),
-          ListTile(
-            leading: const Icon(Icons.info),
-            title: Text(
-              'About',
-              style: AppTypography.textTheme.titleMedium,
-            ),
-            onTap: () {
-              Get.back();
-              Get.toNamed('/about');
-            },
-          ),
-          // const ThemeSwitch(),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.close),
-            title: Text(
-              'Logout',
-              style: AppTypography.textTheme.titleMedium,
-            ),
-            onTap: () {
-              Get.back();
-              final AuthController authController = Get.find<AuthController>();
-              authController.logout();
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: Text(
-              'Version: ${_packageInfo.version}',
-              style: AppTypography.textTheme.titleMedium,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildOverviewPanel() {
-    final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
+    final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '?');
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -288,17 +160,11 @@ class HomeView extends StatelessWidget {
             itemCount: recentExpenses.length,
             itemBuilder: (context, index) {
               final expense = recentExpenses[index];
-              return _buildExpenseItem(expense);
+              return ExpenseCard(expense: expense);
             },
           );
         }),
       ],
-    );
-  }
-
-  Widget _buildExpenseItem(Expense expense) {
-    return ExpenseCard(
-      expense: expense,
     );
   }
 }

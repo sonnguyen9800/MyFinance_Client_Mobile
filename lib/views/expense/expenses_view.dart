@@ -3,17 +3,19 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
 import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
-import '../../controllers/expense_controller.dart';
+
 import '../../controllers/category_controller.dart';
+import '../../controllers/expense_controller.dart';
+import '../widget/app_shell.dart';
 import 'expense_card.dart';
 import 'expense_view_utils.dart';
 
 class ExpensesView extends StatelessWidget {
+  ExpensesView({super.key}) : categoryId = Get.parameters['categoryId'];
+
   final ExpenseController _expenseController = Get.find<ExpenseController>();
   final CategoryController _categoryController = Get.find<CategoryController>();
   final String? categoryId;
-
-  ExpensesView({super.key}) : categoryId = Get.parameters['categoryId'];
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +24,11 @@ class ExpensesView extends StatelessWidget {
       title =
           'Expenses for ${_categoryController.findCategoryById(categoryId!)!.name}';
     }
-    return Scaffold(
-      appBar: AppBar(
+
+    return AppShell(
+      appBarBuilder: (isPermanentNavigation) => AppBar(
         backgroundColor: Theme.of(context).colorScheme.secondary,
+        automaticallyImplyLeading: !isPermanentNavigation,
         title: Text(
           title,
           style: AppTypography.textTheme.headlineMedium!
@@ -103,38 +107,34 @@ class ExpensesView extends StatelessWidget {
                         : ElevatedButton(
                             onPressed: () =>
                                 _expenseController.loadExpenses(loadMore: true),
-                            child: Text(
-                              'Show more',
-                            ),
+                            child: const Text('Show more'),
                           ),
                   ),
                 );
               }
 
-              if (index > 0) {
-                if (filteredExpenses[index - 1].date.month !=
-                    filteredExpenses[index].date.month) {
-                  return Column(
-                    children: [
-                      const Divider(),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          DateFormat('MMMM yyyy')
-                              .format(filteredExpenses[index].date),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+              if (index > 0 &&
+                  filteredExpenses[index - 1].date.month !=
+                      filteredExpenses[index].date.month) {
+                return Column(
+                  children: [
+                    const Divider(),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        DateFormat('MMMM yyyy')
+                            .format(filteredExpenses[index].date),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ],
-                  );
-                }
+                    ),
+                  ],
+                );
               }
+
               final expense = filteredExpenses[index];
-              return ExpenseCard(
-                expense: expense,
-              );
+              return ExpenseCard(expense: expense);
             },
           ),
         );

@@ -2,20 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
 import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
+
 import '../../controllers/category_controller.dart';
-import 'create_category_dialog.dart';
+import '../widget/app_shell.dart';
 import 'category_card.dart';
+import 'create_category_dialog.dart';
 
 class CategoryView extends StatelessWidget {
-  final CategoryController _categoryController = Get.find<CategoryController>();
-
   CategoryView({super.key});
+
+  final CategoryController _categoryController = Get.find<CategoryController>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return AppShell(
+      appBarBuilder: (isPermanentNavigation) => AppBar(
         backgroundColor: Theme.of(context).colorScheme.secondary,
+        automaticallyImplyLeading: !isPermanentNavigation,
         title: Text(
           'Categories',
           style: AppTypography.textTheme.headlineMedium!
@@ -86,7 +89,8 @@ class CategoryView extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Get.dialog(
-              CreateCategoryDialog(categoryController: _categoryController));
+            CreateCategoryDialog(categoryController: _categoryController),
+          );
         },
         child: const Icon(Icons.add),
       ),

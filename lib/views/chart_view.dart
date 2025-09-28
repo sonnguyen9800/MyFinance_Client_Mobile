@@ -1,8 +1,10 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
+
 import '../controllers/expense_controller.dart';
+import 'widget/app_shell.dart';
 
 class ChartView extends StatefulWidget {
   const ChartView({super.key});
@@ -19,8 +21,9 @@ class _ChartViewState extends State<ChartView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return AppShell(
+      appBarBuilder: (isPermanentNavigation) => AppBar(
+        automaticallyImplyLeading: !isPermanentNavigation,
         title: const Text('Expense Charts'),
         actions: [
           IconButton(
@@ -111,7 +114,6 @@ class _ChartViewState extends State<ChartView> {
         return const Center(child: Text('No expenses in selected date range'));
       }
 
-      // Group expenses by date
       final Map<DateTime, double> dailyExpenses = {};
       for (var expense in expenses) {
         final date =
@@ -186,10 +188,9 @@ class _ChartViewState extends State<ChartView> {
         return const Center(child: Text('No expenses in selected date range'));
       }
 
-      // Group expenses by category
       final Map<String, double> categoryExpenses = {};
       for (var expense in expenses) {
-        var category = expense.categoryId ?? "";
+        var category = expense.categoryId ?? '';
         if (category.isEmpty) {
           continue;
         }

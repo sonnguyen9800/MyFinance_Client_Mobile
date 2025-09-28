@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart'
-show SharedPreferences;
+    show SharedPreferences;
+
+import 'widget/app_shell.dart';
 
 class SettingsController extends GetxController {
   final _prefs = SharedPreferences.getInstance();
@@ -40,8 +42,9 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return AppShell(
+      appBarBuilder: (isPermanentNavigation) => AppBar(
+        automaticallyImplyLeading: !isPermanentNavigation,
         title: const Text('Settings'),
       ),
       body: ListView(
