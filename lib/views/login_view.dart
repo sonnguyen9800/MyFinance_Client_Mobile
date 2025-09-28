@@ -57,7 +57,7 @@ class _LoginViewState extends State<LoginView> {
   Widget _renderServerAddressForm() {
     if (_serverAddressController.text.isEmpty) {
       _serverAddressController.text =
-          kIsWeb ? '${Uri.base.origin}/api' : 'http://10.0.2.2:8080/api';
+          kIsWeb ? '${Uri.base.origin}/api' : 'http://localhost:8080/api';
     }
 
     String serverAddress = '';

@@ -4,14 +4,24 @@ import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
 import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
 import '../controllers/auth_controller.dart';
 
-class SignupView extends StatelessWidget {
+class SignupView extends StatefulWidget {
   SignupView({super.key});
 
+  @override
+  State<SignupView> createState() => _SignupViewState();
+}
+
+class _SignupViewState extends State<SignupView> {
   final _nameController = TextEditingController();
+
   final _emailController = TextEditingController();
+
   final _passwordController = TextEditingController();
+
   final _confirmPasswordController = TextEditingController();
+
   final _authController = Get.find<AuthController>();
+  bool _isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -60,20 +70,40 @@ class SignupView extends StatelessWidget {
                 const SizedBox(height: 16),
                 TextField(
                   controller: _passwordController,
-                  decoration: const InputDecoration(
+                  decoration:  InputDecoration(
                     labelText: 'Password',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                  ),
                     border: OutlineInputBorder(),
                   ),
-                  obscureText: true,
+                  obscureText: !_isPasswordVisible,
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _confirmPasswordController,
-                  decoration: const InputDecoration(
+                  decoration:  InputDecoration(
                     labelText: 'Confirm Password',
                     border: OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    )
                   ),
-                  obscureText: true,
+                  obscureText: !_isPasswordVisible,
                 ),
                 const SizedBox(height: 24),
                 Obx(() => ElevatedButton(
