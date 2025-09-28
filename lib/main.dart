@@ -11,15 +11,9 @@ import 'controllers/theme_controller.dart';
 import 'services/api_service.dart';
 import 'services/connectivity_service.dart';
 import 'services/storage/app_storage.dart';
-import 'views/about_view.dart';
-import 'views/categories/category_view.dart';
-import 'views/chart_view.dart';
-import 'views/expense/expenses_view.dart';
-import 'views/expense/monthly_view.dart';
-import 'views/home_view.dart';
+import 'controllers/navigation_controller.dart';
+import 'views/dashboard_view.dart';
 import 'views/login_view.dart';
-import 'views/profile_view.dart';
-import 'views/settings_view.dart';
 import 'views/signup_view.dart';
 import 'views/splash_view.dart';
 
@@ -37,6 +31,7 @@ Future<void> main() async {
   Get.put(AuthController(apiService, storage), permanent: true);
   Get.put(ExpenseController(apiService), permanent: true);
   Get.put(CategoryController(apiService), permanent: true);
+  Get.put(NavigationController(), permanent: true);
 
   final connectivityService = Get.put(ConnectivityService(), permanent: true);
   await connectivityService.init();
@@ -70,42 +65,59 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/signup', page: () => SignupView()),
         GetPage(
           name: '/home',
-          page: () => HomeView(),
+          page: () => DashboardView(
+            initialSection: NavigationSection.home,
+          ),
           middlewares: [AuthMiddleware()],
         ),
         GetPage(
           name: '/expenses',
-          page: () => ExpensesView(),
+          page: () => DashboardView(
+            initialSection: NavigationSection.expenses,
+            initialCategoryId: Get.parameters['categoryId'],
+          ),
           middlewares: [AuthMiddleware()],
         ),
         GetPage(
           name: '/monthly',
-          page: () => MonthlyView(),
+          page: () => DashboardView(
+            initialSection: NavigationSection.monthly,
+          ),
           middlewares: [AuthMiddleware()],
         ),
         GetPage(
           name: '/chart',
-          page: () => const ChartView(),
+          page: () => DashboardView(
+            initialSection: NavigationSection.chart,
+          ),
           middlewares: [AuthMiddleware()],
         ),
         GetPage(
           name: '/categories',
-          page: () => CategoryView(),
+          page: () => DashboardView(
+            initialSection: NavigationSection.categories,
+          ),
           middlewares: [AuthMiddleware()],
         ),
         GetPage(
           name: '/profile',
-          page: () => ProfileView(),
+          page: () => DashboardView(
+            initialSection: NavigationSection.profile,
+          ),
           middlewares: [AuthMiddleware()],
         ),
         GetPage(
           name: '/settings',
-          page: () => SettingsView(),
+          page: () => DashboardView(
+            initialSection: NavigationSection.settings,
+          ),
           middlewares: [AuthMiddleware()],
         ),
         GetPage(
           name: '/about',
-          page: () => const AboutView(),
+          page: () => DashboardView(
+            initialSection: NavigationSection.about,
+          ),
           middlewares: [AuthMiddleware()],
         ),
       ],

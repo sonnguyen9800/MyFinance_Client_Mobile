@@ -181,6 +181,7 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
                     category: previewCategory,
                     categoryController: widget.categoryController,
                     isAllowControl: false,
+                    onViewExpenses: null,
                   ),
                 ],
               ),

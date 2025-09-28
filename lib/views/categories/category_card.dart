@@ -7,15 +7,18 @@ import '../utils/icon_helper.dart';
 import 'create_category_dialog.dart';
 
 class CategoryCard extends StatelessWidget {
-  final Category category;
-  final CategoryController categoryController;
-  final bool isAllowControl;
   const CategoryCard({
     super.key,
     required this.category,
     required this.categoryController,
     required this.isAllowControl,
+    this.onViewExpenses,
   });
+
+  final Category category;
+  final CategoryController categoryController;
+  final bool isAllowControl;
+  final VoidCallback? onViewExpenses;
 
   void _showOptionsMenu(BuildContext context) {
     final button = context.findRenderObject() as RenderBox;
@@ -38,13 +41,9 @@ class CategoryCard extends StatelessWidget {
           value: 'View Expenses',
           child: const Text('View Expenses'),
           onTap: () {
-            // Need to use Future.delayed because onTap is called before the menu is closed
             Future.delayed(
               Duration.zero,
-              () => Get.toNamed(
-                '/expenses',
-                parameters: {'categoryId': category.id},
-              ),
+              () => onViewExpenses?.call(),
             );
           },
         ),
@@ -93,11 +92,6 @@ class CategoryCard extends StatelessWidget {
     );
   }
 
-  void onViewExpenseTap() {
-    Get.back();
-    Get.toNamed('/expense', parameters: {'categoryId': category.id});
-  }
-
   @override
   Widget build(BuildContext context) {
     final categoryColor = ColorHelper.getColor(category.color) ?? Colors.grey;
@@ -106,7 +100,7 @@ class CategoryCard extends StatelessWidget {
     return Card(
       color: categoryColor.withOpacity(0.4),
       child: InkWell(
-        onTap: (isAllowControl) ? () => _showOptionsMenu(context) : null,
+        onTap: isAllowControl ? () => _showOptionsMenu(context) : null,
         child: ListTile(
           leading: CircleAvatar(
             backgroundColor: categoryColor,
@@ -121,7 +115,7 @@ class CategoryCard extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          trailing: (isAllowControl) ? const Icon(Icons.more_vert) : null,
+          trailing: isAllowControl ? const Icon(Icons.more_vert) : null,
         ),
       ),
     );

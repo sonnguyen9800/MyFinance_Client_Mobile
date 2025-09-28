@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
 import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
 import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:get/get.dart';
 
-import 'widget/app_shell.dart';
+class AboutSection extends StatelessWidget {
+  const AboutSection({super.key});
 
-class AboutView extends StatelessWidget {
-  const AboutView({super.key});
+  static PreferredSizeWidget appBar(
+    BuildContext context,
+    bool isPermanentNavigation,
+  ) {
+    return AppBar(
+      backgroundColor: Theme.of(context).colorScheme.secondary,
+      automaticallyImplyLeading: !isPermanentNavigation,
+      title: Text('About',
+          style: AppTypography.textTheme.headlineMedium!
+              .copyWith(color: AppColors.primaryDark)),
+    );
+  }
 
   Future<void> _launchUrl(String urlString) async {
     try {
@@ -33,74 +44,65 @@ class AboutView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppShell(
-      appBarBuilder: (isPermanentNavigation) => AppBar(
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        automaticallyImplyLeading: !isPermanentNavigation,
-        title: Text('About',
-            style: AppTypography.textTheme.headlineMedium!
-                .copyWith(color: AppColors.primaryDark)),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          SvgPicture.asset(
-            'assets/logo.svg',
-            width: 120,
-            height: 120,
+    return ListView(
+      padding: const EdgeInsets.all(16.0),
+      children: [
+        SvgPicture.asset(
+          'assets/logo.svg',
+          width: 120,
+          height: 120,
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'MyFinance (alpha)',
+          style: AppTypography.textTheme.headlineMedium,
+          textAlign: TextAlign.center,
+        ),
+        Text(
+          'Version 0.0.1',
+          style: AppTypography.textTheme.bodyMedium!.copyWith(
+            color: Colors.grey,
           ),
-          const SizedBox(height: 16),
-          Text(
-            'MyFinance (alpha)',
-            style: AppTypography.textTheme.headlineMedium,
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            'Version 0.0.1',
-            style: AppTypography.textTheme.bodyMedium!.copyWith(
-              color: Colors.grey,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 32),
-          _buildInfoCard(
-            title: 'About MyFinance (alpha)',
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 32),
+        _buildInfoCard(
+          title: 'About MyFinance (alpha)',
+          content:
+              'MyFinance is a self-host, personal expense tracking app designed for families. '
+              'It helps you manage your expenses, track spending patterns, and '
+              'maintain financial transparency within your family group.\n',
+        ),
+        const SizedBox(height: 16),
+        _buildInfoCard(
+            title: 'Disclaimer',
             content:
-                'MyFinance is a self-host, personal expense tracking app designed for families. '
-                'It helps you manage your expenses, track spending patterns, and '
-                'maintain financial transparency within your family group.\n',
+                'The app is ongoing development, and it is still in alpha stage. So don\'t use it for serious financial matters yet.'
+                ' We are working hard to make it stable and secure. Please be patient and report any bugs or issues you find. We appreciate your feedback and suggestions.'),
+        const SizedBox(height: 16),
+        _buildInfoCard(
+          title: 'Privacy Policy',
+          content:
+              'We take your privacy seriously. All your financial data is encrypted '
+              'and stored securely. We never share your personal information with '
+              'third parties without your explicit consent.',
+        ),
+        const SizedBox(height: 16),
+        _buildInfoCard(
+          title: 'Contact Us',
+          content: 'Email: sonnguyen9800@gmail.com\n'
+              'Website: www.sonnguyen9800.com',
+        ),
+        const SizedBox(height: 32),
+        _buildExtraInfoCard(title: 'More'),
+        Text(
+          ' 2024 MyFinance. All rights reserved.',
+          style: AppTypography.textTheme.bodyMedium!.copyWith(
+            color: AppColors.primary,
           ),
-          const SizedBox(height: 16),
-          _buildInfoCard(
-              title: 'Disclaimer',
-              content:
-                  'The app is ongoing development, and it is still in alpha stage. So don\'t use it for serious financial matters yet.'
-                  ' We are working hard to make it stable and secure. Please be patient and report any bugs or issues you find. We appreciate your feedback and suggestions.'),
-          const SizedBox(height: 16),
-          _buildInfoCard(
-            title: 'Privacy Policy',
-            content:
-                'We take your privacy seriously. All your financial data is encrypted '
-                'and stored securely. We never share your personal information with '
-                'third parties without your explicit consent.',
-          ),
-          const SizedBox(height: 16),
-          _buildInfoCard(
-            title: 'Contact Us',
-            content: 'Email: sonnguyen9800@gmail.com\n'
-                'Website: www.sonnguyen9800.com',
-          ),
-          const SizedBox(height: 32),
-          _buildExtraInfoCard(title: 'More'),
-          Text(
-            ' 2024 MyFinance. All rights reserved.',
-            style: AppTypography.textTheme.bodyMedium!.copyWith(
-              color: AppColors.primary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 

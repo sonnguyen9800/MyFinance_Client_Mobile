@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
 
-import 'widget/app_shell.dart';
-
 class SettingsController extends GetxController {
   final _prefs = SharedPreferences.getInstance();
   final RxString language = 'en'.obs;
@@ -35,29 +33,23 @@ class SettingsController extends GetxController {
   }
 }
 
-class SettingsView extends StatelessWidget {
-  SettingsView({super.key});
+class SettingsSection extends StatelessWidget {
+  SettingsSection({super.key});
 
   final SettingsController _settingsController = Get.put(SettingsController());
 
   @override
   Widget build(BuildContext context) {
-    return AppShell(
-      appBarBuilder: (isPermanentNavigation) => AppBar(
-        automaticallyImplyLeading: !isPermanentNavigation,
-        title: const Text('Settings'),
-      ),
-      body: ListView(
-        children: [
-          _buildLanguageSection(),
-          const Divider(),
-          _buildThemeSection(),
-          const Divider(),
-          _buildFontSizeSection(),
-          const Divider(),
-          _buildCurrencySection(),
-        ],
-      ),
+    return ListView(
+      children: [
+        _buildLanguageSection(),
+        const Divider(),
+        _buildThemeSection(),
+        const Divider(),
+        _buildFontSizeSection(),
+        const Divider(),
+        _buildCurrencySection(),
+      ],
     );
   }
 

@@ -4,16 +4,25 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../controllers/expense_controller.dart';
-import 'widget/app_shell.dart';
 
-class ChartView extends StatefulWidget {
-  const ChartView({super.key});
+class ChartSection extends StatefulWidget {
+  const ChartSection({super.key});
+
+  static PreferredSizeWidget appBar(
+    BuildContext context,
+    bool isPermanentNavigation,
+  ) {
+    return AppBar(
+      automaticallyImplyLeading: !isPermanentNavigation,
+      title: const Text('Expense Charts'),
+    );
+  }
 
   @override
-  State<ChartView> createState() => _ChartViewState();
+  State<ChartSection> createState() => _ChartSectionState();
 }
 
-class _ChartViewState extends State<ChartView> {
+class _ChartSectionState extends State<ChartSection> {
   final ExpenseController _expenseController = Get.find<ExpenseController>();
   bool _showFanChart = false;
   DateTime _startDate = DateTime.now().subtract(const Duration(days: 30));
@@ -21,36 +30,20 @@ class _ChartViewState extends State<ChartView> {
 
   @override
   Widget build(BuildContext context) {
-    return AppShell(
-      appBarBuilder: (isPermanentNavigation) => AppBar(
-        automaticallyImplyLeading: !isPermanentNavigation,
-        title: const Text('Expense Charts'),
-        actions: [
-          IconButton(
-            icon: Icon(_showFanChart ? Icons.show_chart : Icons.pie_chart),
-            onPressed: () {
-              setState(() {
-                _showFanChart = !_showFanChart;
-              });
-            },
+    return Column(
+      children: [
+        _buildDateRangeSelector(context),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: _showFanChart ? _buildFanChart() : _buildLineChart(),
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          _buildDateRangeSelector(),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: _showFanChart ? _buildFanChart() : _buildLineChart(),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildDateRangeSelector() {
+  Widget _buildDateRangeSelector(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -92,6 +85,14 @@ class _ChartViewState extends State<ChartView> {
                   _endDate = DateTime.now();
                 });
               }
+            },
+          ),
+          IconButton(
+            icon: Icon(_showFanChart ? Icons.show_chart : Icons.pie_chart),
+            onPressed: () {
+              setState(() {
+                _showFanChart = !_showFanChart;
+              });
             },
           ),
         ],
@@ -190,22 +191,21 @@ class _ChartViewState extends State<ChartView> {
 
       final Map<String, double> categoryExpenses = {};
       for (var expense in expenses) {
-        var category = expense.categoryId ?? '';
+        final category = expense.categoryId ?? '';
         if (category.isEmpty) {
           continue;
         }
-
         categoryExpenses[category] =
-            (categoryExpenses[expense.categoryId] ?? 0) + expense.amount;
+            (categoryExpenses[category] ?? 0) + expense.amount;
       }
 
       final total = categoryExpenses.values.reduce((a, b) => a + b);
 
+      final keys = categoryExpenses.keys.toList();
       final sections = categoryExpenses.entries.map((e) {
         final percentage = e.value / total;
-        final color = Colors.primaries[
-            categoryExpenses.keys.toList().indexOf(e.key) %
-                Colors.primaries.length];
+        final color =
+            Colors.primaries[keys.indexOf(e.key) % Colors.primaries.length];
 
         return PieChartSectionData(
           color: color,

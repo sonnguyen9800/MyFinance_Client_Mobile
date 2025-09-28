@@ -1,20 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
-import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
-import 'package:myfinance_client_flutter/controllers/category_controller.dart';
-import 'package:myfinance_client_flutter/views/expense/expense_view_utils.dart';
 
+import '../config/theme/app_typography.dart';
+import '../controllers/category_controller.dart';
 import '../controllers/expense_controller.dart';
+import '../controllers/navigation_controller.dart';
 import 'expense/expense_card.dart';
-import 'widget/app_shell.dart';
+import 'expense/expense_view_utils.dart';
 
-class HomeView extends StatelessWidget {
-  HomeView({super.key});
+class HomeSection extends StatefulWidget {
+  const HomeSection({super.key});
 
+  static Widget buildFloatingActionButton() {
+    final expenseController = Get.find<ExpenseController>();
+    return FloatingActionButton(
+      onPressed: () => showExpenseUpdateDialog(expenseController),
+      child: const Icon(Icons.add),
+    );
+  }
+
+  @override
+  State<HomeSection> createState() => _HomeSectionState();
+}
+
+class _HomeSectionState extends State<HomeSection> {
   final ExpenseController _expenseController = Get.find<ExpenseController>();
   final CategoryController _categoryController = Get.find<CategoryController>();
+  final NavigationController _navigationController =
+      Get.find<NavigationController>();
+  late Future<void> _loadFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFuture = _initialLoad();
+  }
 
   Future<void> _initialLoad() async {
     await _categoryController.loadCategories();
@@ -25,54 +46,38 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _initialLoad(),
+      future: _loadFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
-          return _buildHomeView(context);
         }
+        return _buildContent(context);
       },
     );
   }
 
-  Widget _buildHomeView(BuildContext context) {
-    return AppShell(
-      appBarBuilder: (isPermanentNavigation) => AppBar(
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        automaticallyImplyLeading: !isPermanentNavigation,
-        title: Text(
-          'MyFinance',
-          style: AppTypography.textTheme.headlineMedium!
-              .copyWith(color: AppColors.primaryDark),
-        ),
-      ),
-      body: Obx(
-        () => _expenseController.isLoading.value
-            ? const Center(child: CircularProgressIndicator())
-            : RefreshIndicator(
-                onRefresh: _expenseController.loadExpenses,
-                child: ListView(
-                  padding: const EdgeInsets.all(5.0),
-                  children: [
-                    _buildOverviewPanel(),
-                    const SizedBox(height: 0),
-                    _buildExpensesPanel(),
-                  ],
-                ),
+  Widget _buildContent(BuildContext context) {
+    return Obx(
+      () => _expenseController.isLoading.value
+          ? const Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
+              onRefresh: _expenseController.loadExpenses,
+              child: ListView(
+                padding: const EdgeInsets.all(5.0),
+                children: [
+                  _buildOverviewPanel(context),
+                  const SizedBox(height: 8),
+                  _buildExpensesPanel(context),
+                ],
               ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => showExpenseUpdateDialog(_expenseController),
-        child: const Icon(Icons.add),
-      ),
+            ),
     );
   }
 
-  Widget _buildOverviewPanel() {
-    final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '?');
+  Widget _buildOverviewPanel(BuildContext context) {
+    final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -88,6 +93,7 @@ class HomeView extends StatelessWidget {
               children: [
                 Expanded(
                   child: _buildOverviewItem(
+                    context,
                     'Last 30 Days',
                     currencyFormat.format(_expenseController.totalLast30Days),
                   ),
@@ -95,6 +101,7 @@ class HomeView extends StatelessWidget {
                 const SizedBox(width: 16),
                 Expanded(
                   child: _buildOverviewItem(
+                    context,
                     'Last 7 Days',
                     currencyFormat.format(_expenseController.totalLast7Days),
                   ),
@@ -107,7 +114,11 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildOverviewItem(String title, String amount) {
+  Widget _buildOverviewItem(
+    BuildContext context,
+    String title,
+    String amount,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -119,7 +130,7 @@ class HomeView extends StatelessWidget {
         Text(
           amount,
           style: AppTypography.textTheme.bodyLarge!.copyWith(
-            color: Theme.of(Get.context!).colorScheme.primary,
+            color: Theme.of(context).colorScheme.primary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -127,12 +138,12 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildExpensesPanel() {
+  Widget _buildExpensesPanel(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -141,11 +152,12 @@ class HomeView extends StatelessWidget {
                 style: AppTypography.textTheme.titleLarge,
               ),
               TextButton(
-                onPressed: () => Get.toNamed('/expenses'),
+                onPressed: () => _navigationController
+                    .setSection(NavigationSection.expenses),
                 child: Text(
                   'View All',
                   style: AppTypography.textTheme.titleMedium!.copyWith(
-                    color: Theme.of(Get.context!).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),
@@ -154,6 +166,12 @@ class HomeView extends StatelessWidget {
         ),
         Obx(() {
           final recentExpenses = _expenseController.expenses.take(5).toList();
+          if (recentExpenses.isEmpty) {
+            return const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text('No expenses recorded yet'),
+            );
+          }
           return ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),

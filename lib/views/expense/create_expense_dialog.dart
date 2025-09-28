@@ -148,6 +148,7 @@ class _UpdateExpenseDialogState extends State<UpdateExpenseDialog> {
                         category: category,
                         categoryController: _categoryController,
                         isAllowControl: false,
+                        onViewExpenses: null,
                       );
               }),
               const SizedBox(height: 16),
