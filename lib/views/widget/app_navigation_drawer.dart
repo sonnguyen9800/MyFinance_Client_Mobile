@@ -88,26 +88,26 @@ class _AppNavigationDrawerState extends State<AppNavigationDrawer> {
           label: 'Monthly',
           route: '/monthly',
         ),
-        _buildNavItem(
-          icon: Icons.pie_chart,
-          label: 'Charts',
-          route: '/chart',
-        ),
+        // _buildNavItem(
+        //   icon: Icons.pie_chart,
+        //   label: 'Charts',
+        //   route: '/chart',
+        // ),
         _buildNavItem(
           icon: Icons.category,
           label: 'Categories',
           route: '/categories',
         ),
-        _buildNavItem(
-          icon: Icons.person,
-          label: 'Profile',
-          route: '/profile',
-        ),
-        _buildNavItem(
-          icon: Icons.settings,
-          label: 'Settings',
-          route: '/settings',
-        ),
+        // _buildNavItem(
+        //   icon: Icons.person,
+        //   label: 'Profile',
+        //   route: '/profile',
+        // ),
+        // _buildNavItem(
+        //   icon: Icons.settings,
+        //   label: 'Settings',
+        //   route: '/settings',
+        // ),
         _buildNavItem(
           icon: Icons.info,
           label: 'About',
