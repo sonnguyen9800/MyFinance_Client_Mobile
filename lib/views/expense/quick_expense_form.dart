@@ -170,29 +170,36 @@ class _QuickExpenseFormState extends State<QuickExpenseForm> {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 12),
-                TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Name',
-                    border: OutlineInputBorder(),
+                Row(children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Name',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) =>
+                          value == null || value.trim().isEmpty
+                              ? 'Enter a name'
+                              : null,
+                    ),
                   ),
-                  validator: (value) => value == null || value.trim().isEmpty
-                      ? 'Enter a name'
-                      : null,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _amountController,
-                  decoration: const InputDecoration(
-                    labelText: 'Amount',
-                    border: OutlineInputBorder(),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _amountController,
+                      decoration: const InputDecoration(
+                        labelText: 'Amount',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.number,
+                      validator: (value) =>
+                          value == null || int.tryParse(value.trim()) == null
+                              ? 'Enter a valid amount'
+                              : null,
+                    ),
                   ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) =>
-                      value == null || int.tryParse(value.trim()) == null
-                          ? 'Enter a valid amount'
-                          : null,
-                ),
+                ]),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _descriptionController,
