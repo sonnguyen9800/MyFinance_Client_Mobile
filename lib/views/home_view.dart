@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -8,11 +9,13 @@ import '../controllers/expense_controller.dart';
 import '../controllers/navigation_controller.dart';
 import 'expense/expense_card.dart';
 import 'expense/expense_view_utils.dart';
+import 'expense/quick_expense_form.dart';
 
 class HomeSection extends StatefulWidget {
   const HomeSection({super.key});
 
-  static Widget buildFloatingActionButton() {
+  static Widget? buildFloatingActionButton() {
+    if (kIsWeb) return null;
     final expenseController = Get.find<ExpenseController>();
     return FloatingActionButton(
       onPressed: () => showExpenseUpdateDialog(expenseController),
@@ -68,6 +71,17 @@ class _HomeSectionState extends State<HomeSection> {
                 padding: const EdgeInsets.all(5.0),
                 children: [
                   _buildOverviewPanel(context),
+                  if (kIsWeb) ...[
+                    const SizedBox(height: 12),
+                    QuickExpenseForm(
+                      onCreated: () async {
+                        await _expenseController.loadExpenses(
+                          forceRefresh: true,
+                        );
+                        await _expenseController.loadLastExpenses();
+                      },
+                    ),
+                  ],
                   const SizedBox(height: 8),
                   _buildExpensesPanel(context),
                 ],

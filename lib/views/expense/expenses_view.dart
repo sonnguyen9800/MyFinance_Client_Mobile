@@ -1,14 +1,17 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../config/theme/app_colors.dart';
-import '../../config/theme/app_typography.dart';
-import '../../controllers/category_controller.dart';
+import 'package:myfinance_client_flutter/config/theme/app_colors.dart';
+import 'package:myfinance_client_flutter/config/theme/app_typography.dart';
+
 import '../../controllers/expense_controller.dart';
+import '../../controllers/category_controller.dart';
 import '../../controllers/navigation_controller.dart';
 import 'expense_card.dart';
 import 'expense_view_utils.dart';
+import 'quick_expense_form.dart';
 
 class ExpensesSection extends StatefulWidget {
   const ExpensesSection({super.key});
@@ -50,6 +53,7 @@ class ExpensesSection extends StatefulWidget {
   }
 
   static Widget? buildFloatingActionButton() {
+    if (kIsWeb) return null;
     final expenseController = Get.find<ExpenseController>();
     return FloatingActionButton(
       onPressed: () => showExpenseUpdateDialog(expenseController),
@@ -109,7 +113,7 @@ class _ExpensesSectionState extends State<ExpensesSection> {
               .toList()
           : _expenseController.expenses;
 
-      if (filteredExpenses.isEmpty) {
+      if (filteredExpenses.isEmpty && !kIsWeb) {
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -130,9 +134,20 @@ class _ExpensesSectionState extends State<ExpensesSection> {
         onRefresh: () => _expenseController.loadExpenses(forceRefresh: true),
         child: ListView.builder(
           padding: const EdgeInsets.all(8),
-          itemCount: filteredExpenses.length + 1,
+          itemCount: filteredExpenses.length + 1 + (kIsWeb ? 1 : 0),
           itemBuilder: (context, index) {
-            if (index == filteredExpenses.length) {
+            if (kIsWeb && index == 0) {
+              return QuickExpenseForm(
+                onCreated: () async {
+                  await _expenseController.loadExpenses(forceRefresh: true);
+                  await _expenseController.loadLastExpenses();
+                },
+              );
+            }
+
+            final adjustedIndex = index - (kIsWeb ? 1 : 0);
+
+            if (adjustedIndex == filteredExpenses.length) {
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Center(
@@ -147,9 +162,9 @@ class _ExpensesSectionState extends State<ExpensesSection> {
               );
             }
 
-            if (index > 0 &&
-                filteredExpenses[index - 1].date.month !=
-                    filteredExpenses[index].date.month) {
+            if (adjustedIndex > 0 &&
+                filteredExpenses[adjustedIndex - 1].date.month !=
+                    filteredExpenses[adjustedIndex].date.month) {
               return Column(
                 children: [
                   const Divider(),
@@ -157,7 +172,7 @@ class _ExpensesSectionState extends State<ExpensesSection> {
                     padding: const EdgeInsets.all(16.0),
                     child: Text(
                       DateFormat('MMMM yyyy')
-                          .format(filteredExpenses[index].date),
+                          .format(filteredExpenses[adjustedIndex].date),
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
@@ -167,7 +182,7 @@ class _ExpensesSectionState extends State<ExpensesSection> {
               );
             }
 
-            final expense = filteredExpenses[index];
+            final expense = filteredExpenses[adjustedIndex];
             return ExpenseCard(expense: expense);
           },
         ),
