@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+﻿import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -104,6 +104,54 @@ class _QuickExpenseFormState extends State<QuickExpenseForm> {
 
     try {
       await _expenseController.addExpense(expense);
+      if (!mounted) {
+        widget.onCreated?.call();
+        return;
+      }
+
+      setState(() {
+        _nameController.clear();
+        _amountController.clear();
+        _descriptionController.clear();
+        _selectedDate = DateTime.now();
+        _isSubmitting = false;
+      });
+
+      widget.onCreated?.call();
+      Get.snackbar('Success', 'Expense created');
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
+      Get.snackbar('Error', 'Failed to create expense: ');
+    }
+  }
+
+    final amount = int.tryParse(_amountController.text.trim());
+    if (amount == null || amount <= 0) {
+      Get.snackbar('Error', 'Please enter a valid amount');
+      return;
+    }
+
+    if (_categoryController.categories.isEmpty) {
+      Get.snackbar('Error', 'Please create a category first');
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    final expense = Expense(
+      name: _nameController.text.trim(),
+      amount: amount,
+      date: _selectedDate,
+      description: _descriptionController.text.trim().isEmpty
+          ? null
+          : _descriptionController.text.trim(),
+      categoryId: _selectedCategoryId,
+    );
+
+    try {
+      await _expenseController.addExpense(expense);
       widget.onCreated?.call();
       _nameController.clear();
       _amountController.clear();
@@ -113,6 +161,7 @@ class _QuickExpenseFormState extends State<QuickExpenseForm> {
       });
     } catch (e) {
       Get.snackbar('Error', 'Failed to create expense: $e');
+      print('$e');
     } finally {
       if (mounted) {
         setState(() => _isSubmitting = false);
@@ -165,31 +214,35 @@ class _QuickExpenseFormState extends State<QuickExpenseForm> {
                 ),
                 const SizedBox(height: 12),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Name',
-                        border: OutlineInputBorder(),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _nameController,
+                        decoration: const InputDecoration(
+                          labelText: 'Name',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) => value == null || value.trim().isEmpty
+                            ? 'Enter a name'
+                            : null,
                       ),
-                      validator: (value) => value == null || value.trim().isEmpty
-                          ? 'Enter a name'
-                          : null,
                     ),
 
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _amountController,
-                      decoration: const InputDecoration(
-                        labelText: 'Amount',
-                        border: OutlineInputBorder(),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _amountController,
+                        decoration: const InputDecoration(
+                          labelText: 'Amount',
+                          border: OutlineInputBorder(),
+                        ),
+                        keyboardType: TextInputType.number,
+                        validator: (value) =>
+                            value == null || int.tryParse(value.trim()) == null
+                                ? 'Enter a valid amount'
+                                : null,
                       ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) =>
-                          value == null || int.tryParse(value.trim()) == null
-                              ? 'Enter a valid amount'
-                              : null,
                     ),
                   ],
 
@@ -217,7 +270,7 @@ class _QuickExpenseFormState extends State<QuickExpenseForm> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        value: _selectedCategoryId,
+                        initialValue: _selectedCategoryId,
                         decoration: const InputDecoration(
                           labelText: 'Category',
                           border: OutlineInputBorder(),
@@ -259,3 +312,4 @@ class _QuickExpenseFormState extends State<QuickExpenseForm> {
     });
   }
 }
+
