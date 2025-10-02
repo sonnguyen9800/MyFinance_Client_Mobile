@@ -1,4 +1,4 @@
-﻿import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -23,11 +23,11 @@ class _QuickExpenseFormState extends State<QuickExpenseForm> {
   final _nameController = TextEditingController();
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
   DateTime _selectedDate = DateTime.now();
   String? _selectedCategoryId;
   bool _isSubmitting = false;
-
-  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -123,49 +123,7 @@ class _QuickExpenseFormState extends State<QuickExpenseForm> {
       if (mounted) {
         setState(() => _isSubmitting = false);
       }
-      Get.snackbar('Error', 'Failed to create expense: ');
-    }
-  }
-
-    final amount = int.tryParse(_amountController.text.trim());
-    if (amount == null || amount <= 0) {
-      Get.snackbar('Error', 'Please enter a valid amount');
-      return;
-    }
-
-    if (_categoryController.categories.isEmpty) {
-      Get.snackbar('Error', 'Please create a category first');
-      return;
-    }
-
-    setState(() => _isSubmitting = true);
-
-    final expense = Expense(
-      name: _nameController.text.trim(),
-      amount: amount,
-      date: _selectedDate,
-      description: _descriptionController.text.trim().isEmpty
-          ? null
-          : _descriptionController.text.trim(),
-      categoryId: _selectedCategoryId,
-    );
-
-    try {
-      await _expenseController.addExpense(expense);
-      widget.onCreated?.call();
-      _nameController.clear();
-      _amountController.clear();
-      _descriptionController.clear();
-      setState(() {
-        _selectedDate = DateTime.now();
-      });
-    } catch (e) {
       Get.snackbar('Error', 'Failed to create expense: $e');
-      print('$e');
-    } finally {
-      if (mounted) {
-        setState(() => _isSubmitting = false);
-      }
     }
   }
 
@@ -187,7 +145,6 @@ class _QuickExpenseFormState extends State<QuickExpenseForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
-
                 Text(
                   'Quick Add Expense',
                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -210,44 +167,32 @@ class _QuickExpenseFormState extends State<QuickExpenseForm> {
               children: [
                 Text(
                   'Quick Add Expense',
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 12),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: _nameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Name',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) => value == null || value.trim().isEmpty
-                            ? 'Enter a name'
-                            : null,
-                      ),
-                    ),
-
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: TextFormField(
-                        controller: _amountController,
-                        decoration: const InputDecoration(
-                          labelText: 'Amount',
-                          border: OutlineInputBorder(),
-                        ),
-                        keyboardType: TextInputType.number,
-                        validator: (value) =>
-                            value == null || int.tryParse(value.trim()) == null
-                                ? 'Enter a valid amount'
-                                : null,
-                      ),
-                    ),
-                  ],
-
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Name',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) => value == null || value.trim().isEmpty
+                      ? 'Enter a name'
+                      : null,
                 ),
-
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _amountController,
+                  decoration: const InputDecoration(
+                    labelText: 'Amount',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.number,
+                  validator: (value) =>
+                      value == null || int.tryParse(value.trim()) == null
+                          ? 'Enter a valid amount'
+                          : null,
+                ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _descriptionController,
@@ -312,4 +257,3 @@ class _QuickExpenseFormState extends State<QuickExpenseForm> {
     });
   }
 }
-
