@@ -73,14 +73,7 @@ class _HomeSectionState extends State<HomeSection> {
                   _buildOverviewPanel(context),
                   if (kIsWeb) ...[
                     const SizedBox(height: 12),
-                    QuickExpenseForm(
-                      onCreated: () async {
-                        await _expenseController.loadExpenses(
-                          forceRefresh: true,
-                        );
-                        await _expenseController.loadLastExpenses();
-                      },
-                    ),
+                    const QuickExpenseForm(),
                   ],
                   const SizedBox(height: 8),
                   _buildExpensesPanel(context),

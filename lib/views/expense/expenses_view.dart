@@ -137,12 +137,7 @@ class _ExpensesSectionState extends State<ExpensesSection> {
           itemCount: filteredExpenses.length + 1 + (kIsWeb ? 1 : 0),
           itemBuilder: (context, index) {
             if (kIsWeb && index == 0) {
-              return QuickExpenseForm(
-                onCreated: () async {
-                  await _expenseController.loadExpenses(forceRefresh: true);
-                  await _expenseController.loadLastExpenses();
-                },
-              );
+              return const QuickExpenseForm();
             }
 
             final adjustedIndex = index - (kIsWeb ? 1 : 0);
