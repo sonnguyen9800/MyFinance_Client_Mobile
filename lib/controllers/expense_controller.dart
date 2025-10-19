@@ -182,7 +182,6 @@ class ExpenseController extends GetxController {
 
   Future<void> addExpense(Expense expense) async {
     try {
-      isLoading.value = true;
       final newExpense = await _apiService.createExpense(expense);
       expenses.insert(0, newExpense);
       currentOffset.value += 1;
@@ -198,14 +197,11 @@ class ExpenseController extends GetxController {
       Get.snackbar('Success', 'Expense added successfully');
     } catch (e) {
       Get.snackbar('Error', 'Failed to add expense: $e');
-    } finally {
-      isLoading.value = false;
     }
   }
 
   Future<void> updateExpense(Expense expense) async {
     try {
-      isLoading.value = true;
       final updatedExpense =
           await _apiService.updateExpense(expense.id!, expense);
 
@@ -233,14 +229,11 @@ class ExpenseController extends GetxController {
       Get.snackbar('Success', 'Expense updated successfully');
     } catch (e) {
       Get.snackbar('Error', 'Failed to update expense: $e');
-    } finally {
-      isLoading.value = false;
     }
   }
 
   Future<void> deleteExpense(String id) async {
     try {
-      isLoading.value = true;
       await _apiService.deleteExpense(id);
 
       final expense = expenses.firstWhere((e) => e.id == id);
@@ -257,14 +250,13 @@ class ExpenseController extends GetxController {
       await loadLastExpenses();
     } catch (e) {
       Get.snackbar('Error', 'Failed to delete expense: $e');
-    } finally {
-      isLoading.value = false;
     }
   }
 
   Future<void> loadLastExpenses() async {
+    // Skip toggling isLoading here so lightweight stat refreshes don't
+    // trigger global loading indicators.
     try {
-      isLoading.value = true;
       final lastExpenses = await _apiService.getTotalSpendLastExpenses();
       last7DaysExpenses = lastExpenses.expensesLast7Days;
       last30DaysExpenses = lastExpenses.expensesLast30Days;
@@ -272,8 +264,6 @@ class ExpenseController extends GetxController {
       hasError.value = true;
       errorMessage.value = e.toString();
       Get.snackbar('Error', 'Failed to load last expenses: $e');
-    } finally {
-      isLoading.value = false;
     }
   }
 
