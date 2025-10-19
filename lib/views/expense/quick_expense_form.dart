@@ -62,15 +62,124 @@ class _QuickExpenseFormState extends State<QuickExpenseForm> {
     });
   }
 
-  Future<void> _pickDate() async {
-    final picked = await showDatePicker(
+  Future<void> _pickDateTime() async {
+    DateTime tempDate = _selectedDate;
+    int tempHour = _selectedDate.hour;
+    int tempMinute = _selectedDate.minute;
+
+    final selected = await showDialog<DateTime>(
       context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text('Select date & time'),
+              content: SizedBox(
+                width: 360,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CalendarDatePicker(
+                      initialDate: tempDate,
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                      onDateChanged: (value) {
+                        setDialogState(() {
+                          tempDate = DateTime(
+                            value.year,
+                            value.month,
+                            value.day,
+                            tempHour,
+                            tempMinute,
+                          );
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: DropdownButtonFormField<int>(
+                            initialValue: tempHour,
+                            decoration: const InputDecoration(
+                              labelText: 'Hour',
+                              border: OutlineInputBorder(),
+                            ),
+                            items: List.generate(
+                                24,
+                                (index) => DropdownMenuItem(
+                                      value: index,
+                                      child: Text(
+                                          index.toString().padLeft(2, '0')),
+                                    )),
+                            onChanged: (value) {
+                              if (value == null) return;
+                              setDialogState(() {
+                                tempHour = value;
+                                tempDate = DateTime(
+                                  tempDate.year,
+                                  tempDate.month,
+                                  tempDate.day,
+                                  tempHour,
+                                  tempMinute,
+                                );
+                              });
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: DropdownButtonFormField<int>(
+                            initialValue: tempMinute - tempMinute % 5,
+                            decoration: const InputDecoration(
+                              labelText: 'Minute',
+                              border: OutlineInputBorder(),
+                            ),
+                            items: List.generate(12, (index) => index * 5)
+                                .map((minute) => DropdownMenuItem(
+                                      value: minute,
+                                      child: Text(
+                                          minute.toString().padLeft(2, '0')),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              if (value == null) return;
+                              setDialogState(() {
+                                tempMinute = value;
+                                tempDate = DateTime(
+                                  tempDate.year,
+                                  tempDate.month,
+                                  tempDate.day,
+                                  tempHour,
+                                  tempMinute,
+                                );
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(tempDate),
+                  child: const Text('Done'),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
-    if (picked != null) {
-      setState(() => _selectedDate = picked);
+
+    if (selected != null) {
+      setState(() => _selectedDate = selected);
     }
   }
 
@@ -136,7 +245,7 @@ class _QuickExpenseFormState extends State<QuickExpenseForm> {
     return Obx(() {
       final categories = _categoryController.categories;
       _scheduleCategorySelection(categories);
-      final dateLabel = DateFormat('yyyy-MM-dd').format(_selectedDate);
+      final dateLabel = DateFormat('yyyy-MM-dd – HH:mm').format(_selectedDate);
 
       if (categories.isEmpty) {
         return Card(
@@ -213,11 +322,14 @@ class _QuickExpenseFormState extends State<QuickExpenseForm> {
                 Row(
                   children: [
                     Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: _pickDate,
-                        icon: const Icon(Icons.calendar_today),
-                        label: Text(dateLabel),
-                      ),
+                      child: InputDatePickerFormField(
+                      initialDate: _selectedDate,
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                      fieldLabelText: 'Date',
+                      onDateSubmitted: (value) {
+                        _selectedDate = value;
+                      })
                     ),
                     const SizedBox(width: 12),
                     Expanded(
