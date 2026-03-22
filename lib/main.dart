@@ -28,13 +28,15 @@ Future<void> main() async {
 
   final apiService = Get.put(ApiService(storage), permanent: true);
   Get.put(ThemeController(), permanent: true);
-  Get.put(AuthController(apiService, storage), permanent: true);
+  final authController =
+      Get.put(AuthController(apiService, storage), permanent: true);
   Get.put(ExpenseController(apiService), permanent: true);
   Get.put(CategoryController(apiService), permanent: true);
   Get.put(NavigationController(), permanent: true);
 
   final connectivityService = Get.put(ConnectivityService(), permanent: true);
   await connectivityService.init();
+  await authController.checkAuthStatus();
 
   runApp(const MyApp());
 }

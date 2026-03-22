@@ -20,6 +20,30 @@ class _LoginViewState extends State<LoginView> {
   final _authController = Get.find<AuthController>();
 
   @override
+  void initState() {
+    super.initState();
+    _hydrateServerAddress();
+  }
+
+  Future<void> _hydrateServerAddress() async {
+    final storedServerAddress = await _authController.getStoredServerAddress();
+    if (!mounted) return;
+
+    _serverAddressController.text = storedServerAddress?.isNotEmpty == true
+        ? storedServerAddress!
+        : (kIsWeb ? '${Uri.base.origin}/api' : 'http://localhost:8080/api');
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _serverAddressController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -49,10 +73,11 @@ class _LoginViewState extends State<LoginView> {
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 24),
-                      if (_authController.serverAddress.value.isNotEmpty)
-                        _buildLoginForm()
-                      else
-                        _buildServerAddressForm(),
+                      Obx(
+                        () => _authController.serverAddress.value.isNotEmpty
+                            ? _buildLoginForm()
+                            : _buildServerAddressForm(),
+                      ),
                     ],
                   ),
                 ),
@@ -68,17 +93,14 @@ class _LoginViewState extends State<LoginView> {
     if (_serverAddressController.text.isEmpty) {
       _serverAddressController.text =
           kIsWeb ? '${Uri.base.origin}/api' : 'http://localhost:8080/api';
-
     }
 
-    String serverAddress = '';
     final serverAddressField = TextField(
       decoration: const InputDecoration(
         labelText: 'Server address',
         border: OutlineInputBorder(),
       ),
       controller: _serverAddressController,
-      onChanged: (value) => serverAddress = value,
     );
 
     return Column(
@@ -88,7 +110,7 @@ class _LoginViewState extends State<LoginView> {
         const SizedBox(height: 16),
         ElevatedButton(
           onPressed: () async {
-            serverAddress = serverAddressField.controller!.text;
+            final serverAddress = serverAddressField.controller!.text.trim();
             final canConnect = await _authController.connect(serverAddress);
             if (canConnect) {
               setState(() {});
@@ -99,7 +121,7 @@ class _LoginViewState extends State<LoginView> {
         const SizedBox(height: 12),
         ElevatedButton(
           onPressed: () async {
-            serverAddress = serverAddressField.controller!.text;
+            final serverAddress = serverAddressField.controller!.text.trim();
             await _authController.ping(serverAddress);
           },
           child: const Text('Ping'),
@@ -162,6 +184,7 @@ class _LoginViewState extends State<LoginView> {
         ),
         TextButton(
           onPressed: () {
+            _serverAddressController.text = _authController.serverAddress.value;
             _authController.serverAddress.value = '';
             setState(() {});
           },

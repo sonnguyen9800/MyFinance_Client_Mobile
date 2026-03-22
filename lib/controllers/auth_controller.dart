@@ -26,6 +26,15 @@ class AuthController extends GetxController {
     developer.log('AuthController initialized');
   }
 
+  Future<String?> getStoredServerAddress() async {
+    final storedServerAddress = await _storage.read('server_address');
+    if (storedServerAddress != null && storedServerAddress.isNotEmpty) {
+      serverAddress.value = storedServerAddress;
+      return storedServerAddress;
+    }
+    return null;
+  }
+
   void handleOffline() {
     developer.log('Handling offline state');
     user.value = null;
@@ -38,7 +47,7 @@ class AuthController extends GetxController {
 
     try {
       final token = await _storage.read('token');
-      final storedServerAddress = await _storage.read('server_address');
+      final storedServerAddress = await getStoredServerAddress();
       if (storedServerAddress != null && storedServerAddress.isNotEmpty) {
         if (!kIsWeb) {
           final canConnect = await _apiService.ping(storedServerAddress);
@@ -134,12 +143,12 @@ class AuthController extends GetxController {
   Future<void> logout() async {
     try {
       developer.log('Logging out...');
-      await _storage.deleteAll(['token', 'server_address']);
+      await _storage.delete('token');
 
       final storedToken = await _storage.read('token');
       developer.log('Token deleted successfully: ${storedToken == null}');
       final storedAddress = await _storage.read('server_address');
-      developer.log('Address deleted successfully: ${storedAddress == null}');
+      developer.log('Address preserved successfully: ${storedAddress != null}');
 
       user.value = null;
       Get.offAllNamed('/login');
@@ -154,30 +163,32 @@ class AuthController extends GetxController {
   }
 
   Future<void> setServerAddress(String address) async {
-    serverAddress.value = address;
-    _apiService.updateBaseUrl(address);
-    await _storage.write('server_address', address);
+    final normalizedAddress = address.trim();
+    serverAddress.value = normalizedAddress;
+    _apiService.updateBaseUrl(normalizedAddress);
+    await _storage.write('server_address', normalizedAddress);
   }
 
   void toggleServerSelection() {}
 
   Future<bool> connect(String address) async {
-    final canConnect = await _apiService.ping(address);
+    final normalizedAddress = address.trim();
+    final canConnect = await _apiService.ping(normalizedAddress);
     if (canConnect) {
-      await setServerAddress(address);
+      await setServerAddress(normalizedAddress);
       return true;
     } else {
       Get.snackbar('Error', "Can't connect to server");
       return false;
     }
-
-
   }
 
-        Future<bool> ping(String address) async {
-    final canConnect = await _apiService.ping(address);
+  Future<bool> ping(String address) async {
+    final normalizedAddress = address.trim();
+    final canConnect = await _apiService.ping(normalizedAddress);
     if (canConnect) {
-      Get.snackbar("Success","Server is online");
+      await setServerAddress(normalizedAddress);
+      Get.snackbar("Success", "Server is online");
       return true;
     } else {
       Get.snackbar('Error', "Can't connect to server");

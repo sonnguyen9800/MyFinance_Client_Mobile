@@ -53,8 +53,12 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
 
     // Step 2: Check auth status
     try {
-      await authController.checkAuthStatus();
-      _navigateTo('/home');
+      if (!authController.isInitialized.value) {
+        await authController.checkAuthStatus();
+      }
+      _navigateTo(
+        authController.user.value != null ? '/home' : '/login',
+      );
     } catch (e) {
       _navigateTo('/login');
     }
