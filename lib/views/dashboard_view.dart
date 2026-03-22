@@ -12,7 +12,6 @@ import 'expense/monthly_view.dart';
 import 'home_view.dart';
 import 'profile_view.dart';
 import 'settings_view.dart';
-import 'portfolio/portfolio_section.dart';
 import 'widget/app_shell.dart';
 
 class DashboardView extends StatefulWidget {
@@ -42,7 +41,6 @@ class _DashboardViewState extends State<DashboardView> {
     debugPrint("Secion Order");
     _sectionBodies = {
       NavigationSection.home: HomeSection(),
-      NavigationSection.portfolio: const PortfolioSection(),
       NavigationSection.expenses: ExpensesSection(),
       NavigationSection.monthly: MonthlySection(),
       NavigationSection.chart: const ChartSection(),
@@ -97,11 +95,7 @@ class _DashboardViewState extends State<DashboardView> {
         );
       case NavigationSection.expenses:
         return ExpensesSection.appBar(context, isPermanentNavigation);
-      case NavigationSection.portfolio:
-        return AppBar(
-          automaticallyImplyLeading: !isPermanentNavigation,
-          title: const Text('Portfolio'),
-        );
+
       case NavigationSection.monthly:
         return MonthlySection.appBar(context, isPermanentNavigation);
       case NavigationSection.chart:
@@ -129,8 +123,6 @@ class _DashboardViewState extends State<DashboardView> {
         return HomeSection.buildFloatingActionButton();
       case NavigationSection.expenses:
         return ExpensesSection.buildFloatingActionButton();
-      case NavigationSection.portfolio:
-        return null;
       default:
         return null;
     }

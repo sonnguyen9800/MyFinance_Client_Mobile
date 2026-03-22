@@ -7,7 +7,6 @@ import 'config/theme/app_theme.dart';
 import 'controllers/auth_controller.dart';
 import 'controllers/category_controller.dart';
 import 'controllers/expense_controller.dart';
-import 'controllers/portfolio_controller.dart';
 import 'controllers/theme_controller.dart';
 import 'services/api_service.dart';
 import 'services/connectivity_service.dart';
@@ -32,7 +31,6 @@ Future<void> main() async {
   Get.put(AuthController(apiService, storage), permanent: true);
   Get.put(ExpenseController(apiService), permanent: true);
   Get.put(CategoryController(apiService), permanent: true);
-  Get.put(PortfolioController(apiService), permanent: true);
   Get.put(NavigationController(), permanent: true);
 
   final connectivityService = Get.put(ConnectivityService(), permanent: true);
@@ -80,13 +78,13 @@ class MyApp extends StatelessWidget {
           ),
           middlewares: [AuthMiddleware()],
         ),
-        GetPage(
-          name: '/portfolio',
-          page: () => const DashboardView(
-            initialSection: NavigationSection.portfolio,
-          ),
-          middlewares: [AuthMiddleware()],
-        ),
+        // GetPage(
+        //   name: '/portfolio',
+        //   page: () => const DashboardView(
+        //     initialSection: NavigationSection.portfolio,
+        //   ),
+        //   middlewares: [AuthMiddleware()],
+        // ),
         GetPage(
           name: '/monthly',
           page: () => DashboardView(

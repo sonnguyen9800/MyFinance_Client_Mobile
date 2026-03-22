@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 enum NavigationSection {
   home,
-  portfolio,
+ // portfolio, depcated
   expenses,
   monthly,
   chart,
@@ -37,11 +37,11 @@ class NavigationController extends GetxController {
       label: 'Home',
       icon: Icons.home,
     ),
-    NavigationSectionData(
-      section: NavigationSection.portfolio,
-      label: 'Portfolio',
-      icon: Icons.account_balance_wallet,
-    ),
+    // NavigationSectionData(
+    //   section: NavigationSection.portfolio,
+    //   label: 'Portfolio',
+    //   icon: Icons.account_balance_wallet,
+    // ),
     NavigationSectionData(
       section: NavigationSection.expenses,
       label: 'Expenses',
@@ -96,8 +96,8 @@ class NavigationController extends GetxController {
         return NavigationSection.monthly;
       case '/chart':
         return NavigationSection.chart;
-      case '/portfolio':
-        return NavigationSection.portfolio;
+      // case '/portfolio':
+      //   return NavigationSection.portfolio;
       case '/categories':
         return NavigationSection.categories;
       case '/profile':
