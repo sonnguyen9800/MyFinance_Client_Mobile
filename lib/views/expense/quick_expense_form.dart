@@ -201,34 +201,70 @@ class _QuickExpenseFormState extends State<QuickExpenseForm> {
                 Row(
                   children: [
                     Expanded(
-                      child: InputDatePickerFormField(
-                      initialDate: _selectedDate,
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2100),
-                      fieldLabelText: 'Date',
-                      onDateSubmitted: (value) {
-                        _selectedDate = value;
-                      })
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Date',
+                            style: Theme.of(context).textTheme.labelLarge,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Use format YYYY-MM-DD',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          const SizedBox(height: 6),
+                          InputDatePickerFormField(
+                            initialDate: _selectedDate,
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2100),
+                            fieldLabelText: '',
+                            fieldHintText: 'YYYY-MM-DD',
+                            errorInvalidText: 'Enter a valid date',
+                            onDateSaved: (value) {
+                              _selectedDate = value;
+                            },
+                            onDateSubmitted: (value) {
+                              _selectedDate = value;
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: DropdownButtonFormField<String>(
-                        initialValue: _selectedCategoryId,
-                        decoration: const InputDecoration(
-                          labelText: 'Category',
-                          border: OutlineInputBorder(),
-                        ),
-                        items: categories
-                            .map(
-                              (category) => DropdownMenuItem<String>(
-                                value: category.id,
-                                child: Text(category.name),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (value) {
-                          setState(() => _selectedCategoryId = value);
-                        },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Category',
+                            style: Theme.of(context).textTheme.labelLarge,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Select an expense category',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          const SizedBox(height: 6),
+                          DropdownButtonFormField<String>(
+                            initialValue: _selectedCategoryId,
+                            decoration: const InputDecoration(
+                              hintText: 'Category',
+                              border: OutlineInputBorder(),
+                            ),
+                            items: categories
+                                .map(
+                                  (category) => DropdownMenuItem<String>(
+                                    value: category.id,
+                                    child: Text(category.name),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (value) {
+                              setState(() => _selectedCategoryId = value);
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   ],
